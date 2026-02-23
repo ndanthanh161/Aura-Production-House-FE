@@ -1,0 +1,9 @@
+﻿
+> aura-production@0.0.0 build
+> tsc -b && vite build
+
+src/components/Navbar.tsx(7,27): error TS6133: 'login' is declared but its value is never read.
+src/pages/public/Login.tsx(4,19): error TS1484: 'Role' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/public/Packages.tsx(3,10): error TS6133: 'Check' is declared but its value is never read.
+src/pages/public/Packages.tsx(3,29): error TS6133: 'Star' is declared but its value is never read.
+src/pages/public/Services.tsx(3,43): error TS6133: 'CheckCircle2' is declared but its value is never read.

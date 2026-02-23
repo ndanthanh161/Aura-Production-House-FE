@@ -1,0 +1,50 @@
+﻿
+> aura-production@0.0.0 build
+> tsc -b && vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 2799 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                 [39m[1m[2m  0.46 kB[22m[1m[22m[2m Γöé gzip:   0.30 kB[22m
+[2mdist/[22m[35massets/index-01XiTQ-v.css  [39m[1m[2m  2.28 kB[22m[1m[22m[2m Γöé gzip:   0.96 kB[22m
+[2mdist/[22m[36massets/index-DJtTMdm8.js   [39m[1m[33m794.74 kB[39m[22m[2m Γöé gzip: 239.48 kB[22m
+node.exe : [33m
+At C:\Program Files\n
+odejs\npm.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: ([33m:S   
+ tring) [], Remot    
+eException
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+(!) Some chunks are 
+larger than 500 kB 
+after minification. 
+Consider:
+- Using dynamic 
+import() to 
+code-split the 
+application
+- Use build.rollupOpt
+ions.output.manualChu
+nks to improve 
+chunking: https://rol
+lupjs.org/configurati
+on-options/#output-ma
+nualchunks
+- Adjust chunk size 
+limit for this 
+warning via build.chu
+nkSizeWarningLimit.[
+39m
+[32mΓ£ô built in 13.72s[39m

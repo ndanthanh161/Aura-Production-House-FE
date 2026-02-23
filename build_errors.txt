@@ -1,0 +1,3 @@
+﻿src/pages/public/Packages.tsx(3,10): error TS6133: 'Check' is declared but its value is never read.
+src/pages/public/Packages.tsx(3,29): error TS6133: 'Star' is declared but its value is never read.
+src/pages/public/Services.tsx(3,43): error TS6133: 'CheckCircle2' is declared but its value is never read.
