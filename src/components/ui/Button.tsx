@@ -59,12 +59,14 @@ export const Button: React.FC<ButtonProps> = ({
             className={`btn-${variant} ${className || ''}`}
             {...props}
         >
-            <span style={{ position: 'relative', zIndex: 1 }}>{children as React.ReactNode}</span>
+            <span style={{ position: 'relative', zIndex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 'inherit' }}>
+                {children as React.ReactNode}
+            </span>
             <style>{`
         .btn-primary:hover {
           background-color: var(--color-accent-hover);
           border-color: var(--color-accent-hover);
-          box-shadow: 0 0 20px rgba(197, 160, 89, 0.3);
+          box-shadow: 0 0 20px rgba(173, 255, 0, 0.3);
         }
         .btn-outline:hover {
           background-color: var(--color-text);

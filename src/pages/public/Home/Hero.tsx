@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Button } from '../../../components/ui/Button';
-import { ArrowRight, Play } from 'lucide-react';
-import { Link } from 'react-router-dom';
+// import { Button } from '../../../components/ui/Button';
+// import { ArrowRight, Play } from 'lucide-react';
+// import { Link } from 'react-router-dom';
 
 export const Hero: React.FC = () => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -11,15 +11,25 @@ export const Hero: React.FC = () => {
     const textY = useTransform(scrollY, [0, 700], [0, -80]);
     const opacity = useTransform(scrollY, [0, 500], [1, 0]);
 
+    const requestRef = React.useRef<number>(0);
+
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
-            setMousePos({
-                x: (e.clientX / window.innerWidth - 0.5) * 20,
-                y: (e.clientY / window.innerHeight - 0.5) * 20,
+            if (requestRef.current) {
+                cancelAnimationFrame(requestRef.current);
+            }
+            requestRef.current = requestAnimationFrame((_time) => {
+                setMousePos({
+                    x: (e.clientX / window.innerWidth - 0.5) * 20,
+                    y: (e.clientY / window.innerHeight - 0.5) * 20,
+                });
             });
         };
         window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            if (requestRef.current) cancelAnimationFrame(requestRef.current);
+        };
     }, []);
 
     return (
@@ -45,6 +55,7 @@ export const Hero: React.FC = () => {
                     zIndex: 1,
                     y: bgY,
                     x: mousePos.x * 0.3,
+                    willChange: 'transform'
                 }}
             >
                 <div style={{
@@ -59,24 +70,9 @@ export const Hero: React.FC = () => {
                 />
             </motion.div>
 
-            {/* Decorative: Floating Film Grain Overlay */}
-            <div style={{
-                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2,
-                opacity: 0.04, pointerEvents: 'none',
-                backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")',
-            }} />
+            {/* Decorative film grain removed for performance optimization */}
 
-            {/* Decorative Lines */}
-            <motion.div
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ duration: 1.5, delay: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                style={{
-                    position: 'absolute', right: '10%', top: '15%', width: '1px', height: '30%',
-                    background: 'linear-gradient(180deg, transparent, var(--color-accent), transparent)',
-                    zIndex: 3, opacity: 0.3, transformOrigin: 'top',
-                }}
-            />
+
 
             {/* Main Hero Content */}
             <motion.div
@@ -95,35 +91,33 @@ export const Hero: React.FC = () => {
                             },
                         }}
                     >
-                        {/* Accent Line + Tag */}
-                        <motion.div
+                        {/* <motion.div
                             variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0 } }}
                             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', marginBottom: '2.5rem' }}
                         >
-                            <div style={{ width: '60px', height: '1px', background: 'var(--color-accent)' }} />
+                            <div style={{ width: '60px', height: '2px', background: 'var(--color-accent-hover)', boxShadow: '0 0 10px var(--color-accent-hover)' }} />
                             <span style={{
-                                color: 'var(--color-accent)', letterSpacing: 'var(--ls-wide)',
-                                fontSize: '0.7rem', textTransform: 'uppercase',
+                                color: 'var(--color-text)', letterSpacing: 'var(--ls-wide)',
+                                fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600
                             }}>
-                                Experience the Cinematic Presence
+                                Trải Nghiệm Sự Hiện Diện Điện Ảnh
                             </span>
-                        </motion.div>
+                        </motion.div> */}
 
-                        {/* Title: AURA */}
-                        <div style={{ overflow: 'hidden', marginBottom: '0.5rem' }}>
+                        <div style={{ overflow: 'hidden', marginTop: '3rem' }}>
                             <motion.h1
                                 variants={{ hidden: { y: '110%' }, visible: { y: 0 } }}
-                                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
                                 style={{
-                                    fontSize: 'clamp(4.5rem, 14vw, 12rem)',
-                                    lineHeight: 0.85, margin: 0,
-                                    background: 'linear-gradient(180deg, #FFFFFF 30%, rgba(255,255,255,0.5) 100%)',
-                                    WebkitBackgroundClip: 'text',
-                                    WebkitTextFillColor: 'transparent',
-                                    backgroundClip: 'text',
+                                    fontSize: 'clamp(3.5rem, 11vw, 9rem)',
+                                    lineHeight: 1.15, margin: 0,
+                                    fontWeight: '200',
+                                    fontFamily: 'var(--font-display)',
+                                    textTransform: 'none', letterSpacing: '-0.02em',
+                                    color: 'rgba(255,255,255,0.85)',
                                 }}
                             >
-                                AURA
+                                Creative
                             </motion.h1>
                         </div>
 
@@ -134,9 +128,9 @@ export const Hero: React.FC = () => {
                                 transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
                                 style={{
                                     fontSize: 'clamp(3.5rem, 11vw, 9rem)',
-                                    lineHeight: 0.9, margin: 0,
-                                    fontStyle: 'italic', fontWeight: '200',
-                                    fontFamily: 'var(--font-serif)',
+                                    lineHeight: 1.15, margin: 0,
+                                    fontWeight: '200',
+                                    fontFamily: 'var(--font-display)',
                                     textTransform: 'none', letterSpacing: '-0.02em',
                                     color: 'rgba(255,255,255,0.85)',
                                 }}
@@ -155,35 +149,56 @@ export const Hero: React.FC = () => {
                                 fontWeight: 300,
                             }}
                         >
-                            Crafting high-end visual legacies for visionaries who demand excellence.
+                            Kiến tạo di sản hình ảnh cao cấp cho những người có tầm nhìn đòi hỏi sự xuất sắc.
                         </motion.p>
 
                         {/* CTA Buttons */}
-                        <motion.div
+                        {/* <motion.div
                             variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}
                             transition={{ duration: 0.8 }}
                             style={{ display: 'flex', gap: '2rem', alignItems: 'center', justifyContent: 'center' }}
                         >
                             <Link to="/portfolio">
                                 <Button size="lg" style={{ borderRadius: '0', padding: '1.5rem 3rem' }}>
-                                    View Work <ArrowRight size={18} style={{ marginLeft: '12px' }} />
+                                    Xem Dự Án <ArrowRight size={18} style={{ marginLeft: '12px' }} />
                                 </Button>
                             </Link>
-                            <button style={{
+                            <button className="hero-play-btn" style={{
                                 color: '#fff', display: 'flex', alignItems: 'center', gap: '0.75rem',
                                 fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.15em',
-                                opacity: 0.7, background: 'none', border: 'none', cursor: 'pointer',
+                                opacity: 0.8, background: 'none', border: 'none', cursor: 'pointer',
+                                transition: 'all 0.4s ease',
                             }}>
                                 <div style={{
                                     width: '48px', height: '48px', borderRadius: '50%',
                                     border: '1px solid rgba(255,255,255,0.3)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    position: 'relative',
                                 }}>
-                                    <Play size={16} fill="#fff" />
+                                    <div className="play-ripple" style={{
+                                        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                                        borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.4)', opacity: 0,
+                                        transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)', transform: 'scale(0.5) translateZ(0)', zIndex: 1,
+                                    }} />
+                                    <Play className="play-icon" size={16} fill="#fff" style={{ position: 'relative', zIndex: 2, transition: 'all 0.4s ease' }} />
                                 </div>
-                                Showreel
+                                Giới Thiệu
                             </button>
-                        </motion.div>
+                            <style>{`
+                                .hero-play-btn:hover .play-ripple {
+                                    opacity: 0.3 !important;
+                                    transform: scale(1.6) translateZ(0) !important;
+                                }
+                                .hero-play-btn:hover {
+                                    color: #fff !important;
+                                    opacity: 1 !important;
+                                }
+                                .hero-play-btn:hover .play-icon {
+                                    fill: #fff !important;
+                                    color: #fff !important;
+                                }
+                            `}</style>
+                        </motion.div> */}
                     </motion.div>
                 </div>
             </motion.div>
@@ -198,9 +213,9 @@ export const Hero: React.FC = () => {
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
                 }}
             >
-                <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.3em', writingMode: 'vertical-rl' }}>
-                    Scroll
-                </span>
+                {/* <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.3em', writingMode: 'vertical-rl' }}>
+                    Cuộn
+                </span> */}
                 <motion.div
                     animate={{ height: ['0%', '100%', '0%'] }}
                     transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
@@ -219,23 +234,6 @@ export const Hero: React.FC = () => {
                     display: 'flex', justifyContent: 'center',
                 }}
             >
-                <div style={{
-                    display: 'flex', gap: '0', maxWidth: '800px', width: '100%',
-                }}>
-                    {[
-                        { num: '500+', label: 'Projects' },
-                        { num: '15+', label: 'Awards' },
-                        { num: '50+', label: 'Clients' },
-                    ].map((stat, i) => (
-                        <div key={i} style={{
-                            flex: 1, padding: '1.5rem 2rem', textAlign: 'center',
-                            borderRight: i < 2 ? '1px solid rgba(255,255,255,0.08)' : 'none',
-                        }}>
-                            <span style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-accent)' }}>{stat.num}</span>
-                            <span style={{ display: 'block', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)', marginTop: '0.25rem' }}>{stat.label}</span>
-                        </div>
-                    ))}
-                </div>
             </motion.div>
         </section>
     );

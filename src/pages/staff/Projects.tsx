@@ -4,10 +4,10 @@ import { Search, Filter, MoreHorizontal, ExternalLink } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 
 const projects = [
-    { id: 1, name: 'Brand Film: Nexus', client: 'Nexus Tech', package: 'Executive', deadline: 'Oct 24, 2024', status: 'In Production' },
-    { id: 2, name: 'Editorial: Vogue Sub', client: 'Vogue', package: 'Premium', deadline: 'Oct 28, 2024', status: 'Pre-Production' },
-    { id: 3, name: 'CEO Portrait', client: 'Sarah Jenkins', package: 'Essential', deadline: 'Nov 02, 2024', status: 'Scheduled' },
-    { id: 4, name: 'Cyberpunk Vision', client: 'Future Labs', package: 'Premium', deadline: 'Nov 15, 2024', status: 'In Production' },
+    { id: 1, name: 'Phim Thương Hiệu: Nexus', client: 'Nexus Tech', package: 'Executive', deadline: '24 Thg 10, 2024', status: 'Đang Sản Xuất' },
+    { id: 2, name: 'Biên Tập: Vogue Sub', client: 'Vogue', package: 'Premium', deadline: '28 Thg 10, 2024', status: 'Tiền Sản Xuất' },
+    { id: 3, name: 'Chân Dung CEO', client: 'Sarah Jenkins', package: 'Essential', deadline: '02 Thg 11, 2024', status: 'Đã Lên Lịch' },
+    { id: 4, name: 'Tầm Nhìn Cyberpunk', client: 'Future Labs', package: 'Premium', deadline: '15 Thg 11, 2024', status: 'Đang Sản Xuất' },
 ];
 
 const StaffProjects: React.FC = () => {
@@ -15,10 +15,10 @@ const StaffProjects: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                 <div>
-                    <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Projects</h1>
-                    <p style={{ color: 'var(--color-text-muted)' }}>Manage and track your assigned production projects.</p>
+                    <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Dự Án</h1>
+                    <p style={{ color: 'var(--color-text-muted)' }}>Quản lý và theo dõi các dự án sản xuất được giao của bạn.</p>
                 </div>
-                <Button size="sm">Create New Project</Button>
+                <Button size="sm">Tạo Dự Án Mới</Button>
             </header>
 
             {/* Toolbar */}
@@ -27,20 +27,20 @@ const StaffProjects: React.FC = () => {
                     <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
                     <input
                         type="text"
-                        placeholder="Search projects..."
+                        placeholder="Tìm kiếm dự án..."
                         style={{
                             width: '100%',
                             padding: '0.75rem 1rem 0.75rem 3rem',
                             backgroundColor: 'var(--color-bg-secondary)',
                             border: '1px solid var(--color-border)',
-                            color: '#fff',
+                            color: 'var(--color-text)',
                             fontSize: '0.875rem'
                         }}
                     />
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.75rem 1rem', border: '1px solid var(--color-border)', fontSize: '0.875rem' }}>
-                        <Filter size={16} /> Filter
+                    <button style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.75rem 1rem', border: '1px solid var(--color-border)', fontSize: '0.875rem', color: 'var(--color-text)' }}>
+                        <Filter size={16} /> Bộ Lọc
                     </button>
                 </div>
             </div>
@@ -68,12 +68,12 @@ const StaffProjects: React.FC = () => {
                         </div>
                         <div>
                             <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{p.name}</h3>
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Client: {p.client}</p>
+                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Khách hàng: {p.client}</p>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
                             <div style={{ fontSize: '0.75rem' }}>
-                                <div style={{ color: 'var(--color-text-muted)' }}>Deadline</div>
-                                <div style={{ color: '#fff' }}>{p.deadline}</div>
+                                <div style={{ color: 'var(--color-text-muted)' }}>Hạn chót</div>
+                                <div style={{ color: 'var(--color-text)' }}>{p.deadline}</div>
                             </div>
                             <button style={{ color: 'var(--color-accent)' }}><ExternalLink size={18} /></button>
                         </div>

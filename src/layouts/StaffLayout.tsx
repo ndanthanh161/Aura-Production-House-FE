@@ -1,16 +1,22 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, User as UserIcon, LogOut, ChevronRight, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const StaffLayout: React.FC = () => {
     const { logout } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/', { replace: true });
+    };
 
     const navItems = [
-        { name: 'Overview', path: '/staff', icon: <LayoutDashboard size={20} /> },
-        { name: 'Projects', path: '/staff/projects', icon: <Briefcase size={20} /> },
-        { name: 'Profile', path: '/staff/profile', icon: <UserIcon size={20} /> },
+        { name: 'Tổng Quan', path: '/staff', icon: <LayoutDashboard size={20} /> },
+        { name: 'Dự Án', path: '/staff/projects', icon: <Briefcase size={20} /> },
+        { name: 'Hồ Sơ', path: '/staff/profile', icon: <UserIcon size={20} /> },
     ];
 
     return (
@@ -27,7 +33,7 @@ export const StaffLayout: React.FC = () => {
             }}>
                 <div style={{ marginBottom: '3rem', padding: '0 0.5rem' }}>
                     <h2 style={{ fontFamily: 'var(--font-serif)', letterSpacing: '0.2em', color: 'var(--color-accent)' }}>AURA</h2>
-                    <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', opacity: 0.5 }}>Staff Workspace</span>
+                    <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', opacity: 0.5 }}>Không Gian Làm Việc</span>
                 </div>
 
                 <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -55,13 +61,13 @@ export const StaffLayout: React.FC = () => {
 
                 <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem', borderTop: '1px solid var(--color-border)', paddingTop: '1.5rem' }}>
                     <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0.875rem 1rem', color: 'var(--color-text-muted)' }}>
-                        <Home size={20} /> <span>Public Website</span>
+                        <Home size={20} /> <span>Trang Chủ</span>
                     </Link>
                     <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0.875rem 1rem', color: 'var(--color-text-muted)', textAlign: 'left' }}
                     >
-                        <LogOut size={20} /> <span>Sign Out</span>
+                        <LogOut size={20} /> <span>Đăng Xuất</span>
                     </button>
                 </div>
             </aside>

@@ -4,76 +4,111 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 
 const Contact: React.FC = () => {
     return (
-        <div style={{ paddingTop: '100px', backgroundColor: '#000', minHeight: '100vh' }}>
-            <header className="container" style={{ marginBottom: 'var(--spacing-xl)', textAlign: 'left' }}>
-                <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    style={{ color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: 'var(--ls-wide)', fontSize: '0.75rem' }}
-                >
-                    Get In Touch
-                </motion.span>
-                <motion.h1
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    style={{ fontSize: 'clamp(3rem, 10vw, 7rem)', marginTop: '2rem', lineHeight: 0.9 }}
-                >
-                    Let's Create <br />
-                    <span style={{ fontStyle: 'italic', fontWeight: '200', textTransform: 'none', fontFamily: 'var(--font-serif)' }}>Together</span>
-                </motion.h1>
+        <div style={{ paddingTop: '10px', backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
+            {/* Header Section */}
+            <header style={{ padding: '8rem 0 4rem', textAlign: 'center', backgroundColor: '#FFFFFF', borderBottom: '1px solid #EEEEEE' }}>
+                <div className="container">
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            fontSize: 'clamp(3rem, 7vw, 6.5rem)',
+                            fontFamily: 'var(--font-display)',
+                            fontWeight: 900,
+                            textTransform: 'uppercase',
+                            color: '#0F0F0F',
+                            margin: 0
+                        }}
+                    >
+                        HÃY ĐỂ AURA GIÚP BẠN
+                    </motion.h1>
+                </div>
             </header>
 
-            <section className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1px', backgroundColor: 'var(--color-border)' }}>
-                {[
-                    { icon: <Mail size={28} />, title: 'Email', detail: 'hello@auraproduction.com', sub: 'We respond within 24 hours' },
-                    { icon: <Phone size={28} />, title: 'Phone', detail: '+1 (555) 123-4567', sub: 'Mon–Fri, 9am–6pm EST' },
-                    { icon: <MapPin size={28} />, title: 'Studio', detail: 'New York City, NY', sub: 'By appointment only' },
-                ].map((item, i) => (
-                    <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: i * 0.15 }}
-                        style={{ padding: '4rem', backgroundColor: '#050505' }}
-                    >
-                        <div style={{ color: 'var(--color-accent)', marginBottom: '2rem' }}>{item.icon}</div>
-                        <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{item.title}</h3>
-                        <p style={{ color: '#fff', fontSize: '1.125rem', marginBottom: '0.5rem' }}>{item.detail}</p>
-                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>{item.sub}</p>
-                    </motion.div>
-                ))}
+            {/* Info Cards Section - Black Background */}
+            <section style={{ backgroundColor: '#FFFFFF', padding: '6rem 0' }}>
+                <div className="container">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+                        {[
+                            { icon: <Mail size={24} />, title: 'EMAIL', detail: 'hello@auraproduction.com', sub: 'Chúng tôi phản hồi trong 24 giờ' },
+                            { icon: <Phone size={24} />, title: 'ĐIỆN THOẠI', detail: '+1 (555) 123-4567', sub: 'Thứ 2–Thứ 6, 9h–18h' },
+                            { icon: <MapPin size={24} />, title: 'STUDIO', detail: 'Thành phố New York, NY', sub: 'Chỉ theo lịch hẹn' },
+                        ].map((item, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.8, delay: i * 0.15 }}
+                                style={{
+                                    padding: '4rem 2.5rem',
+                                    backgroundColor: '#FFFFFF',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '1.5rem',
+                                    textAlign: 'left',
+                                    borderRight: i !== 2 ? '1px solid #EEEEEE' : 'none'
+                                }}
+                            >
+                                <div style={{ color: '#071FD9' }}>{item.icon}</div>
+                                <div>
+                                    <h3 style={{ fontSize: '0.85rem', marginBottom: '1.25rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 900, color: '#0F0F0F' }}>
+                                        {item.title}
+                                    </h3>
+                                    <p style={{ color: '#0F0F0F', fontSize: '1rem', fontWeight: 500, marginBottom: '0.5rem' }}>{item.detail}</p>
+                                    <p style={{ color: '#888', fontSize: '0.75rem', fontWeight: 400 }}>{item.sub}</p>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
             </section>
 
-            <section className="section-padding" style={{ marginTop: 'var(--spacing-xl)' }}>
-                <div className="container" style={{ maxWidth: '700px' }}>
-                    <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', marginBottom: 'var(--spacing-lg)', textAlign: 'left' }}>Send a Message</h2>
+            {/* Form Section - White Background */}
+            <section style={{ padding: '8rem 0', backgroundColor: '#FFFFFF' }}>
+                <div className="container" style={{ maxWidth: '800px' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                        <h2 style={{
+                            fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+                            fontFamily: 'var(--font-display)',
+                            fontWeight: 900,
+                            textTransform: 'uppercase',
+                            color: '#0F0F0F',
+                            margin: 0
+                        }}>
+                            GỬI TIN NHẮN
+                        </h2>
+                    </div>
+
                     <form onSubmit={(e) => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                            <input type="text" placeholder="Name" style={{
-                                background: 'transparent', border: '1px solid var(--color-border)', padding: '1rem 1.25rem',
-                                color: '#fff', fontFamily: 'var(--font-sans)', fontSize: '0.875rem', outline: 'none',
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                            <input type="text" placeholder="Họ và Tên" style={{
+                                width: '100%', border: '1px solid #EEE', padding: '1.25rem',
+                                color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFF'
                             }} />
                             <input type="email" placeholder="Email" style={{
-                                background: 'transparent', border: '1px solid var(--color-border)', padding: '1rem 1.25rem',
-                                color: '#fff', fontFamily: 'var(--font-sans)', fontSize: '0.875rem', outline: 'none',
+                                width: '100%', border: '1px solid #EEE', padding: '1.25rem',
+                                color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFF'
                             }} />
                         </div>
-                        <input type="text" placeholder="Subject" style={{
-                            background: 'transparent', border: '1px solid var(--color-border)', padding: '1rem 1.25rem',
-                            color: '#fff', fontFamily: 'var(--font-sans)', fontSize: '0.875rem', outline: 'none',
+                        <input type="text" placeholder="Chủ đề" style={{
+                            width: '100%', border: '1px solid #EEE', padding: '1.25rem',
+                            color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFF'
                         }} />
-                        <textarea placeholder="Tell us about your project..." rows={6} style={{
-                            background: 'transparent', border: '1px solid var(--color-border)', padding: '1rem 1.25rem',
-                            color: '#fff', fontFamily: 'var(--font-sans)', fontSize: '0.875rem', outline: 'none', resize: 'vertical',
+                        <textarea placeholder="Hãy cho chúng tôi biết về dự án của bạn..." rows={8} style={{
+                            width: '100%', border: '1px solid #EEE', padding: '1.25rem',
+                            color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', resize: 'vertical', backgroundColor: '#FFF'
                         }} />
-                        <button type="submit" style={{
-                            backgroundColor: 'var(--color-accent)', color: 'var(--color-bg)', padding: '1rem 2.5rem',
-                            fontSize: '0.75rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 800,
-                            alignSelf: 'flex-start', cursor: 'pointer', border: 'none',
-                        }}>
-                            Send Message
-                        </button>
+
+                        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                            <button type="submit" style={{
+                                backgroundColor: '#071FD9', color: '#FFFFFF', padding: '1.25rem 3rem',
+                                fontSize: '0.8rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 900,
+                                cursor: 'pointer', border: 'none', minWidth: '220px', transition: 'all 0.3s ease'
+                            }}>
+                                GỬI TIN NHẮN
+                            </button>
+                        </div>
                     </form>
                 </div>
             </section>

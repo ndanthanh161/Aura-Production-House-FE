@@ -1,27 +1,33 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Package, Users, Settings, LogOut, Briefcase } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const AdminLayout: React.FC = () => {
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/', { replace: true });
+    };
 
     const navItems = [
-        { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={20} /> },
-        { name: 'Projects', path: '/admin/projects', icon: <Briefcase size={20} /> },
-        { name: 'Packages', path: '/admin/packages', icon: <Package size={20} /> },
-        { name: 'Users', path: '/admin/users', icon: <Users size={20} /> },
-        { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
+        { name: 'Bảng Điều Khiển', path: '/admin', icon: <LayoutDashboard size={20} /> },
+        { name: 'Dự Án', path: '/admin/projects', icon: <Briefcase size={20} /> },
+        { name: 'Gói Dịch Vụ', path: '/admin/packages', icon: <Package size={20} /> },
+        { name: 'Người Dùng', path: '/admin/users', icon: <Users size={20} /> },
+        { name: 'Cài Đặt', path: '/admin/settings', icon: <Settings size={20} /> },
     ];
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#050505' }}>
+        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
             {/* Admin Sidebar */}
             <aside style={{
                 width: '260px',
-                backgroundColor: '#0a0a0a',
-                borderRight: '1px solid #1a1a1a',
+                backgroundColor: 'var(--color-bg-secondary)',
+                borderRight: '1px solid var(--color-border)',
                 display: 'flex',
                 flexDirection: 'column',
                 padding: '2rem 1rem',
@@ -31,7 +37,7 @@ export const AdminLayout: React.FC = () => {
             }}>
                 <div style={{ marginBottom: '3rem', padding: '0 1rem' }}>
                     <h2 style={{ fontFamily: 'var(--font-serif)', letterSpacing: '0.2em', color: 'var(--color-accent)', fontSize: '1.5rem' }}>AURA</h2>
-                    <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.5, letterSpacing: '0.1em' }}>Admin Control</span>
+                    <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.5, letterSpacing: '0.1em' }}>Quản Trị</span>
                 </div>
 
                 <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -45,55 +51,55 @@ export const AdminLayout: React.FC = () => {
                                 gap: '12px',
                                 padding: '0.75rem 1rem',
                                 borderRadius: '6px',
-                                color: location.pathname === item.path ? '#fff' : 'rgba(255,255,255,0.5)',
+                                color: location.pathname === item.path ? 'var(--color-bg)' : 'var(--color-text-muted)',
                                 backgroundColor: location.pathname === item.path ? 'var(--color-accent)' : 'transparent',
                                 transition: 'all 0.3s ease'
                             }}
                         >
-                            <span style={{ color: location.pathname === item.path ? '#000' : 'inherit' }}>{item.icon}</span>
-                            <span style={{ fontWeight: location.pathname === item.path ? '600' : '400', color: location.pathname === item.path ? '#000' : 'inherit' }}>{item.name}</span>
+                            <span style={{ color: location.pathname === item.path ? 'var(--color-bg)' : 'inherit' }}>{item.icon}</span>
+                            <span style={{ fontWeight: location.pathname === item.path ? '600' : '400', color: location.pathname === item.path ? 'var(--color-bg)' : 'inherit' }}>{item.name}</span>
                         </Link>
                     ))}
                 </nav>
 
-                <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid #1a1a1a' }}>
+                <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid var(--color-border)' }}>
                     <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         style={{
                             width: '100%',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '12px',
                             padding: '0.75rem 1rem',
-                            color: 'rgba(255,255,255,0.5)',
+                            color: 'var(--color-text-muted)',
                             textAlign: 'left',
                             borderRadius: '6px',
                             transition: 'all 0.3s ease'
                         }}
                         className="logout-btn"
                     >
-                        <LogOut size={20} /> <span>Sign Out</span>
+                        <LogOut size={20} /> <span>Đăng Xuất</span>
                     </button>
                 </div>
             </aside>
 
             {/* Main Content Area */}
-            <main style={{ marginLeft: '260px', flex: 1, backgroundColor: '#050505' }}>
+            <main style={{ marginLeft: '260px', flex: 1, backgroundColor: 'var(--color-bg)' }}>
                 <header style={{
                     height: '70px',
-                    borderBottom: '1px solid #1a1a1a',
+                    borderBottom: '1px solid var(--color-border)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                     padding: '0 2rem',
-                    backgroundColor: '#0a0a0a'
+                    backgroundColor: 'var(--color-bg-secondary)'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#fff' }}>Admin User</div>
-                            <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>Super Admin</div>
+                            <div style={{ fontSize: '0.875rem', fontWeight: '600', color: 'var(--color-text)' }}>{user?.fullName || 'Admin'}</div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{user?.role || 'Admin'}</div>
                         </div>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: '700' }}>AD</div>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-bg)', fontWeight: '700' }}>{user?.fullName?.charAt(0)?.toUpperCase() || 'A'}</div>
                     </div>
                 </header>
                 <div style={{ padding: '2.5rem' }}>

@@ -3,15 +3,15 @@ import { motion } from 'framer-motion';
 import { Briefcase, CheckCircle2, Clock, Bell } from 'lucide-react';
 
 const stats = [
-    { label: 'Active Projects', value: '12', icon: <Briefcase size={20} />, color: 'var(--color-accent)' },
-    { label: 'In Progress', value: '8', icon: <Clock size={20} />, color: '#3b82f6' },
-    { label: 'Completed', value: '45', icon: <CheckCircle2 size={20} />, color: '#22c55e' },
+    { label: 'Dự Án Đang Triển Khai', value: '12', icon: <Briefcase size={20} />, color: 'var(--color-accent)' },
+    { label: 'Đang Thực Hiện', value: '8', icon: <Clock size={20} />, color: '#3b82f6' },
+    { label: 'Hoàn Thành', value: '45', icon: <CheckCircle2 size={20} />, color: '#22c55e' },
 ];
 
 const activeProjects = [
-    { id: 1, name: 'Brand Film: Nexus', client: 'Nexus Tech', deadline: 'Oct 24, 2024', status: 'In Production' },
-    { id: 2, name: 'Editorial: Vogue Sub', client: 'Vogue', deadline: 'Oct 28, 2024', status: 'Pre-Production' },
-    { id: 3, name: 'CEO Portrait', client: 'Sarah Jenkins', deadline: 'Nov 02, 2024', status: 'Scheduled' },
+    { id: 1, name: 'Phim Thương Hiệu: Nexus', client: 'Nexus Tech', deadline: '24 Thg 10, 2024', status: 'Đang Sản Xuất' },
+    { id: 2, name: 'Biên Tập: Vogue Sub', client: 'Vogue', deadline: '28 Thg 10, 2024', status: 'Tiền Sản Xuất' },
+    { id: 3, name: 'Chân Dung CEO', client: 'Sarah Jenkins', deadline: '02 Thg 11, 2024', status: 'Đã Lên Lịch' },
 ];
 
 const StaffOverview: React.FC = () => {
@@ -19,8 +19,8 @@ const StaffOverview: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Overview</h1>
-                    <p style={{ color: 'var(--color-text-muted)' }}>Welcome back, Creative Director.</p>
+                    <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Tổng Quan</h1>
+                    <p style={{ color: 'var(--color-text-muted)' }}>Chào mừng trở lại, Giám Đốc Sáng Tạo.</p>
                 </div>
                 <button style={{ position: 'relative', color: 'var(--color-text-muted)' }}>
                     <Bell size={24} />
@@ -58,21 +58,21 @@ const StaffOverview: React.FC = () => {
 
             {/* Active Projects Table */}
             <section style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', padding: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem' }}>Active Projects</h3>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem' }}>Dự Án Đang Triển Khai</h3>
                 <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text-muted)' }}>
-                                <th style={{ padding: '1rem', fontSize: '0.875rem' }}>Project Name</th>
-                                <th style={{ padding: '1rem', fontSize: '0.875rem' }}>Client</th>
-                                <th style={{ padding: '1rem', fontSize: '0.875rem' }}>Deadline</th>
-                                <th style={{ padding: '1rem', fontSize: '0.875rem' }}>Status</th>
+                                <th style={{ padding: '1rem', fontSize: '0.875rem' }}>Tên Dự Án</th>
+                                <th style={{ padding: '1rem', fontSize: '0.875rem' }}>Khách Hàng</th>
+                                <th style={{ padding: '1rem', fontSize: '0.875rem' }}>Hạn Chót</th>
+                                <th style={{ padding: '1rem', fontSize: '0.875rem' }}>Trạng Thái</th>
                             </tr>
                         </thead>
                         <tbody>
                             {activeProjects.map(p => (
                                 <tr key={p.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                                    <td style={{ padding: '1rem', color: '#fff' }}>{p.name}</td>
+                                    <td style={{ padding: '1rem', color: 'var(--color-text)' }}>{p.name}</td>
                                     <td style={{ padding: '1rem', color: 'var(--color-text-muted)' }}>{p.client}</td>
                                     <td style={{ padding: '1rem', color: 'var(--color-text-muted)' }}>{p.deadline}</td>
                                     <td style={{ padding: '1rem' }}>

@@ -5,8 +5,8 @@ const StaffProfile: React.FC = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', maxWidth: '800px' }}>
             <header>
-                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Profile</h1>
-                <p style={{ color: 'var(--color-text-muted)' }}>Manage your personal information and studio preferences.</p>
+                <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Hồ Sơ</h1>
+                <p style={{ color: 'var(--color-text-muted)' }}>Quản lý thông tin cá nhân và tùy chọn studio của bạn.</p>
             </header>
 
             <section style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -23,27 +23,27 @@ const StaffProfile: React.FC = () => {
                     </div>
                     <div>
                         <h3 style={{ fontSize: '1.25rem' }}>Marcus Valerius</h3>
-                        <p style={{ color: 'var(--color-accent)', fontSize: '0.875rem' }}>Lead Creative Director</p>
+                        <p style={{ color: 'var(--color-accent)', fontSize: '0.875rem' }}>Giám Đốc Sáng Tạo</p>
                     </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>First Name</label>
-                        <input type="text" defaultValue="Marcus" style={{ padding: '0.75rem', backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', color: '#fff' }} />
+                        <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Tên</label>
+                        <input type="text" defaultValue="Marcus" style={{ padding: '0.75rem', backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }} />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Last Name</label>
-                        <input type="text" defaultValue="Valerius" style={{ padding: '0.75rem', backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', color: '#fff' }} />
+                        <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Họ</label>
+                        <input type="text" defaultValue="Valerius" style={{ padding: '0.75rem', backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }} />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', gridColumn: 'span 2' }}>
                         <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>Email</label>
-                        <input type="email" defaultValue="marcur@auraproduction.com" style={{ padding: '0.75rem', backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', color: '#fff' }} />
+                        <input type="email" defaultValue="marcur@auraproduction.com" style={{ padding: '0.75rem', backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }} />
                     </div>
                 </div>
 
                 <Button style={{ alignSelf: 'flex-start' }}>
-                    <Save size={18} style={{ marginRight: '10px' }} /> Save Changes
+                    <Save size={18} style={{ marginRight: '10px' }} /> Lưu Thay Đổi
                 </Button>
             </section>
         </div>

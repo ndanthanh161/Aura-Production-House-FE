@@ -1,23 +1,46 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:wght@100..900&display=swap');
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('./assets/AURA FONTS/SpaceGrotesk-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('./assets/AURA FONTS/SpaceGrotesk-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Big Shoulders Display';
+  src: url('./assets/AURA FONTS/BigShouldersDisplay-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  /* Colors - Deep Cinematic Palette */
-  --color-bg: #050505;
-  --color-bg-secondary: #0a0a0a;
-  --color-text: #ffffff;
-  --color-text-muted: rgba(255, 255, 255, 0.4);
-  --color-accent: #c5a059;
-  --color-accent-hover: #d4b47a;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-surface: #0c0c0c;
+  /* Colors - Light Theme (Default) */
+  --color-bg: #F8FFFF;
+  --color-bg-secondary: #ffffff;
+  --color-text: #0F0F0F;
+  --color-text-muted: rgba(15, 15, 15, 0.6);
+  --color-accent: #071FD9;
+  --color-accent-hover: #ADFF00;
+  --color-neon: #ADFF00;
+  --color-border: rgba(15, 15, 15, 0.1);
+  --color-surface: #f0f2f5;
 
   /* Typography - Editorial Style */
-  --font-serif: "Crimson Pro", serif;
-  --font-sans: "Inter", sans-serif;
+  --font-display: "Big Shoulders Display";
+  --font-sans: "Space Grotesk";
 
   /* Letter Spacing */
   --ls-tight: -0.04em;
-  --ls-wide: 0.4em;
+  --ls-wide: 0.1em;
 
   /* Spacing */
   --spacing-xs: 0.5rem;
@@ -25,12 +48,11 @@
   --spacing-md: 2rem;
   --spacing-lg: 4rem;
   --spacing-xl: 10rem;
-  /* Increased for dramatic sections */
 
   /* Utilities */
   --transition-cinematic: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  --glass-bg: rgba(5, 5, 5, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(248, 255, 255, 0.95);
+  --glass-border: rgba(15, 15, 15, 0.08);
 }
 
 * {
@@ -41,6 +63,16 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+::-moz-selection {
+  background-color: var(--color-accent);
+  color: var(--color-text);
 }
 
 body {
@@ -56,18 +88,21 @@ body {
 h1,
 h2,
 h3 {
-  font-family: var(--font-sans);
-  font-weight: 800;
-  letter-spacing: var(--ls-tight);
+  font-family: var(--font-display);
+  font-weight: 900;
+  /* Black */
+  letter-spacing: normal;
   text-transform: uppercase;
 }
 
+/* Sub-headings */
 h4,
 h5,
 h6 {
-  font-family: var(--font-serif);
-  font-weight: 300;
-  font-style: italic;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  /* Bold */
+  text-transform: uppercase;
 }
 
 a {
@@ -106,10 +141,7 @@ button {
 }
 
 .text-gradient {
-  background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.4) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #000000;
 }
 
 .accent-border {
@@ -143,11 +175,11 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #222;
+  background: var(--color-accent);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent);
+  background: var(--color-neon);
 }
 
 @media (max-width: 768px) {
