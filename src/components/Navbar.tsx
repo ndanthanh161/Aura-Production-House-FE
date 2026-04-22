@@ -79,9 +79,27 @@ export const Navbar: React.FC = () => {
 
     const authSection = (
         <>
-            {role && (role === 'staff' || role === 'admin') && (
-                <Link to={role === 'admin' ? '/admin' : '/staff'} style={{ fontSize: '0.7rem', color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
-                    {role === 'admin' ? 'Quản trị' : 'Không gian làm việc'}
+            {role === 'staff' && (
+                <Link
+                    to="/staff"
+                    style={linkStyle(location.pathname.startsWith('/staff'))}
+                    className="hover-link"
+                >
+                    Thống Kê
+                </Link>
+            )}
+            {role === 'photographer' && (
+                <Link
+                    to="/photographer"
+                    style={linkStyle(location.pathname.startsWith('/photographer'))}
+                    className="hover-link"
+                >
+                    Workspace
+                </Link>
+            )}
+            {role === 'admin' && (
+                <Link to="/admin" style={{ fontSize: '0.7rem', color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+                    Quản trị
                 </Link>
             )}
             {!role ? (
@@ -213,6 +231,32 @@ export const Navbar: React.FC = () => {
 
                 {/* Auth links */}
                 <div className="nav-group right-auth" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginLeft: '2.5rem' }}>
+                    {role === 'staff' && (
+                        <Link
+                            to="/staff"
+                            style={homeLinkStyle(location.pathname.startsWith('/staff'))}
+                            className="hover-link-dark"
+                        >
+                            Thống Kê
+                        </Link>
+                    )}
+                    {role === 'photographer' && (
+                        <Link
+                            to="/photographer"
+                            style={homeLinkStyle(location.pathname.startsWith('/photographer'))}
+                            className="hover-link-dark"
+                        >
+                            Workspace
+                        </Link>
+                    )}
+                    {role === 'admin' && (
+                        <Link to="/admin" style={{
+                            color: '#071FD9', fontSize: '0.75rem', letterSpacing: '0.15em',
+                            textTransform: 'uppercase', fontWeight: 700, opacity: 0.9,
+                        }} className="hover-link-dark">
+                            Quản trị
+                        </Link>
+                    )}
                     {!role ? (
                         <>
                             <Link to="/login" style={{

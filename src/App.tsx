@@ -17,11 +17,20 @@ import StaffOverview from './pages/staff/Overview';
 import StaffProjects from './pages/staff/Projects';
 import StaffProfile from './pages/staff/Profile';
 
+import { PhotographerLayout } from './layouts/PhotographerLayout';
+import PhotographerOverview from './pages/photographer/Overview';
+import PhotographerProjects from './pages/photographer/Projects';
+import PhotographerProfile from './pages/photographer/Profile';
+
 import { AdminLayout } from './layouts/AdminLayout';
 import AdminOverview from './pages/admin/Overview';
 import AdminProjects from './pages/admin/Projects';
 import AdminPackages from './pages/admin/Packages';
 import AdminUsers from './pages/admin/Users';
+import AdminPhotographers from './pages/admin/Photographers';
+import AdminBookings from './pages/admin/Bookings';
+import AdminCustomers from './pages/admin/Customers';
+import AdminStatistics from './pages/admin/Statistics';
 
 import { ScrollToTop } from './components/ScrollToTop';
 
@@ -58,6 +67,20 @@ function App() {
           <Route path="profile" element={<StaffProfile />} />
         </Route>
 
+        {/* Photographer Routes */}
+        <Route
+          path="/photographer"
+          element={
+            <RoleGuard allowedRoles={['photographer']}>
+              <PhotographerLayout />
+            </RoleGuard>
+          }
+        >
+          <Route index element={<PhotographerOverview />} />
+          <Route path="projects" element={<PhotographerProjects />} />
+          <Route path="profile" element={<PhotographerProfile />} />
+        </Route>
+
         {/* Admin Routes */}
         <Route
           path="/admin"
@@ -71,6 +94,10 @@ function App() {
           <Route path="projects" element={<AdminProjects />} />
           <Route path="packages" element={<AdminPackages />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="photographers" element={<AdminPhotographers />} />
+          <Route path="bookings" element={<AdminBookings />} />
+          <Route path="customers" element={<AdminCustomers />} />
+          <Route path="statistics" element={<AdminStatistics />} />
         </Route>
       </Routes>
     </>

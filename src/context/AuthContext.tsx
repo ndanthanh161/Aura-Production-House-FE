@@ -4,7 +4,7 @@ import type { AuthResponse, RegisterRequest } from '../types/auth.types';
 
 // ─── Types ───────────────────────────────────────────────────────
 
-export type Role = 'user' | 'staff' | 'admin' | null;
+export type Role = 'user' | 'staff' | 'photographer' | 'admin' | null;
 
 interface User {
     userId: string;
@@ -38,6 +38,7 @@ function mapRole(beRole: string): Role {
     const lower = beRole.toLowerCase();
     if (lower === 'admin') return 'admin';
     if (lower === 'staff') return 'staff';
+    if (lower === 'photographer') return 'photographer';
     return 'user';
 }
 

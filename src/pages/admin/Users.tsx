@@ -1,58 +1,158 @@
-import { User, Shield, MoreVertical } from 'lucide-react';
-
-const users = [
-    { id: 1, name: 'Marcus Valerius', email: 'marcus@auraproduction.com', role: 'Nhân viên', joined: 'Tháng 10 2023' },
-    { id: 2, name: 'Elena Rossi', email: 'elena@auraproduction.com', role: 'Nhân viên', joined: 'Tháng 1 2024' },
-    { id: 3, name: 'David Lee', email: 'david@auraproduction.com', role: 'Nhân viên', joined: 'Tháng 3 2024' },
-    { id: 4, name: 'Sarah Jenkins', email: 'sarah@client.com', role: 'Người dùng', joined: 'Tháng 9 2024' },
-];
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Search, Mail, Phone, Calendar, Shield, User, Loader2, X } from 'lucide-react';
+import { photographerApi } from '../../services/userApi';
+import { customerApi } from '../../services/userApi';
+import type { UserDTO } from '../../types/user.types';
 
 const AdminUsers: React.FC = () => {
+    const [staff, setStaff] = useState<UserDTO[]>([]);
+    const [customers, setCustomers] = useState<UserDTO[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [search, setSearch] = useState('');
+    const [tab, setTab] = useState<'staff' | 'customer'>('staff');
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                setLoading(true);
+                const [s, c] = await Promise.all([
+                    photographerApi.getAll(),
+                    customerApi.getAll(),
+                ]);
+                setStaff(s.data || []);
+                setCustomers(c.data || []);
+            } catch {
+                setError('Không thể tải danh sách người dùng.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
+    }, []);
+
+    const list = tab === 'staff' ? staff : customers;
+    const q = search.toLowerCase();
+    const filtered = list.filter(u =>
+        u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+    );
+
+    const fmtDate = (d: string) => new Date(d).toLocaleDateString('vi-VN');
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <header>
-                <h1 style={{ fontSize: '2rem', color: 'var(--color-text)' }}>Quản Lý Người Dùng</h1>
-                <p style={{ color: 'var(--color-text-muted)' }}>Quản lý vai trò và quyền truy cập cho khách hàng và nhân viên studio.</p>
+            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                    <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--color-text)' }}>Quản Lý Người Dùng</h1>
+                    <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
+                        {staff.length} nhân viên · {customers.length} khách hàng
+                    </p>
+                </div>
+                <div style={{ position: 'relative' }}>
+                    <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
+                    <input
+                        placeholder="Tìm tên, email..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        style={{ padding: '0.65rem 0.9rem 0.65rem 36px', backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: '6px', color: 'var(--color-text)', fontSize: '0.875rem', width: '240px', boxSizing: 'border-box' }}
+                    />
+                </div>
             </header>
 
-            <div style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                        <tr style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-text-muted)' }}>
-                            <th style={{ padding: '1.25rem' }}>Họ và Tên</th>
-                            <th style={{ padding: '1.25rem' }}>Email</th>
-                            <th style={{ padding: '1.25rem' }}>Vai Trò</th>
-                            <th style={{ padding: '1.25rem' }}>Đã Tham Gia</th>
-                            <th style={{ padding: '1.25rem' }}>Thao Tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map(u => (
-                            <tr key={u.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                                <td style={{ padding: '1.25rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--color-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
-                                            <User size={16} />
-                                        </div>
-                                        <span style={{ color: 'var(--color-text)' }}>{u.name}</span>
-                                    </div>
-                                </td>
-                                <td style={{ padding: '1.25rem', color: 'var(--color-text)' }}>{u.email}</td>
-                                <td style={{ padding: '1.25rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: u.role === 'Nhân viên' ? 'var(--color-accent)' : 'var(--color-text)' }}>
-                                        {u.role === 'Nhân viên' && <Shield size={14} />}
-                                        <span style={{ fontSize: '0.875rem' }}>{u.role}</span>
-                                    </div>
-                                </td>
-                                <td style={{ padding: '1.25rem', color: 'var(--color-text-muted)' }}>{u.joined}</td>
-                                <td style={{ padding: '1.25rem' }}>
-                                    <button style={{ color: 'var(--color-text-muted)' }}><MoreVertical size={18} /></button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            {/* Tab */}
+            <div style={{ display: 'flex', gap: '0.25rem', backgroundColor: 'var(--color-bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--color-border)', width: 'fit-content' }}>
+                {(['staff', 'customer'] as const).map(t => (
+                    <button
+                        key={t}
+                        onClick={() => setTab(t)}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            padding: '0.5rem 1.25rem', borderRadius: '6px', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', border: 'none',
+                            backgroundColor: tab === t ? 'var(--color-accent)' : 'transparent',
+                            color: tab === t ? 'var(--color-bg)' : 'var(--color-text-muted)',
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        {t === 'staff' ? <><Shield size={14} /> Nhân viên ({staff.length})</> : <><User size={14} /> Khách hàng ({customers.length})</>}
+                    </button>
+                ))}
             </div>
+
+            {error && (
+                <div style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.75rem 1rem', borderRadius: '6px', display: 'flex', justifyContent: 'space-between' }}>
+                    {error} <button onClick={() => setError('')}><X size={14} /></button>
+                </div>
+            )}
+
+            {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+                    <Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-accent)' }} />
+                </div>
+            ) : (
+                <div style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '8px', overflow: 'hidden' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                        <thead>
+                            <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                                {['Người dùng', 'Email', 'Số điện thoại', 'Vai trò', 'Tham gia'].map(h => (
+                                    <th key={h} style={{ padding: '1rem 1.25rem', fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filtered.map((u, i) => (
+                                <motion.tr key={u.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
+                                    style={{ borderBottom: '1px solid var(--color-border)' }}>
+                                    <td style={{ padding: '1rem 1.25rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--color-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-bg)', fontWeight: 700, flexShrink: 0 }}>
+                                                {u.fullName.charAt(0).toUpperCase()}
+                                            </div>
+                                            <span style={{ fontWeight: 600, color: 'var(--color-text)', fontSize: '0.9rem' }}>{u.fullName}</span>
+                                        </div>
+                                    </td>
+                                    <td style={{ padding: '1rem 1.25rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text)', fontSize: '0.875rem' }}>
+                                            <Mail size={12} style={{ color: 'var(--color-text-muted)' }} /> {u.email}
+                                        </div>
+                                    </td>
+                                    <td style={{ padding: '1rem 1.25rem' }}>
+                                        {u.phone
+                                            ? <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text)', fontSize: '0.875rem' }}><Phone size={12} style={{ color: 'var(--color-text-muted)' }} /> {u.phone}</div>
+                                            : <span style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>—</span>
+                                        }
+                                    </td>
+                                    <td style={{ padding: '1rem 1.25rem' }}>
+                                        <span style={{
+                                            display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                            padding: '3px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 600,
+                                            backgroundColor: u.role === 'Staff' ? 'rgba(197,160,89,0.15)' : 'rgba(59,130,246,0.12)',
+                                            color: u.role === 'Staff' ? 'var(--color-accent)' : '#3b82f6',
+                                        }}>
+                                            {u.role === 'Staff' ? <Shield size={11} /> : <User size={11} />}
+                                            {u.role === 'Staff' ? 'Nhân viên' : 'Khách hàng'}
+                                        </span>
+                                    </td>
+                                    <td style={{ padding: '1rem 1.25rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+                                            <Calendar size={12} /> {fmtDate(u.createdAt)}
+                                        </div>
+                                    </td>
+                                </motion.tr>
+                            ))}
+                            {filtered.length === 0 && !loading && (
+                                <tr>
+                                    <td colSpan={5} style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>
+                                        Không tìm thấy người dùng nào.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
         </div>
     );
 };

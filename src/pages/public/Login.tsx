@@ -20,8 +20,16 @@ const Login: React.FC = () => {
         setLoading(true);
 
         try {
-            await login(email, password);
-            navigate('/', { replace: true });
+            const role = await login(email, password);
+            if (role === 'admin') {
+                navigate('/admin', { replace: true });
+            } else if (role === 'staff') {
+                navigate('/staff', { replace: true });
+            } else if (role === 'photographer') {
+                navigate('/photographer', { replace: true });
+            } else {
+                navigate('/', { replace: true });
+            }
         } catch (err) {
             console.error('Login error:', err);
             setError(err instanceof Error ? err.message : 'Đăng nhập thất bại. Vui lòng thử lại.');

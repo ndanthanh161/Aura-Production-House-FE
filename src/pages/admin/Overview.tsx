@@ -1,121 +1,219 @@
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    AreaChart, Area, PieChart, Pie, Cell
+    AreaChart, Area,
 } from 'recharts';
-import { DollarSign, ShoppingCart, Users, Briefcase } from 'lucide-react';
+import { DollarSign, Users, Briefcase, CalendarCheck, Loader2, TrendingUp, TrendingDown } from 'lucide-react';
+import { statisticsApi } from '../../services/statisticsApi';
+import type { DashboardStats, MonthlyRevenue } from '../../types/statistics.types';
 
-const data = [
-    { name: 'Jan', revenue: 4000, orders: 24 },
-    { name: 'Feb', revenue: 3000, orders: 18 },
-    { name: 'Mar', revenue: 5000, orders: 29 },
-    { name: 'Apr', revenue: 4500, orders: 22 },
-    { name: 'May', revenue: 6000, orders: 35 },
-    { name: 'Jun', revenue: 8000, orders: 48 },
-];
+const MONTH_NAMES = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
 
-const pieData = [
-    { name: 'Photography', value: 400 },
-    { name: 'Videography', value: 300 },
-    { name: 'Branding', value: 300 },
-];
-
-const COLORS = ['#c5a059', '#1a1a1a', '#3a3a3a'];
+const fmtMoney = (n: number) =>
+    n >= 1_000_000
+        ? `${(n / 1_000_000).toFixed(1)}M ₫`
+        : new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
 
 const AdminOverview: React.FC = () => {
+    const [stats, setStats] = useState<DashboardStats | null>(null);
+    const [revenue, setRevenue] = useState<MonthlyRevenue[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                setLoading(true);
+                const [s, r] = await Promise.all([
+                    statisticsApi.getDashboard(),
+                    statisticsApi.getMonthlyRevenue(6),
+                ]);
+                setStats(s.data);
+                setRevenue(r.data || []);
+            } catch {
+                setError('Không thể tải dữ liệu tổng quan.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
+    }, []);
+
+    const chartData = revenue.map(r => ({
+        name: `${MONTH_NAMES[r.month - 1]}/${String(r.year).slice(2)}`,
+        'Doanh thu': r.revenue,
+        'Dự án': r.projectCount,
+    }));
+
+    const revenueTrend =
+        stats && stats.revenueLastMonth > 0
+            ? ((stats.revenueThisMonth - stats.revenueLastMonth) / stats.revenueLastMonth * 100).toFixed(1)
+            : null;
+
+    if (loading) return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+            <Loader2 size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-accent)' }} />
+            <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+        </div>
+    );
+
+    if (error) return (
+        <div style={{ textAlign: 'center', padding: '4rem', color: '#ef4444' }}>{error}</div>
+    );
+
+    const kpis = [
+        {
+            label: 'Tổng Doanh Thu',
+            value: fmtMoney(stats?.totalRevenue ?? 0),
+            sub: `Tháng này: ${fmtMoney(stats?.revenueThisMonth ?? 0)}`,
+            icon: <DollarSign size={20} />,
+            trend: revenueTrend,
+            trendUp: revenueTrend ? parseFloat(revenueTrend) >= 0 : null,
+        },
+        {
+            label: 'Tổng Khách Hàng',
+            value: stats?.totalCustomers ?? 0,
+            sub: `Mới tháng này: +${stats?.newCustomersThisMonth ?? 0}`,
+            icon: <Users size={20} />,
+            trend: null, trendUp: null,
+        },
+        {
+            label: 'Booking Tháng Này',
+            value: stats?.bookingsThisMonth ?? 0,
+            sub: `Đã hủy: ${stats?.cancelledThisMonth ?? 0}`,
+            icon: <CalendarCheck size={20} />,
+            trend: null, trendUp: null,
+        },
+        {
+            label: 'Dự Án Đang Thực Hiện',
+            value: stats?.projectsInProduction ?? 0,
+            sub: `Đã lên lịch: ${stats?.projectsScheduled ?? 0}`,
+            icon: <Briefcase size={20} />,
+            trend: null, trendUp: null,
+        },
+    ];
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <header>
-                <h1 style={{ fontSize: '2rem', color: 'var(--color-text)' }}>Tổng Quan Bảng Điều Khiển</h1>
-                <p style={{ color: 'var(--color-text-muted)' }}>Quản lý hiệu suất kinh doanh và chỉ số của bạn.</p>
+                <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--color-text)' }}>
+                    Tổng Quan
+                </h1>
+                <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
+                    Số liệu thực tế từ hệ thống — cập nhật lúc {stats ? new Date(stats.generatedAt).toLocaleTimeString('vi-VN') : '—'}
+                </p>
             </header>
 
-            {/* Stats row */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                {[
-                    { label: 'Tổng Doanh Thu', value: '$45,231', icon: <DollarSign size={20} />, trend: '+12.5%' },
-                    { label: 'Tổng Đơn Hàng', value: '124', icon: <ShoppingCart size={20} />, trend: '+8.2%' },
-                    { label: 'Tổng Khách Hàng', value: '89', icon: <Users size={20} />, trend: '+5.4%' },
-                    { label: 'Dự Án Đang Triển Khai', value: '18', icon: <Briefcase size={20} />, trend: '+2' },
-                ].map((stat, i) => (
+            {/* KPI Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1.25rem' }}>
+                {kpis.map((kpi, i) => (
                     <motion.div
-                        key={stat.label}
+                        key={kpi.label}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        style={{ backgroundColor: 'var(--color-bg-secondary)', padding: '1.5rem', border: '1px solid var(--color-border)' }}
+                        transition={{ delay: i * 0.08 }}
+                        style={{
+                            backgroundColor: 'var(--color-bg-secondary)',
+                            padding: '1.5rem',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: '8px',
+                        }}
                     >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                            <div style={{ color: 'var(--color-accent)' }}>{stat.icon}</div>
-                            <div style={{ color: '#22c55e', fontSize: '0.75rem', fontWeight: '600' }}>{stat.trend}</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                            <div style={{ color: 'var(--color-accent)' }}>{kpi.icon}</div>
+                            {kpi.trend && (
+                                <div style={{
+                                    display: 'flex', alignItems: 'center', gap: '3px',
+                                    fontSize: '0.75rem', fontWeight: 600,
+                                    color: kpi.trendUp ? '#22c55e' : '#ef4444',
+                                }}>
+                                    {kpi.trendUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                    {kpi.trend}%
+                                </div>
+                            )}
                         </div>
-                        <div style={{ fontSize: '1.75rem', fontWeight: '700', color: 'var(--color-text)' }}>{stat.value}</div>
-                        <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>{stat.label}</div>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text)', lineHeight: 1 }}>
+                            {kpi.value}
+                        </div>
+                        <div style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text)', marginTop: '4px' }}>
+                            {kpi.label}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '3px' }}>
+                            {kpi.sub}
+                        </div>
                     </motion.div>
                 ))}
             </div>
 
-            {/* Charts row */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
-                <div style={{ backgroundColor: 'var(--color-bg-secondary)', padding: '1.5rem', border: '1px solid var(--color-border)', minHeight: '400px' }}>
-                    <h3 style={{ fontSize: '1.125rem', color: 'var(--color-text)', marginBottom: '2rem' }}>Phân Tích Doanh Thu</h3>
-                    <div style={{ width: '100%', height: '300px' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={data}>
-                                <defs>
-                                    <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#c5a059" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#c5a059" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-                                <XAxis dataKey="name" stroke="var(--color-text-muted)" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="var(--color-text-muted)" fontSize={12} tickLine={false} axisLine={false} />
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)' }}
-                                    itemStyle={{ color: '#c5a059' }}
-                                />
-                                <Area type="monotone" dataKey="revenue" stroke="#c5a059" fillOpacity={1} fill="url(#colorRev)" strokeWidth={2} />
-                            </AreaChart>
-                        </ResponsiveContainer>
+            {/* Revenue Chart */}
+            <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+                style={{
+                    backgroundColor: 'var(--color-bg-secondary)',
+                    padding: '1.75rem',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: '8px',
+                }}
+            >
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '1.5rem' }}>
+                    Doanh Thu 6 Tháng Gần Nhất
+                </h3>
+                {chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={280}>
+                        <AreaChart data={chartData}>
+                            <defs>
+                                <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#c5a059" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#c5a059" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                            <XAxis dataKey="name" stroke="var(--color-text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                            <YAxis stroke="var(--color-text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => fmtMoney(v)} />
+                            <Tooltip
+                                contentStyle={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '8px' }}
+                                formatter={(v: number | undefined) => [fmtMoney(v ?? 0), 'Doanh thu']}
+                            />
+                            <Area type="monotone" dataKey="Doanh thu" stroke="#c5a059" fillOpacity={1} fill="url(#colorRev)" strokeWidth={2.5} dot={{ r: 4, fill: '#c5a059' }} activeDot={{ r: 6 }} />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>
+                        Chưa có dữ liệu doanh thu.
                     </div>
-                </div>
+                )}
+            </motion.div>
 
-                <div style={{ backgroundColor: 'var(--color-bg-secondary)', padding: '1.5rem', border: '1px solid var(--color-border)' }}>
-                    <h3 style={{ fontSize: '1.125rem', color: 'var(--color-text)', marginBottom: '2rem' }}>Phân Loại Dịch Vụ</h3>
-                    <div style={{ width: '100%', height: '240px' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={pieData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {pieData.map((_, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
+            {/* Project Status Summary */}
+            <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45 }}
+                style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}
+            >
+                {[
+                    { label: 'Đã lên lịch',    value: stats?.projectsScheduled ?? 0,    color: '#3b82f6' },
+                    { label: 'Đang thực hiện', value: stats?.projectsInProduction ?? 0,  color: '#f59e0b' },
+                    { label: 'Hoàn thành',      value: stats?.projectsCompleted ?? 0,     color: '#22c55e' },
+                    { label: 'Đã hủy',          value: stats?.projectsCancelled ?? 0,     color: '#ef4444' },
+                ].map(s => (
+                    <div key={s.label} style={{
+                        backgroundColor: 'var(--color-bg-secondary)',
+                        border: `1px solid var(--color-border)`,
+                        borderLeft: `4px solid ${s.color}`,
+                        borderRadius: '8px',
+                        padding: '1.25rem',
+                    }}>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 800, color: s.color }}>{s.value}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>{s.label}</div>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
-                        {pieData.map((d, i) => (
-                            <div key={d.name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: COLORS[i] }} />
-                                    <span style={{ color: 'var(--color-text-muted)' }}>{d.name}</span>
-                                </div>
-                                <span style={{ color: 'var(--color-text)' }}>{d.value} đơn</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+                ))}
+            </motion.div>
+
+            <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
         </div>
     );
 };

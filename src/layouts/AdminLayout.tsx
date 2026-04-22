@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, Settings, LogOut, Briefcase } from 'lucide-react';
+import { LayoutDashboard, Package, Users, LogOut, Camera, CalendarCheck, BarChart3 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const AdminLayout: React.FC = () => {
@@ -14,11 +14,12 @@ export const AdminLayout: React.FC = () => {
     };
 
     const navItems = [
-        { name: 'Bảng Điều Khiển', path: '/admin', icon: <LayoutDashboard size={20} /> },
-        { name: 'Dự Án', path: '/admin/projects', icon: <Briefcase size={20} /> },
-        { name: 'Gói Dịch Vụ', path: '/admin/packages', icon: <Package size={20} /> },
-        { name: 'Người Dùng', path: '/admin/users', icon: <Users size={20} /> },
-        { name: 'Cài Đặt', path: '/admin/settings', icon: <Settings size={20} /> },
+        { name: 'Tổng Quan', path: '/admin', icon: <LayoutDashboard size={20} />, exact: true },
+        { name: 'Dịch Vụ', path: '/admin/packages', icon: <Package size={20} /> },
+        { name: 'Photographer', path: '/admin/photographers', icon: <Camera size={20} /> },
+        { name: 'Booking', path: '/admin/bookings', icon: <CalendarCheck size={20} /> },
+        { name: 'Khách Hàng', path: '/admin/customers', icon: <Users size={20} /> },
+        { name: 'Thống Kê', path: '/admin/statistics', icon: <BarChart3 size={20} /> },
     ];
 
     return (
@@ -51,13 +52,13 @@ export const AdminLayout: React.FC = () => {
                                 gap: '12px',
                                 padding: '0.75rem 1rem',
                                 borderRadius: '6px',
-                                color: location.pathname === item.path ? 'var(--color-bg)' : 'var(--color-text-muted)',
-                                backgroundColor: location.pathname === item.path ? 'var(--color-accent)' : 'transparent',
+                                color: (item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)) ? 'var(--color-bg)' : 'var(--color-text-muted)',
+                                backgroundColor: (item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)) ? 'var(--color-accent)' : 'transparent',
                                 transition: 'all 0.3s ease'
                             }}
                         >
-                            <span style={{ color: location.pathname === item.path ? 'var(--color-bg)' : 'inherit' }}>{item.icon}</span>
-                            <span style={{ fontWeight: location.pathname === item.path ? '600' : '400', color: location.pathname === item.path ? 'var(--color-bg)' : 'inherit' }}>{item.name}</span>
+                            <span style={{ color: (item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)) ? 'var(--color-bg)' : 'inherit' }}>{item.icon}</span>
+                            <span style={{ fontWeight: (item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)) ? '600' : '400', color: (item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)) ? 'var(--color-bg)' : 'inherit' }}>{item.name}</span>
                         </Link>
                     ))}
                 </nav>
