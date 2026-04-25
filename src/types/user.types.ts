@@ -17,3 +17,10 @@ export interface UpdateUserRequest {
     phone?: string;
     avatar?: string;
 }
+
+export interface CreatePhotographerRequest {
+    fullName: string;
+    email: string;
+    password?: string;
+    phone?: string;
+}

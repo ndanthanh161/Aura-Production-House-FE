@@ -8,7 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://localhost:7283/api
 
 function normalizeApiResponse<T>(raw: Record<string, unknown>): ApiResponse<T> {
     return {
-        succeeded: (raw.succeeded ?? raw.Succeeded ?? false) as boolean,
+        succeeded: (raw.succeeded ?? raw.Succeeded ?? raw.success ?? raw.Success ?? false) as boolean,
         message: (raw.message ?? raw.Message ?? '') as string,
         statusCode: (raw.statusCode ?? raw.StatusCode ?? 0) as number,
         data: (raw.data ?? raw.Data ?? null) as T | null,

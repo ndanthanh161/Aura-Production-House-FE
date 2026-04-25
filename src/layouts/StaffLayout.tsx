@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, User as UserIcon, LogOut, ChevronRight, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export const StaffLayout: React.FC = () => {
+export const PhotographerLayout: React.FC = () => {
     const { logout } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
@@ -14,9 +14,9 @@ export const StaffLayout: React.FC = () => {
     };
 
     const navItems = [
-        { name: 'Tổng Quan', path: '/staff', icon: <LayoutDashboard size={20} /> },
-        { name: 'Dự Án', path: '/staff/projects', icon: <Briefcase size={20} /> },
-        { name: 'Hồ Sơ', path: '/staff/profile', icon: <UserIcon size={20} /> },
+        { name: 'Tổng Quan', path: '/photographer', icon: <LayoutDashboard size={20} /> },
+        { name: 'Dự Án', path: '/photographer/projects', icon: <Briefcase size={20} /> },
+        { name: 'Hồ Sơ', path: '/photographer/profile', icon: <UserIcon size={20} /> },
     ];
 
     return (

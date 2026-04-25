@@ -1,29 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, CheckCircle2, Clock, CalendarDays, Loader2 } from 'lucide-react';
-import { bookingApi } from '../../services/bookingApi';
+import { projectApi } from '../../services/projectApi';
 import { useAuth } from '../../context/AuthContext';
-import type { BookingSchedule } from '../../types/booking.types';
+import type { Project } from '../../types/project.types';
 
-const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
-    Scheduled:     { bg: 'rgba(59,130,246,0.12)',  color: '#3b82f6' },
-    InProduction:  { bg: 'rgba(245,158,11,0.12)',  color: '#f59e0b' },
-    PreProduction: { bg: 'rgba(139,92,246,0.12)', color: '#8b5cf6' },
-    Completed:     { bg: 'rgba(34,197,94,0.12)',  color: '#22c55e' },
-    Cancelled:     { bg: 'rgba(239,68,68,0.12)',  color: '#ef4444' },
+const STATUS_COLORS: Record<string, string> = {
+    Scheduled:     '#3b82f6',
+    InProduction:  '#f59e0b',
+    Completed:     '#22c55e',
+    Cancelled:     '#ef4444',
 };
 
 const STATUS_LABELS: Record<string, string> = {
     Scheduled: 'Đã Lên Lịch',
     InProduction: 'Đang Thực Hiện',
-    PreProduction: 'Tiền Sản Xuất',
     Completed: 'Hoàn Thành',
     Cancelled: 'Đã Hủy',
 };
 
 const PhotographerOverview: React.FC = () => {
     const { user } = useAuth();
-    const [schedules, setSchedules] = useState<BookingSchedule[]>([]);
+    const [schedules, setSchedules] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -31,7 +29,7 @@ const PhotographerOverview: React.FC = () => {
         const load = async () => {
             try {
                 setLoading(true);
-                const res = await bookingApi.getSchedules();
+                const res = await projectApi.getSchedules();
                 setSchedules(res.data || []);
             } catch {
                 setError('Không thể tải dữ liệu.');
@@ -119,18 +117,18 @@ const PhotographerOverview: React.FC = () => {
                                 {active.map((s, i) => {
                                     const cfg = STATUS_COLORS[s.status] ?? STATUS_COLORS.Scheduled;
                                     return (
-                                        <motion.tr key={s.projectId} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
+                                        <motion.tr key={s.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
                                             style={{ borderBottom: '1px solid var(--color-border)' }}>
-                                            <td style={{ padding: '1rem', color: 'var(--color-text)', fontWeight: 500 }}>{s.projectName}</td>
+                                            <td style={{ padding: '1rem', color: 'var(--color-text)', fontWeight: 500 }}>{s.name}</td>
                                             <td style={{ padding: '1rem', color: 'var(--color-text-muted)' }}>{s.clientName}</td>
                                             <td style={{ padding: '1rem' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text)', fontSize: '0.875rem' }}>
                                                     <CalendarDays size={13} style={{ color: 'var(--color-accent)' }} />
-                                                    {fmtDate(s.shootingDate)}
+                                                    {fmtDate(s.deadline)}
                                                 </div>
                                             </td>
                                             <td style={{ padding: '1rem' }}>
-                                                <span style={{ display: 'inline-block', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 600, backgroundColor: cfg.bg, color: cfg.color }}>
+                                                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: cfg }}>
                                                     {STATUS_LABELS[s.status] || s.status}
                                                 </span>
                                             </td>

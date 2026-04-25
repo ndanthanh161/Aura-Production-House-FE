@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, CalendarDays, Clock, CheckCircle, XCircle, AlertCircle, Loader2, X, RefreshCw } from 'lucide-react';
-import { bookingApi } from '../../services/bookingApi';
-import type { BookingSchedule, BookingStatus } from '../../types/booking.types';
+import { projectApi } from '../../services/projectApi';
+import type { Project, ProjectStatus } from '../../types/project.types';
 
-const STATUS_CONFIG: Record<BookingStatus, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
-    Scheduled:     { label: 'Đã lên lịch',    color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',  icon: <Clock size={12} /> },
-    InProduction:  { label: 'Đang thực hiện',  color: '#f59e0b', bg: 'rgba(245,158,11,0.12)',  icon: <AlertCircle size={12} /> },
-    PreProduction: { label: 'Tiền sản xuất',   color: '#8b5cf6', bg: 'rgba(139,92,246,0.12)', icon: <AlertCircle size={12} /> },
-    Completed:     { label: 'Hoàn thành',       color: '#22c55e', bg: 'rgba(34,197,94,0.12)',  icon: <CheckCircle size={12} /> },
-    Cancelled:     { label: 'Đã hủy',           color: '#ef4444', bg: 'rgba(239,68,68,0.12)',  icon: <XCircle size={12} /> },
+const STATUS_CONFIG: Record<ProjectStatus, { label: string; color: string }> = {
+    Scheduled:     { label: 'Đã lên lịch',    color: '#3b82f6' },
+    InProduction:  { label: 'Đang thực hiện',  color: '#f59e0b' },
+    Completed:     { label: 'Hoàn thành',       color: '#22c55e' },
+    Cancelled:     { label: 'Đã hủy',           color: '#ef4444' },
 };
 
 const PhotographerProjects: React.FC = () => {
-    const [schedules, setSchedules] = useState<BookingSchedule[]>([]);
-    const [filtered, setFiltered] = useState<BookingSchedule[]>([]);
+    const [schedules, setSchedules] = useState<Project[]>([]);
+    const [filtered, setFiltered] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [search, setSearch] = useState('');
-    const [filterStatus, setFilterStatus] = useState<BookingStatus | 'All'>('All');
+    const [filterStatus, setFilterStatus] = useState<ProjectStatus | 'All'>('All');
 
     const fetchData = async () => {
         try {
             setLoading(true);
             setError('');
-            const res = await bookingApi.getSchedules();
+            const res = await projectApi.getSchedules();
             setSchedules(res.data || []);
             setFiltered(res.data || []);
         } catch {
@@ -40,7 +39,7 @@ const PhotographerProjects: React.FC = () => {
         const q = search.toLowerCase();
         setFiltered(schedules.filter(s =>
             (filterStatus === 'All' || s.status === filterStatus) &&
-            (s.projectName.toLowerCase().includes(q) || s.clientName.toLowerCase().includes(q))
+            (s.name.toLowerCase().includes(q) || (s.clientName || '').toLowerCase().includes(q))
         ));
     }, [search, filterStatus, schedules]);
 
@@ -71,11 +70,11 @@ const PhotographerProjects: React.FC = () => {
                 </div>
                 <select
                     value={filterStatus}
-                    onChange={e => setFilterStatus(e.target.value as BookingStatus | 'All')}
+                    onChange={e => setFilterStatus(e.target.value as ProjectStatus | 'All')}
                     style={{ padding: '0.65rem 1rem', backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: '6px', color: 'var(--color-text)', fontSize: '0.875rem', cursor: 'pointer' }}
                 >
                     <option value="All">Tất cả trạng thái</option>
-                    {(Object.keys(STATUS_CONFIG) as BookingStatus[]).map(s => (
+                    {(Object.keys(STATUS_CONFIG) as ProjectStatus[]).map(s => (
                         <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
                     ))}
                 </select>
@@ -97,7 +96,7 @@ const PhotographerProjects: React.FC = () => {
                         const cfg = STATUS_CONFIG[s.status] ?? STATUS_CONFIG.Scheduled;
                         return (
                             <motion.div
-                                key={s.projectId}
+                                key={s.id}
                                 initial={{ opacity: 0, scale: 0.96 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: i * 0.07 }}
@@ -113,17 +112,19 @@ const PhotographerProjects: React.FC = () => {
                                     <span style={{ fontSize: '0.7rem', color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
                                         {s.packageName}
                                     </span>
-                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 600, backgroundColor: cfg.bg, color: cfg.color }}>
-                                        {cfg.icon} {cfg.label}
-                                    </span>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: cfg.color }}>
+                                            {cfg.label}
+                                        </span>
+                                    </div>
                                 </div>
                                 <div>
-                                    <h3 style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: '4px' }}>{s.projectName}</h3>
+                                    <h3 style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: '4px' }}>{s.name}</h3>
                                     <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Khách hàng: {s.clientName}</p>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: 'auto', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', color: 'var(--color-text)', fontSize: '0.875rem' }}>
                                     <CalendarDays size={14} style={{ color: 'var(--color-accent)' }} />
-                                    <span>Ngày chụp: <strong>{fmtDate(s.shootingDate)}</strong></span>
+                                    <span>Ngày chụp: <strong>{fmtDate(s.deadline)}</strong></span>
                                 </div>
                             </motion.div>
                         );

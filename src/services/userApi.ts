@@ -9,6 +9,10 @@ export const photographerApi = {
         const res = await axiosInstance.get<ApiResponse<UserDTO[]>>('/v1/Photographer');
         return res.data;
     },
+    create: async (data: any): Promise<ApiResponse<UserDTO>> => {
+        const res = await axiosInstance.post<ApiResponse<UserDTO>>('/v1/Photographer', data);
+        return res.data;
+    },
     getById: async (id: string): Promise<ApiResponse<UserDTO>> => {
         const res = await axiosInstance.get<ApiResponse<UserDTO>>(`/v1/Photographer/${id}`);
         return res.data;

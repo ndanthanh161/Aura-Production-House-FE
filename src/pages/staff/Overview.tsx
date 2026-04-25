@@ -14,7 +14,7 @@ const activeProjects = [
     { id: 3, name: 'Chân Dung CEO', client: 'Sarah Jenkins', deadline: '02 Thg 11, 2024', status: 'Đã Lên Lịch' },
 ];
 
-const StaffOverview: React.FC = () => {
+const PhotographerOverview: React.FC = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -96,4 +96,4 @@ const StaffOverview: React.FC = () => {
     );
 };
 
-export default StaffOverview;
+export default PhotographerOverview;

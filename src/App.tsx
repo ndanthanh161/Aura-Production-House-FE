@@ -8,23 +8,19 @@ import Services from './pages/public/Services';
 import Packages from './pages/public/Packages';
 import About from './pages/public/About';
 import Contact from './pages/public/Contact';
-import Payment from './pages/public/Payment';
+import PurchasePackage from './pages/public/PurchasePackage';
+import MyBookings from './pages/public/MyBookings';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
 
-import { StaffLayout } from './layouts/StaffLayout';
-import StaffOverview from './pages/staff/Overview';
-import StaffProjects from './pages/staff/Projects';
-import StaffProfile from './pages/staff/Profile';
-
-import { PhotographerLayout } from './layouts/PhotographerLayout';
-import PhotographerOverview from './pages/photographer/Overview';
-import PhotographerProjects from './pages/photographer/Projects';
-import PhotographerProfile from './pages/photographer/Profile';
+import { PhotographerLayout } from './layouts/StaffLayout'; // Sử dụng StaffLayout cũ
+import PhotographerOverview from './pages/staff/Overview';
+import PhotographerProjects from './pages/staff/Projects';
+import PhotographerProfile from './pages/staff/Profile';
 
 import { AdminLayout } from './layouts/AdminLayout';
 import AdminOverview from './pages/admin/Overview';
-import AdminProjects from './pages/admin/Projects';
+
 import AdminPackages from './pages/admin/Packages';
 import AdminUsers from './pages/admin/Users';
 import AdminPhotographers from './pages/admin/Photographers';
@@ -47,25 +43,12 @@ function App() {
           <Route path="packages" element={<Packages />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="payment" element={<Payment />} />
+          <Route path="purchase/:packageId" element={<PurchasePackage />} />
+          <Route path="projects" element={<MyBookings />} />
         </Route>
 
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-
-        {/* Staff Routes */}
-        <Route
-          path="/staff"
-          element={
-            <RoleGuard allowedRoles={['staff']}>
-              <StaffLayout />
-            </RoleGuard>
-          }
-        >
-          <Route index element={<StaffOverview />} />
-          <Route path="projects" element={<StaffProjects />} />
-          <Route path="profile" element={<StaffProfile />} />
-        </Route>
 
         {/* Photographer Routes */}
         <Route
@@ -91,11 +74,11 @@ function App() {
           }
         >
           <Route index element={<AdminOverview />} />
-          <Route path="projects" element={<AdminProjects />} />
+
           <Route path="packages" element={<AdminPackages />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="photographers" element={<AdminPhotographers />} />
-          <Route path="bookings" element={<AdminBookings />} />
+          <Route path="projects" element={<AdminBookings />} />
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="statistics" element={<AdminStatistics />} />
         </Route>

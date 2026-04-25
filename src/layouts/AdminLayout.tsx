@@ -17,7 +17,7 @@ export const AdminLayout: React.FC = () => {
         { name: 'Tổng Quan', path: '/admin', icon: <LayoutDashboard size={20} />, exact: true },
         { name: 'Dịch Vụ', path: '/admin/packages', icon: <Package size={20} /> },
         { name: 'Photographer', path: '/admin/photographers', icon: <Camera size={20} /> },
-        { name: 'Booking', path: '/admin/bookings', icon: <CalendarCheck size={20} /> },
+        { name: 'Dự Án', path: '/admin/projects', icon: <CalendarCheck size={20} /> },
         { name: 'Khách Hàng', path: '/admin/customers', icon: <Users size={20} /> },
         { name: 'Thống Kê', path: '/admin/statistics', icon: <BarChart3 size={20} /> },
     ];

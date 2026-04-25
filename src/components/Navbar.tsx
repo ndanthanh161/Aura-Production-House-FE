@@ -11,7 +11,7 @@ const pageTitleMap: Record<string, string> = {
     '/packages': 'GÓI DỊCH VỤ',
     '/about': 'GIỚI THIỆU',
     '/contact': 'LIÊN HỆ',
-    '/payment': 'THANH TOÁN',
+    '/projects': 'LỊCH HẸN',
     '/login': 'ĐĂNG NHẬP',
     '/register': 'ĐĂNG KÝ',
 };
@@ -54,7 +54,12 @@ export const Navbar: React.FC = () => {
     const location = useLocation();
 
     const isHome = location.pathname === '/';
-    const pageTitle = pageTitleMap[location.pathname] || '';
+
+    // Logic lấy tiêu đề hiển thị ở giữa Navbar
+    let pageTitle = pageTitleMap[location.pathname] || '';
+    if (!pageTitle && location.pathname.startsWith('/purchase/')) {
+        pageTitle = 'THANH TOÁN';
+    }
 
     const leftLinks = [
         { name: 'Giới Thiệu', path: '/about' },
@@ -95,6 +100,15 @@ export const Navbar: React.FC = () => {
                     className="hover-link"
                 >
                     Workspace
+                </Link>
+            )}
+            {role === 'user' && (
+                <Link
+                    to="/projects"
+                    style={linkStyle(isActive('/projects'))}
+                    className="hover-link"
+                >
+                    LỊCH HẸN
                 </Link>
             )}
             {role === 'admin' && (
@@ -247,6 +261,15 @@ export const Navbar: React.FC = () => {
                             className="hover-link-dark"
                         >
                             Workspace
+                        </Link>
+                    )}
+                    {role === 'user' && (
+                        <Link
+                            to="/projects"
+                            style={homeLinkStyle(isActive('/projects'))}
+                            className="hover-link-dark"
+                        >
+                            Dự Án
                         </Link>
                     )}
                     {role === 'admin' && (

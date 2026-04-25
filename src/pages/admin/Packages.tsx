@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit2, Trash2, Star, X, Check, Loader2, Package } from 'lucide-react';
+import { Plus, Edit2, Trash2, Star, X, Check, Loader2, Package, CheckCircle2, PlusCircle, MinusCircle } from 'lucide-react';
 import { packageApi } from '../../services/packageApi';
-import type { Package as PkgType, CreatePackageRequest } from '../../types/package.types';
+import type { Package as PkgType, CreatePackageRequest, UpdatePackageRequest } from '../../types/package.types';
 
 const emptyForm: CreatePackageRequest = {
     name: '',
     price: 0,
     description: '',
-    features: '',
+    benefits: [],
     isPopular: false,
-    isActive: true,
 };
 
 const AdminPackages: React.FC = () => {
@@ -21,6 +20,7 @@ const AdminPackages: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const [editItem, setEditItem] = useState<PkgType | null>(null);
     const [form, setForm] = useState<CreatePackageRequest>(emptyForm);
+    const [benefitInput, setBenefitInput] = useState('');
 
     const fetchPackages = async () => {
         try {
@@ -39,6 +39,7 @@ const AdminPackages: React.FC = () => {
     const openCreate = () => {
         setEditItem(null);
         setForm(emptyForm);
+        setBenefitInput('');
         setShowModal(true);
     };
 
@@ -48,19 +49,42 @@ const AdminPackages: React.FC = () => {
             name: pkg.name,
             price: pkg.price,
             description: pkg.description || '',
-            features: pkg.features,
+            benefits: [...pkg.benefits],
             isPopular: pkg.isPopular,
-            isActive: pkg.isActive,
         });
+        setBenefitInput('');
         setShowModal(true);
     };
 
+    // ── Benefits helpers ─────────────────────────────────────────
+    const addBenefit = () => {
+        const trimmed = benefitInput.trim();
+        if (!trimmed) return;
+        setForm(prev => ({ ...prev, benefits: [...prev.benefits, trimmed] }));
+        setBenefitInput('');
+    };
+
+    const removeBenefit = (index: number) => {
+        setForm(prev => ({ ...prev, benefits: prev.benefits.filter((_, i) => i !== index) }));
+    };
+
+    const handleBenefitKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') { e.preventDefault(); addBenefit(); }
+    };
+
+    // ── Submit ───────────────────────────────────────────────────
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (form.benefits.length === 0) {
+            setError('Vui lòng thêm ít nhất 1 lợi ích cho gói.');
+            return;
+        }
         setSaving(true);
+        setError('');
         try {
             if (editItem) {
-                await packageApi.update({ ...form, id: editItem.id });
+                const updateReq: UpdatePackageRequest = { ...form, id: editItem.id, isActive: editItem.isActive };
+                await packageApi.update(updateReq);
             } else {
                 await packageApi.create(form);
             }
@@ -91,7 +115,7 @@ const AdminPackages: React.FC = () => {
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                     <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--color-text)' }}>
-                        Quản Lý Dịch Vụ
+                        Quản Lý Gói Dịch Vụ
                     </h1>
                     <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
                         Tạo và quản lý các gói chụp ảnh của studio
@@ -122,12 +146,8 @@ const AdminPackages: React.FC = () => {
                             style={{
                                 backgroundColor: 'var(--color-bg-secondary)',
                                 border: `1px solid ${pkg.isPopular ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                                borderRadius: '8px',
-                                padding: '1.75rem',
-                                position: 'relative',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '1rem',
+                                borderRadius: '8px', padding: '1.75rem',
+                                position: 'relative', display: 'flex', flexDirection: 'column', gap: '1rem',
                             }}
                         >
                             {pkg.isPopular && (
@@ -141,6 +161,7 @@ const AdminPackages: React.FC = () => {
                                     <Star size={10} fill="currentColor" /> Phổ biến
                                 </span>
                             )}
+
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                 <div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -167,12 +188,22 @@ const AdminPackages: React.FC = () => {
                                 </p>
                             )}
 
-                            <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                    Tính năng
-                                </p>
-                                <p style={{ fontSize: '0.875rem', color: 'var(--color-text)', lineHeight: 1.6 }}>{pkg.features}</p>
-                            </div>
+                            {/* Benefits list */}
+                            {pkg.benefits.length > 0 && (
+                                <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
+                                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginBottom: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                                        Lợi ích ({pkg.benefits.length})
+                                    </p>
+                                    <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                        {pkg.benefits.map((b, bi) => (
+                                            <li key={bi} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.8rem', color: 'var(--color-text)' }}>
+                                                <CheckCircle2 size={13} style={{ color: 'var(--color-accent)', flexShrink: 0, marginTop: '2px' }} />
+                                                <span style={{ lineHeight: 1.5 }}>{b}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
 
                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
                                 <button onClick={() => openEdit(pkg)} style={btnSecondary}>
@@ -191,9 +222,7 @@ const AdminPackages: React.FC = () => {
             <AnimatePresence>
                 {showModal && (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         style={overlayStyle}
                         onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
                     >
@@ -207,29 +236,37 @@ const AdminPackages: React.FC = () => {
                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text)' }}>
                                     {editItem ? 'Chỉnh Sửa Gói' : 'Tạo Gói Mới'}
                                 </h2>
-                                <button onClick={() => setShowModal(false)} style={{ color: 'var(--color-text-muted)' }}>
+                                <button onClick={() => setShowModal(false)} style={{ color: 'var(--color-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
                                     <X size={20} />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                {[
-                                    { label: 'Tên gói *', key: 'name', type: 'text', required: true },
-                                    { label: 'Mô tả', key: 'description', type: 'text' },
-                                    { label: 'Tính năng (phân cách bằng dấu phẩy) *', key: 'features', type: 'text', required: true },
-                                ].map(f => (
-                                    <div key={f.key}>
-                                        <label style={labelStyle}>{f.label}</label>
-                                        <input
-                                            type={f.type}
-                                            required={f.required}
-                                            value={(form as unknown as Record<string, unknown>)[f.key] as string || ''}
-                                            onChange={e => setForm(prev => ({ ...prev, [f.key]: e.target.value }))}
-                                            style={inputStyle}
-                                        />
-                                    </div>
-                                ))}
+                            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                {/* Name */}
+                                <div>
+                                    <label style={labelStyle}>Tên gói *</label>
+                                    <input
+                                        type="text" required
+                                        value={form.name}
+                                        onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
+                                        style={inputStyle}
+                                        placeholder="VD: Gói Nâng Cao"
+                                    />
+                                </div>
 
+                                {/* Description */}
+                                <div>
+                                    <label style={labelStyle}>Mô tả ngắn</label>
+                                    <input
+                                        type="text"
+                                        value={form.description || ''}
+                                        onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
+                                        style={inputStyle}
+                                        placeholder="VD: Dành cho thương hiệu đang phát triển"
+                                    />
+                                </div>
+
+                                {/* Price */}
                                 <div>
                                     <label style={labelStyle}>Giá (VNĐ) *</label>
                                     <input
@@ -240,15 +277,62 @@ const AdminPackages: React.FC = () => {
                                     />
                                 </div>
 
+                                {/* Benefits */}
+                                <div>
+                                    <label style={labelStyle}>Lợi ích *</label>
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="Nhập lợi ích rồi nhấn Enter hoặc dấu +"
+                                            value={benefitInput}
+                                            onChange={e => setBenefitInput(e.target.value)}
+                                            onKeyDown={handleBenefitKeyDown}
+                                            style={{ ...inputStyle, flex: 1 }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={addBenefit}
+                                            style={{ ...btnPrimary, padding: '0.7rem 0.9rem', flexShrink: 0 }}
+                                        >
+                                            <PlusCircle size={18} />
+                                        </button>
+                                    </div>
+                                    {form.benefits.length === 0 ? (
+                                        <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Chưa có lợi ích nào. Thêm ít nhất 1 lợi ích.</p>
+                                    ) : (
+                                        <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                            {form.benefits.map((b, i) => (
+                                                <li key={i} style={{
+                                                    display: 'flex', alignItems: 'center', gap: '8px',
+                                                    backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)',
+                                                    borderRadius: '6px', padding: '0.5rem 0.75rem',
+                                                    fontSize: '0.85rem', color: 'var(--color-text)'
+                                                }}>
+                                                    <CheckCircle2 size={13} style={{ color: 'var(--color-accent)', flexShrink: 0 }} />
+                                                    <span style={{ flex: 1, lineHeight: 1.4 }}>{b}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeBenefit(i)}
+                                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '2px', display: 'flex', alignItems: 'center' }}
+                                                    >
+                                                        <MinusCircle size={15} />
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+
+                                {/* Toggles */}
                                 <div style={{ display: 'flex', gap: '1.5rem' }}>
                                     {[
                                         { key: 'isPopular', label: 'Đánh dấu Phổ biến' },
-                                        { key: 'isActive', label: 'Kích hoạt' },
+                                        ...(editItem ? [{ key: 'isActive', label: 'Kích hoạt' }] : []),
                                     ].map(toggle => (
                                         <label key={toggle.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
                                             <input
                                                 type="checkbox"
-                                                checked={(form as unknown as Record<string, unknown>)[toggle.key] as boolean}
+                                                checked={(form as unknown as Record<string, unknown>)[toggle.key] as boolean ?? (editItem?.isActive ?? true)}
                                                 onChange={e => setForm(prev => ({ ...prev, [toggle.key]: e.target.checked }))}
                                             />
                                             {toggle.label}
@@ -263,9 +347,7 @@ const AdminPackages: React.FC = () => {
                                         {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Check size={16} />}
                                         {editItem ? 'Lưu thay đổi' : 'Tạo gói'}
                                     </button>
-                                    <button type="button" onClick={() => setShowModal(false)} style={btnSecondary}>
-                                        Huỷ
-                                    </button>
+                                    <button type="button" onClick={() => setShowModal(false)} style={btnSecondary}>Huỷ</button>
                                 </div>
                             </form>
                         </motion.div>
@@ -310,12 +392,12 @@ const overlayStyle: React.CSSProperties = {
 };
 const modalStyle: React.CSSProperties = {
     backgroundColor: 'var(--color-bg-secondary)', borderRadius: '12px',
-    padding: '2rem', width: '100%', maxWidth: '500px',
+    padding: '2rem', width: '100%', maxWidth: '520px',
     border: '1px solid var(--color-border)', maxHeight: '90vh', overflowY: 'auto',
 };
 const labelStyle: React.CSSProperties = {
-    display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)',
-    marginBottom: '0.4rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em',
+    display: 'block', fontSize: '0.78rem', color: 'var(--color-text-muted)',
+    marginBottom: '0.4rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em',
 };
 const inputStyle: React.CSSProperties = {
     width: '100%', padding: '0.7rem 0.9rem',

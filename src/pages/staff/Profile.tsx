@@ -1,7 +1,7 @@
 import { Camera, Save } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 
-const StaffProfile: React.FC = () => {
+const PhotographerProfile: React.FC = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', maxWidth: '800px' }}>
             <header>
@@ -22,8 +22,8 @@ const StaffProfile: React.FC = () => {
                         </button>
                     </div>
                     <div>
-                        <h3 style={{ fontSize: '1.25rem' }}>Marcus Valerius</h3>
-                        <p style={{ color: 'var(--color-accent)', fontSize: '0.875rem' }}>Giám Đốc Sáng Tạo</p>
+                        <h3 style={{ fontSize: '1.25rem' }}>Aura Photographer</h3>
+                        <p style={{ color: 'var(--color-accent)', fontSize: '0.875rem' }}>Thợ Chụp Ảnh Chuyên Nghiệp</p>
                     </div>
                 </div>
 
@@ -50,4 +50,4 @@ const StaffProfile: React.FC = () => {
     );
 };
 
-export default StaffProfile;
+export default PhotographerProfile;

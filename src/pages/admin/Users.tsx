@@ -1,28 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Mail, Phone, Calendar, Shield, User, Loader2, X } from 'lucide-react';
-import { photographerApi } from '../../services/userApi';
+import { Search, Mail, Phone, Calendar, User, Loader2, X, ShieldCheck } from 'lucide-react';
 import { customerApi } from '../../services/userApi';
 import type { UserDTO } from '../../types/user.types';
 
 const AdminUsers: React.FC = () => {
-    const [staff, setStaff] = useState<UserDTO[]>([]);
     const [customers, setCustomers] = useState<UserDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [search, setSearch] = useState('');
-    const [tab, setTab] = useState<'staff' | 'customer'>('staff');
 
     useEffect(() => {
         const load = async () => {
             try {
                 setLoading(true);
-                const [s, c] = await Promise.all([
-                    photographerApi.getAll(),
-                    customerApi.getAll(),
-                ]);
-                setStaff(s.data || []);
-                setCustomers(c.data || []);
+                const res = await customerApi.getAll();
+                setCustomers(res.data || []);
             } catch {
                 setError('Không thể tải danh sách người dùng.');
             } finally {
@@ -32,7 +25,7 @@ const AdminUsers: React.FC = () => {
         load();
     }, []);
 
-    const list = tab === 'staff' ? staff : customers;
+    const list = customers;
     const q = search.toLowerCase();
     const filtered = list.filter(u =>
         u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
@@ -44,9 +37,9 @@ const AdminUsers: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--color-text)' }}>Quản Lý Người Dùng</h1>
+                    <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--color-text)' }}>Quản Lý Khách Hàng</h1>
                     <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
-                        {staff.length} nhân viên · {customers.length} khách hàng
+                        {customers.length} khách hàng trong hệ thống
                     </p>
                 </div>
                 <div style={{ position: 'relative' }}>
@@ -59,25 +52,6 @@ const AdminUsers: React.FC = () => {
                     />
                 </div>
             </header>
-
-            {/* Tab */}
-            <div style={{ display: 'flex', gap: '0.25rem', backgroundColor: 'var(--color-bg-secondary)', padding: '4px', borderRadius: '8px', border: '1px solid var(--color-border)', width: 'fit-content' }}>
-                {(['staff', 'customer'] as const).map(t => (
-                    <button
-                        key={t}
-                        onClick={() => setTab(t)}
-                        style={{
-                            display: 'flex', alignItems: 'center', gap: '6px',
-                            padding: '0.5rem 1.25rem', borderRadius: '6px', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer', border: 'none',
-                            backgroundColor: tab === t ? 'var(--color-accent)' : 'transparent',
-                            color: tab === t ? 'var(--color-bg)' : 'var(--color-text-muted)',
-                            transition: 'all 0.2s',
-                        }}
-                    >
-                        {t === 'staff' ? <><Shield size={14} /> Nhân viên ({staff.length})</> : <><User size={14} /> Khách hàng ({customers.length})</>}
-                    </button>
-                ))}
-            </div>
 
             {error && (
                 <div style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.75rem 1rem', borderRadius: '6px', display: 'flex', justifyContent: 'space-between' }}>
@@ -126,11 +100,11 @@ const AdminUsers: React.FC = () => {
                                         <span style={{
                                             display: 'inline-flex', alignItems: 'center', gap: '4px',
                                             padding: '3px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 600,
-                                            backgroundColor: u.role === 'Staff' ? 'rgba(197,160,89,0.15)' : 'rgba(59,130,246,0.12)',
-                                            color: u.role === 'Staff' ? 'var(--color-accent)' : '#3b82f6',
+                                            backgroundColor: 'rgba(59,130,246,0.12)',
+                                            color: '#3b82f6',
                                         }}>
-                                            {u.role === 'Staff' ? <Shield size={11} /> : <User size={11} />}
-                                            {u.role === 'Staff' ? 'Nhân viên' : 'Khách hàng'}
+                                            <User size={11} />
+                                            Khách hàng
                                         </span>
                                     </td>
                                     <td style={{ padding: '1rem 1.25rem' }}>

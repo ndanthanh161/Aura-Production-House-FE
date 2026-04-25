@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Edit2, UserX, Briefcase, X, Check, Loader2, Search, Phone, Mail } from 'lucide-react';
 import { photographerApi } from '../../services/userApi';
-import type { UserDTO, UpdateUserRequest } from '../../types/user.types';
+import type { UserDTO, UpdateUserRequest, CreatePhotographerRequest } from '../../types/user.types';
 
 const AdminPhotographers: React.FC = () => {
     const [photographers, setPhotographers] = useState<UserDTO[]>([]);
@@ -13,7 +13,9 @@ const AdminPhotographers: React.FC = () => {
     const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editItem, setEditItem] = useState<UserDTO | null>(null);
-    const [form, setForm] = useState<UpdateUserRequest>({ id: '', fullName: '', phone: '' });
+    const [form, setForm] = useState<CreatePhotographerRequest & { id?: string, role: string }>({ 
+        fullName: '', email: '', password: '', phone: '', role: 'Photographer' 
+    });
 
     const fetch = async () => {
         try {
@@ -37,9 +39,15 @@ const AdminPhotographers: React.FC = () => {
         ));
     }, [search, photographers]);
 
+    const openAdd = () => {
+        setEditItem(null);
+        setForm({ fullName: '', email: '', password: '', phone: '', role: 'Photographer' });
+        setShowModal(true);
+    };
+
     const openEdit = (p: UserDTO) => {
         setEditItem(p);
-        setForm({ id: p.id, fullName: p.fullName, phone: p.phone || '' });
+        setForm({ id: p.id, fullName: p.fullName, email: p.email, phone: p.phone || '', role: p.role });
         setShowModal(true);
     };
 
@@ -48,11 +56,15 @@ const AdminPhotographers: React.FC = () => {
         setSaving(true);
         setError('');
         try {
-            await photographerApi.update(form);
+            if (editItem) {
+                await photographerApi.update(form as any);
+            } else {
+                await photographerApi.create(form);
+            }
             setShowModal(false);
             fetch();
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Lỗi cập nhật.');
+            setError(err instanceof Error ? err.message : 'Lỗi hệ thống.');
         } finally {
             setSaving(false);
         }
@@ -81,14 +93,19 @@ const AdminPhotographers: React.FC = () => {
                         {photographers.length} photographer trong hệ thống
                     </p>
                 </div>
-                <div style={{ position: 'relative' }}>
-                    <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
-                    <input
-                        placeholder="Tìm kiếm..."
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        style={{ ...inputStyle, paddingLeft: '36px', width: '240px' }}
-                    />
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div style={{ position: 'relative' }}>
+                        <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
+                        <input
+                            placeholder="Tìm kiếm..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            style={{ ...inputStyle, paddingLeft: '36px', width: '240px' }}
+                        />
+                    </div>
+                    <button onClick={openAdd} style={btnPrimary}>
+                        <Camera size={16} /> Thêm Photographer
+                    </button>
                 </div>
             </header>
 
@@ -177,17 +194,39 @@ const AdminPhotographers: React.FC = () => {
 
             {/* Edit Modal */}
             <AnimatePresence>
-                {showModal && editItem && (
+                {showModal && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={overlayStyle} onClick={e => e.target === e.currentTarget && setShowModal(false)}>
                         <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} style={modalStyle}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Cập Nhật Photographer</h2>
+                                <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>
+                                    {editItem ? 'Cập Nhật Photographer' : 'Thêm Photographer Mới'}
+                                </h2>
                                 <button onClick={() => setShowModal(false)} style={{ color: 'var(--color-text-muted)' }}><X size={20} /></button>
                             </div>
                             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 <div>
                                     <label style={labelStyle}>Họ và Tên *</label>
                                     <input required value={form.fullName} onChange={e => setForm(p => ({ ...p, fullName: e.target.value }))} style={inputStyle} />
+                                </div>
+                                {!editItem && (
+                                    <>
+                                        <div>
+                                            <label style={labelStyle}>Email *</label>
+                                            <input required type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} style={inputStyle} />
+                                        </div>
+                                        <div>
+                                            <label style={labelStyle}>Mật khẩu *</label>
+                                            <input required type="password" value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} style={inputStyle} />
+                                        </div>
+                                    </>
+                                )}
+                                <div>
+                                    <label style={labelStyle}>Vai trò</label>
+                                    <input 
+                                        disabled
+                                        value="Photographer"
+                                        style={{ ...inputStyle, backgroundColor: 'rgba(255,255,255,0.05)', cursor: 'not-allowed' }}
+                                    />
                                 </div>
                                 <div>
                                     <label style={labelStyle}>Số điện thoại</label>

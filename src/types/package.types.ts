@@ -5,7 +5,7 @@ export interface Package {
     name: string;
     price: number;
     description?: string;
-    features: string;
+    benefits: string[];
     isPopular: boolean;
     isActive: boolean;
     createdAt: string;
@@ -16,11 +16,16 @@ export interface CreatePackageRequest {
     name: string;
     price: number;
     description?: string;
-    features: string;
+    benefits: string[];
     isPopular: boolean;
-    isActive: boolean;
 }
 
-export interface UpdatePackageRequest extends CreatePackageRequest {
+export interface UpdatePackageRequest {
     id: string;
+    name: string;
+    price: number;
+    description?: string;
+    benefits: string[];
+    isPopular: boolean;
+    isActive: boolean;
 }
