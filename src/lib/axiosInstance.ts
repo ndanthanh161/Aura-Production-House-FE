@@ -24,11 +24,18 @@ export const axiosInstance = axios.create({
     timeout: 15000,
 });
 
+// ─── Constants for Storage ──────────────────────────────────────
+
+const STORAGE_KEYS = {
+    ACCESS_TOKEN: 'aura_access_token',
+    REFRESH_TOKEN: 'aura_refresh_token',
+} as const;
+
 // ─── Request interceptor: tự gắn Authorization header ───────────
 
 axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('aura_access_token');
+        const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -37,7 +44,23 @@ axiosInstance.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// ─── Response interceptor: normalize + chỉ throw khi HTTP lỗi ──
+// ─── Helper for Refresh Token ───────────────────────────────────
+
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+    failedQueue.forEach((prom) => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
+// ─── Response interceptor: normalize + Silent Refresh ────────────
 
 axiosInstance.interceptors.response.use(
     (response: AxiosResponse) => {
@@ -45,7 +68,63 @@ axiosInstance.interceptors.response.use(
         response.data = normalizeApiResponse(response.data);
         return response;
     },
-    (error) => {
+    async (error) => {
+        const originalRequest = error.config;
+
+        // Nếu lỗi 401 và chưa được retry
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            if (isRefreshing) {
+                return new Promise(function (resolve, reject) {
+                    failedQueue.push({ resolve, reject });
+                })
+                    .then((token) => {
+                        originalRequest.headers['Authorization'] = 'Bearer ' + token;
+                        return axiosInstance(originalRequest);
+                    })
+                    .catch((err) => {
+                        return Promise.reject(err);
+                    });
+            }
+
+            originalRequest._retry = true;
+            isRefreshing = true;
+
+            const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+
+            if (refreshToken) {
+                try {
+                    // Gọi trực tiếp axios để tránh circular dependency với authApi/axiosInstance
+                    const res = await axios.post(`${API_BASE_URL}/Auth/refresh-token`, {
+                        refreshToken,
+                    });
+
+                    // Server trả về ApiResponse<AuthResponse>
+                    const normalized = normalizeApiResponse<any>(res.data);
+                    
+                    if (normalized.succeeded && normalized.data) {
+                        const { accessToken, refreshToken: newRefreshToken } = normalized.data;
+
+                        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+                        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken);
+
+                        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+                        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+
+                        processQueue(null, accessToken);
+                        return axiosInstance(originalRequest);
+                    }
+                } catch (refreshError) {
+                    processQueue(refreshError, null);
+                    // Logout và redirect nếu refresh thất bại
+                    localStorage.clear();
+                    window.location.href = '/login';
+                    return Promise.reject(refreshError);
+                } finally {
+                    isRefreshing = false;
+                }
+            }
+        }
+
         // Axios throw khi status 4xx/5xx
         const data = error.response?.data;
         const normalized = data ? normalizeApiResponse(data as Record<string, unknown>) : null;
