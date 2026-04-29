@@ -19,6 +19,7 @@ interface AuthContextType {
     accessToken: string | null;
     isLoading: boolean;
     login: (email: string, password: string) => Promise<Role>;
+    googleLogin: (idToken: string) => Promise<Role>;
     register: (data: RegisterRequest) => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -130,6 +131,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return mappedRole;
     }, []);
 
+    // ── Google Login ─────────────────────────────────────────────
+    const googleLogin = useCallback(async (idToken: string): Promise<Role> => {
+        const result = await authApi.googleLogin(idToken);
+        const data = result.data!;
+
+        saveAuthToStorage(data);
+        setAccessToken(data.accessToken);
+        setUser({ userId: data.userId, fullName: data.fullName, email: data.email, role: data.role });
+        const mappedRole = mapRole(data.role);
+        setRole(mappedRole);
+        return mappedRole;
+    }, []);
+
     // ── Register: chỉ gọi API, KHÔNG set state, để user tự login ─
     const register = useCallback(async (data: RegisterRequest): Promise<void> => {
         await authApi.register(data);
@@ -151,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     return (
-        <AuthContext.Provider value={{ role, user, accessToken, isLoading, login, register, logout }}>
+        <AuthContext.Provider value={{ role, user, accessToken, isLoading, login, googleLogin, register, logout }}>
             {children}
         </AuthContext.Provider>
     );

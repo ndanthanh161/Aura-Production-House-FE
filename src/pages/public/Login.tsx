@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Loader2 } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import logoColor from '../../assets/LOGO COLOR.png';
 
 const Login: React.FC = () => {
@@ -11,7 +12,7 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, googleLogin } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -33,6 +34,29 @@ const Login: React.FC = () => {
         } catch (err) {
             console.error('Login error:', err);
             setError(err instanceof Error ? err.message : 'Đăng nhập thất bại. Vui lòng thử lại.');
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
+        if (!credentialResponse.credential) {
+            setError('Google login failed: No credential received.');
+            return;
+        }
+        setError('');
+        setLoading(true);
+        try {
+            const role = await googleLogin(credentialResponse.credential);
+            if (role === 'admin') {
+                navigate('/admin', { replace: true });
+            } else if (role === 'photographer') {
+                navigate('/photographer', { replace: true });
+            } else {
+                navigate('/', { replace: true });
+            }
+        } catch (err) {
+            console.error('Google login error:', err);
+            setError(err instanceof Error ? err.message : 'Đăng nhập Google thất bại.');
             setLoading(false);
         }
     };
@@ -173,15 +197,18 @@ const Login: React.FC = () => {
                             <div style={{ flex: 1, height: '1px', backgroundColor: '#E5E7EB' }} />
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                            <button type="button" style={socialButtonStyle}>
-                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style={{ width: '18px', height: '18px' }} />
-                                Đăng nhập với Google
-                            </button>
-                            <button type="button" style={socialButtonStyle}>
-                                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" style={{ width: '18px', height: '18px' }} />
-                                Đăng nhập với Facebook
-                            </button>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', alignItems: 'center' }}>
+                            <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                                <GoogleLogin
+                                    onSuccess={handleGoogleSuccess}
+                                    onError={() => setError('Đăng nhập Google thất bại.')}
+                                    size="large"
+                                    width="400"
+                                    text="signin_with"
+                                    shape="rectangular"
+                                    logo_alignment="center"
+                                />
+                            </div>
                         </div>
 
                         <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#666' }}>

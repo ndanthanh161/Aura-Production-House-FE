@@ -14,6 +14,11 @@ export const authApi = {
         return res.data;
     },
 
+    googleLogin: async (idToken: string): Promise<ApiResponse<AuthResponse>> => {
+        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('/Auth/google-login', { idToken });
+        return res.data;
+    },
+
     register: async (data: RegisterRequest): Promise<ApiResponse<AuthResponse>> => {
         const res = await axiosInstance.post<ApiResponse<AuthResponse>>('/Auth/register', data);
         return res.data;
@@ -36,3 +41,4 @@ export const authApi = {
         return res.data;
     },
 };
+
