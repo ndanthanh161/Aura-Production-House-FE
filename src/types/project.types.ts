@@ -20,6 +20,7 @@ export interface Project {
     deposit: number;
     deadline: string;
     description?: string;
+    resultLink?: string;
     benefits: string[];
     createdAt: string;
     updatedAt: string;
@@ -54,9 +55,11 @@ export interface CreateProjectRequest {
 export interface UpdateProjectRequest {
     id: string;
     name: string;
-    staffId: string;
+    staffId?: string;
     status: ProjectStatus;
     revenue: number;
+    deposit: number;
     deadline: string;
     description?: string;
+    resultLink?: string;
 }

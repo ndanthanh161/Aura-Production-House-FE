@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarDays, X, RefreshCw, Ban, Search, Loader2, Clock, CheckCircle, XCircle, AlertCircle, UserPlus, Edit3 } from 'lucide-react';
+import { CalendarDays, X, RefreshCw, Ban, Search, Loader2, Clock, CheckCircle, XCircle, AlertCircle, UserPlus, Edit3, ExternalLink } from 'lucide-react';
 import { projectApi } from '../../services/projectApi';
 import { photographerApi } from '../../services/userApi';
-import type { Project, ProjectStatus } from '../../types/project.types';
+import type { Project, ProjectStatus, UpdateProjectRequest } from '../../types/project.types';
 import type { UserDTO } from '../../types/user.types';
 
 const STATUS_CONFIG: Record<ProjectStatus, { label: string; color: string }> = {
@@ -26,8 +26,12 @@ const AdminBookings: React.FC = () => {
     const [photographers, setPhotographers] = useState<UserDTO[]>([]);
     const [selectedPhotographer, setSelectedPhotographer] = useState('');
     const [newDate, setNewDate] = useState('');
+    
+    // Edit/Update state
     const [statusUpdateId, setStatusUpdateId] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<ProjectStatus>('InProduction');
+    const [resultLink, setResultLink] = useState('');
+    
     const [saving, setSaving] = useState(false);
 
     const fetchBookings = async () => {
@@ -98,18 +102,39 @@ const AdminBookings: React.FC = () => {
         }
     };
 
-    const handleUpdateStatus = async () => {
+    const handleUpdateProject = async () => {
         if (!statusUpdateId) return;
+        const project = bookings.find(b => b.id === statusUpdateId);
+        if (!project) return;
+
         setSaving(true);
         try {
-            await projectApi.updateStatus(statusUpdateId, selectedStatus);
+            const updateReq: UpdateProjectRequest = {
+                id: project.id,
+                name: project.name,
+                staffId: project.staffId,
+                status: selectedStatus,
+                revenue: project.revenue,
+                deposit: project.deposit,
+                deadline: project.deadline,
+                description: project.description,
+                resultLink: resultLink
+            };
+            await projectApi.update(updateReq);
             setStatusUpdateId(null);
+            setResultLink('');
             fetchBookings();
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Cập nhật trạng thái thất bại.');
+            setError(err instanceof Error ? err.message : 'Cập nhật thất bại.');
         } finally {
             setSaving(false);
         }
+    };
+
+    const openStatusModal = (project: Project) => {
+        setStatusUpdateId(project.id);
+        setSelectedStatus(project.status);
+        setResultLink(project.resultLink || '');
     };
 
     const fmtDate = (d: string) => new Date(d).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -144,7 +169,7 @@ const AdminBookings: React.FC = () => {
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'rgba(255,255,255,0.02)' }}>
-                                {['Dự án', 'Khách hàng', 'Photographer', 'Tiền cọc', 'Giá gói', 'Dự kiến', 'Trạng thái', 'Thao tác'].map(h => (
+                                {['Dự án', 'Khách hàng', 'Photographer', 'Giá gói', 'Dự kiến', 'Trạng thái', 'Thao tác'].map(h => (
                                     <th key={h} style={{ padding: '1rem 1.25rem', textAlign: 'left', fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
                                 ))}
                             </tr>
@@ -152,7 +177,7 @@ const AdminBookings: React.FC = () => {
                         <tbody>
                             {filtered.map((b, i) => {
                                 const cfg = STATUS_CONFIG[b.status] || STATUS_CONFIG.Scheduled;
-                                const isActive = b.status !== 'Completed' && b.status !== 'Cancelled';
+                                const isActive = b.status !== 'Cancelled';
                                 const fmtMoney = (n?: number) => n ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n) : '—';
                                 return (
                                     <motion.tr key={b.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
@@ -165,7 +190,6 @@ const AdminBookings: React.FC = () => {
                                         <td style={{ padding: '1rem 1.25rem', color: b.staffName ? 'var(--color-text)' : 'var(--color-text-muted)', fontSize: '0.875rem' }}>
                                             {b.staffName || '—'}
                                         </td>
-                                        <td style={{ padding: '1rem 1.25rem', color: 'var(--color-accent)', fontSize: '0.875rem', fontWeight: 600 }}>{fmtMoney(b.deposit)}</td>
                                         <td style={{ padding: '1rem 1.25rem', color: 'var(--color-text)', fontSize: '0.875rem' }}>{fmtMoney(b.revenue)}</td>
                                         <td style={{ padding: '1rem 1.25rem' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text)', fontSize: '0.875rem' }}>
@@ -174,33 +198,44 @@ const AdminBookings: React.FC = () => {
                                         </td>
 
                                         <td style={{ padding: '1rem 1.25rem' }}>
-                                            <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 600, color: cfg.color }}>
-                                                {cfg.label}
-                                            </span>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: '0.75rem', fontWeight: 600, color: cfg.color }}>
+                                                    {cfg.label}
+                                                </span>
+                                                {b.resultLink && (
+                                                    <a href={b.resultLink} target="_blank" rel="noreferrer" style={{ fontSize: '0.7rem', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <ExternalLink size={10} /> Đã có link Drive
+                                                    </a>
+                                                )}
+                                            </div>
                                         </td>
                                         <td style={{ padding: '1rem 1.25rem' }}>
-                                            {isActive && (
-                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                    <button onClick={() => { setRescheduleId(b.id); setNewDate(''); }} style={btnIcon} title="Đổi lịch">
-                                                        <RefreshCw size={15} />
-                                                    </button>
-                                                    <button onClick={() => { setStatusUpdateId(b.id); setSelectedStatus(b.status); }} style={btnIcon} title="Cập nhật trạng thái">
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                {b.status !== 'Cancelled' && b.status !== 'Completed' && (
+                                                    <>
+                                                        <button onClick={() => { setRescheduleId(b.id); setNewDate(''); }} style={btnIcon} title="Đổi lịch">
+                                                            <RefreshCw size={15} />
+                                                        </button>
+                                                        <button onClick={() => { setAssignId(b.id); setSelectedPhotographer(b.staffId || ''); }} style={btnIcon} title="Phân công">
+                                                            <UserPlus size={15} />
+                                                        </button>
+                                                        <button onClick={() => handleCancel(b.id, b.name)} style={btnIconDanger} title="Hủy">
+                                                            <Ban size={15} />
+                                                        </button>
+                                                    </>
+                                                )}
+                                                {b.status !== 'Cancelled' && (
+                                                    <button onClick={() => openStatusModal(b)} style={btnIcon} title="Cập nhật trạng thái & link Drive">
                                                         <Edit3 size={15} />
                                                     </button>
-                                                    <button onClick={() => { setAssignId(b.id); setSelectedPhotographer(b.staffId || ''); }} style={btnIcon} title="Phân công">
-                                                        <UserPlus size={15} />
-                                                    </button>
-                                                    <button onClick={() => handleCancel(b.id, b.name)} style={btnIconDanger} title="Hủy">
-                                                        <Ban size={15} />
-                                                    </button>
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
                                         </td>
                                     </motion.tr>
                                 );
                             })}
                             {filtered.length === 0 && (
-                                <tr><td colSpan={6} style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>Không có booking nào.</td></tr>
+                                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>Không có booking nào.</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -256,27 +291,55 @@ const AdminBookings: React.FC = () => {
                 </div>
             )}
 
-            {/* Status Update Modal */}
+            {/* Status & ResultLink Update Modal */}
             {statusUpdateId && (
                 <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setStatusUpdateId(null)}>
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={modalStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Cập Nhật Trạng Thái</h2>
+                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Cập Nhật Dự Án</h2>
                             <button onClick={() => setStatusUpdateId(null)} style={{ color: 'var(--color-text-muted)' }}><X size={20} /></button>
                         </div>
-                        <label style={labelStyle}>Trạng thái mới *</label>
-                        <select
-                            value={selectedStatus}
-                            onChange={e => setSelectedStatus(e.target.value as ProjectStatus)}
-                            style={{ ...inputStyle, marginBottom: '1.25rem', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'white\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
-                        >
-                            {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
-                                <option key={key} value={key}>{cfg.label}</option>
-                            ))}
-                        </select>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '1.5rem' }}>
+                            <div>
+                                <label style={labelStyle}>Trạng thái dự án</label>
+                                <select
+                                    value={selectedStatus}
+                                    disabled={bookings.find(b => b.id === statusUpdateId)?.status === 'Completed'}
+                                    onChange={e => setSelectedStatus(e.target.value as ProjectStatus)}
+                                    style={{ 
+                                        ...inputStyle, 
+                                        opacity: bookings.find(b => b.id === statusUpdateId)?.status === 'Completed' ? 0.6 : 1,
+                                        cursor: bookings.find(b => b.id === statusUpdateId)?.status === 'Completed' ? 'not-allowed' : 'pointer',
+                                        appearance: 'none', 
+                                        backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'white\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', 
+                                        backgroundRepeat: 'no-repeat', 
+                                        backgroundPosition: 'right 1rem center', 
+                                        backgroundSize: '1em' 
+                                    }}
+                                >
+                                    {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+                                        <option key={key} value={key}>{cfg.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style={labelStyle}>Link bàn giao (Google Drive)</label>
+                                <input 
+                                    type="url" 
+                                    placeholder="https://drive.google.com/..." 
+                                    value={resultLink}
+                                    onChange={e => setResultLink(e.target.value)}
+                                    style={inputStyle}
+                                />
+                                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.4rem' }}>Khách hàng sẽ thấy link này trong mục "Dự án của tôi"</p>
+                            </div>
+                        </div>
+
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
-                            <button onClick={handleUpdateStatus} disabled={saving} style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }}>
-                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={16} />} Cập Nhật
+                            <button onClick={handleUpdateProject} disabled={saving} style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }}>
+                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={16} />} Lưu Thay Đổi
                             </button>
                             <button onClick={() => setStatusUpdateId(null)} style={btnSecondary}>Huỷ</button>
                         </div>

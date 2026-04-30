@@ -355,10 +355,16 @@ const MyBookings: React.FC = () => {
                                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                             <Button
                                                 variant="ghost"
-                                                onClick={() => navigate('/portfolio')}
+                                                onClick={() => {
+                                                    if (booking.resultLink) {
+                                                        window.open(booking.resultLink, '_blank');
+                                                    } else {
+                                                        navigate('/portfolio');
+                                                    }
+                                                }}
                                                 style={{ gap: '10px' }}
                                             >
-                                                Xem chi tiết <ArrowRight size={18} />
+                                                {booking.resultLink ? 'Xem sản phẩm' : 'Xem chi tiết'} <ArrowRight size={18} />
                                             </Button>
                                         </div>
                                     </motion.div>

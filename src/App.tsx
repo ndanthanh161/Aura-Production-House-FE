@@ -27,13 +27,16 @@ import AdminPhotographers from './pages/admin/Photographers';
 import AdminBookings from './pages/admin/Bookings';
 import AdminCustomers from './pages/admin/Customers';
 import AdminStatistics from './pages/admin/Statistics';
+import AdminAIKnowledge from './pages/admin/AIKnowledge';
 
 import { ScrollToTop } from './components/ScrollToTop';
+import ChatWidget from './components/ChatWidget';
 
 function App() {
   return (
     <>
       <ScrollToTop />
+      <ChatWidget />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<PublicLayout />}>
@@ -81,6 +84,7 @@ function App() {
           <Route path="projects" element={<AdminBookings />} />
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="statistics" element={<AdminStatistics />} />
+          <Route path="ai" element={<AdminAIKnowledge />} />
         </Route>
       </Routes>
     </>

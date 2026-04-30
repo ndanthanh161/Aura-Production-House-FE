@@ -40,7 +40,7 @@ const PhotographerOverview: React.FC = () => {
         load();
     }, []);
 
-    const active = schedules.filter(s => s.status === 'InProduction' || s.status === 'Scheduled' || s.status === 'PreProduction');
+    const active = schedules.filter(s => s.status === 'InProduction' || s.status === 'Scheduled');
     const completed = schedules.filter(s => s.status === 'Completed');
 
     const kpis = [

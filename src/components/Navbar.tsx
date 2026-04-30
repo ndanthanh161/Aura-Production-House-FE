@@ -11,7 +11,7 @@ const pageTitleMap: Record<string, string> = {
     '/packages': 'GÓI DỊCH VỤ',
     '/about': 'GIỚI THIỆU',
     '/contact': 'LIÊN HỆ',
-    '/projects': 'LỊCH HẸN',
+    '/projects': 'DỰ ÁN CỦA TÔI',
     '/login': 'ĐĂNG NHẬP',
     '/register': 'ĐĂNG KÝ',
 };
@@ -108,7 +108,7 @@ export const Navbar: React.FC = () => {
                     style={linkStyle(isActive('/projects'))}
                     className="hover-link"
                 >
-                    LỊCH HẸN
+                    DỰ ÁN CỦA TÔI
                 </Link>
             )}
             {role === 'admin' && (
@@ -196,7 +196,7 @@ export const Navbar: React.FC = () => {
                     }}>
                         <span style={{
                             fontFamily: 'var(--font-sans)', fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
-                            fontWeight: 300, letterSpacing: '0.3em', color: 'var(--color-text)', textTransform: 'uppercase',
+                            fontWeight: 300, letterSpacing: '0.05em', color: 'var(--color-text)', textTransform: 'uppercase',
                         }}>
                             {pageTitle}
                         </span>
@@ -269,7 +269,7 @@ export const Navbar: React.FC = () => {
                             style={homeLinkStyle(isActive('/projects'))}
                             className="hover-link-dark"
                         >
-                            Dự Án
+                            Dự Án Của Tôi
                         </Link>
                     )}
                     {role === 'admin' && (
