@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Search, Edit2, X, Check, Loader2, Mail, Phone, Calendar } from 'lucide-react';
+import { Users, Search, Edit2, X, Check, Loader2, Mail, Phone, Calendar, Lock } from 'lucide-react';
 import { customerApi } from '../../services/userApi';
 import type { UserDTO, UpdateUserRequest } from '../../types/user.types';
 
@@ -43,6 +43,16 @@ const AdminCustomers: React.FC = () => {
         setEditItem(c);
         setForm({ id: c.id, fullName: c.fullName, phone: c.phone || '' });
         setShowModal(true);
+    };
+
+    const handleDeactivate = async (id: string, name: string) => {
+        if (!confirm(`Bạn có chắc muốn KHÓA tài khoản của khách hàng "${name}"?`)) return;
+        try {
+            await customerApi.deactivate(id);
+            fetch();
+        } catch {
+            setError('Khóa tài khoản thất bại.');
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -137,9 +147,14 @@ const AdminCustomers: React.FC = () => {
                                             </div>
                                         </td>
                                         <td style={{ padding: '1rem 1.25rem' }}>
-                                            <button onClick={() => openEdit(c)} style={btnSecondary}>
-                                                <Edit2 size={14} /> Chỉnh sửa
-                                            </button>
+                                            <div style={{ display: 'flex', gap: '8px' }}>
+                                                <button onClick={() => openEdit(c)} style={btnSecondary}>
+                                                    <Edit2 size={14} /> Sửa
+                                                </button>
+                                                <button onClick={() => handleDeactivate(c.id, c.fullName)} style={btnDanger} title="Khóa tài khoản">
+                                                    <Lock size={14} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </motion.tr>
                                 ))}
@@ -192,6 +207,7 @@ const AdminCustomers: React.FC = () => {
 
 const btnPrimary: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: 'var(--color-accent)', color: 'var(--color-bg)', padding: '0.6rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, borderRadius: '6px', cursor: 'pointer', border: 'none' };
 const btnSecondary: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'transparent', color: 'var(--color-text-muted)', padding: '0.5rem 1rem', fontSize: '0.875rem', fontWeight: 500, borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--color-border)' };
+const btnDanger: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', border: 'none' };
 const alertStyle: React.CSSProperties = { backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.75rem 1rem', borderRadius: '6px', fontSize: '0.875rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
 const centerStyle: React.CSSProperties = { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4rem' };
 const overlayStyle: React.CSSProperties = { position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 };

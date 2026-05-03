@@ -17,7 +17,7 @@ export interface Project {
     staffName?: string;
     status: ProjectStatus;
     revenue: number;
-    deposit: number;
+
     deadline: string;
     description?: string;
     resultLink?: string;
@@ -48,7 +48,7 @@ export interface CreateProjectRequest {
     name: string;
     clientId: string;
     packageId: string;
-    deposit: number;
+
     description?: string;
 }
 
@@ -58,7 +58,7 @@ export interface UpdateProjectRequest {
     staffId?: string;
     status: ProjectStatus;
     revenue: number;
-    deposit: number;
+
     deadline: string;
     description?: string;
     resultLink?: string;

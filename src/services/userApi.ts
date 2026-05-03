@@ -48,4 +48,8 @@ export const customerApi = {
         const res = await axiosInstance.put<ApiResponse<UserDTO>>('/v1/Customer', data);
         return res.data;
     },
+    deactivate: async (id: string): Promise<ApiResponse<string>> => {
+        const res = await axiosInstance.patch<ApiResponse<string>>(`/v1/Customer/${id}/deactivate`);
+        return res.data;
+    },
 };

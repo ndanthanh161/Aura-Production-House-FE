@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Calendar, Clock, CheckCircle2, XCircle, AlertCircle,
     ChevronRight, ChevronLeft, CalendarDays, Loader2, X,
-    ArrowRight
+    ArrowRight, CreditCard
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { projectApi } from '../../services/projectApi';
@@ -336,23 +335,28 @@ const MyBookings: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-
                                                     <div>
-                                                        <span style={{ display: 'block', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em' }}>Tiền cọc</span>
-                                                        <span style={{ fontWeight: 600, color: 'var(--color-accent)' }}>{formatMoney(booking.deposit)}</span>
-                                                    </div>
-                                                </div>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-
-                                                    <div>
-                                                        <span style={{ display: 'block', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em' }}>Giá gói</span>
-                                                        <span style={{ fontWeight: 600, color: 'var(--color-text)' }}>{formatMoney(booking.revenue)}</span>
+                                                        <span style={{ display: 'block', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em' }}>Tổng thanh toán</span>
+                                                        <span style={{ fontWeight: 600, color: 'var(--color-accent)' }}>{formatMoney(booking.revenue)}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                            {booking.status === 'Scheduled' && (
+                                                <Button
+                                                    onClick={() => navigate(`/purchase/${booking.packageId}?projectId=${booking.id}`)}
+                                                    style={{ 
+                                                        backgroundColor: 'var(--color-accent)', 
+                                                        color: 'var(--color-bg)',
+                                                        fontWeight: 800,
+                                                        gap: '8px'
+                                                    }}
+                                                >
+                                                    <CreditCard size={18} /> Thanh toán ngay
+                                                </Button>
+                                            )}
                                             <Button
                                                 variant="ghost"
                                                 onClick={() => {

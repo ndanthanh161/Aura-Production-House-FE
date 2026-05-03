@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Edit2, UserX, Briefcase, X, Check, Loader2, Search, Phone, Mail } from 'lucide-react';
+import { Camera, Edit2, Briefcase, X, Check, Loader2, Search, Phone, Mail, Lock } from 'lucide-react';
 import { photographerApi } from '../../services/userApi';
-import type { UserDTO, UpdateUserRequest, CreatePhotographerRequest } from '../../types/user.types';
+import type { UserDTO, CreatePhotographerRequest } from '../../types/user.types';
 
 const AdminPhotographers: React.FC = () => {
     const [photographers, setPhotographers] = useState<UserDTO[]>([]);
@@ -13,8 +13,8 @@ const AdminPhotographers: React.FC = () => {
     const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editItem, setEditItem] = useState<UserDTO | null>(null);
-    const [form, setForm] = useState<CreatePhotographerRequest & { id?: string, role: string }>({ 
-        fullName: '', email: '', password: '', phone: '', role: 'Photographer' 
+    const [form, setForm] = useState<CreatePhotographerRequest & { id?: string, role: string }>({
+        fullName: '', email: '', password: '', phone: '', role: 'Photographer'
     });
 
     const fetch = async () => {
@@ -71,12 +71,12 @@ const AdminPhotographers: React.FC = () => {
     };
 
     const handleDeactivate = async (id: string, name: string) => {
-        if (!confirm(`Vô hiệu hóa photographer "${name}"?`)) return;
+        if (!confirm(`Bạn có chắc muốn KHÓA tài khoản của photographer "${name}"?`)) return;
         try {
             await photographerApi.deactivate(id);
             fetch();
         } catch {
-            setError('Vô hiệu hóa thất bại.');
+            setError('Khóa tài khoản thất bại.');
         }
     };
 
@@ -175,8 +175,8 @@ const AdminPhotographers: React.FC = () => {
                                     <button onClick={() => openEdit(p)} style={{ ...btnSecondary, flex: 1, justifyContent: 'center' }}>
                                         <Edit2 size={14} /> Chỉnh sửa
                                     </button>
-                                    <button onClick={() => handleDeactivate(p.id, p.fullName)} style={btnDanger}>
-                                        <UserX size={14} />
+                                    <button onClick={() => handleDeactivate(p.id, p.fullName)} style={btnDanger} title="Khóa tài khoản">
+                                        <Lock size={14} />
                                     </button>
                                 </div>
                             )}
@@ -222,7 +222,7 @@ const AdminPhotographers: React.FC = () => {
                                 )}
                                 <div>
                                     <label style={labelStyle}>Vai trò</label>
-                                    <input 
+                                    <input
                                         disabled
                                         value="Photographer"
                                         style={{ ...inputStyle, backgroundColor: 'rgba(255,255,255,0.05)', cursor: 'not-allowed' }}

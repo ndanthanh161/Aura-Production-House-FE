@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarDays, X, RefreshCw, Ban, Search, Loader2, Clock, CheckCircle, XCircle, AlertCircle, UserPlus, Edit3, ExternalLink } from 'lucide-react';
+import { X, RefreshCw, Ban, Search, Loader2, CheckCircle, UserPlus, Edit3, ExternalLink } from 'lucide-react';
 import { projectApi } from '../../services/projectApi';
 import { photographerApi } from '../../services/userApi';
 import type { Project, ProjectStatus, UpdateProjectRequest } from '../../types/project.types';
@@ -26,13 +26,14 @@ const AdminBookings: React.FC = () => {
     const [photographers, setPhotographers] = useState<UserDTO[]>([]);
     const [selectedPhotographer, setSelectedPhotographer] = useState('');
     const [newDate, setNewDate] = useState('');
-    
+
     // Edit/Update state
     const [statusUpdateId, setStatusUpdateId] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<ProjectStatus>('InProduction');
     const [resultLink, setResultLink] = useState('');
-    
+
     const [saving, setSaving] = useState(false);
+    const [viewProject, setViewProject] = useState<Project | null>(null);
 
     const fetchBookings = async () => {
         try {
@@ -115,7 +116,7 @@ const AdminBookings: React.FC = () => {
                 staffId: project.staffId,
                 status: selectedStatus,
                 revenue: project.revenue,
-                deposit: project.deposit,
+
                 deadline: project.deadline,
                 description: project.description,
                 resultLink: resultLink
@@ -177,13 +178,17 @@ const AdminBookings: React.FC = () => {
                         <tbody>
                             {filtered.map((b, i) => {
                                 const cfg = STATUS_CONFIG[b.status] || STATUS_CONFIG.Scheduled;
-                                const isActive = b.status !== 'Cancelled';
                                 const fmtMoney = (n?: number) => n ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n) : '—';
                                 return (
                                     <motion.tr key={b.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
                                         style={{ borderBottom: '1px solid var(--color-border)' }}>
                                         <td style={{ padding: '1rem 1.25rem' }}>
-                                            <div style={{ fontWeight: 600, color: 'var(--color-text)', fontSize: '0.9rem' }}>{b.name}</div>
+                                            <div
+                                                onClick={() => setViewProject(b)}
+                                                style={{ fontWeight: 600, color: 'var(--color-accent)', fontSize: '0.9rem', cursor: 'pointer', textDecoration: 'underline' }}
+                                            >
+                                                {b.name}
+                                            </div>
                                             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{b.packageName}</div>
                                         </td>
                                         <td style={{ padding: '1rem 1.25rem', color: 'var(--color-text)', fontSize: '0.875rem' }}>{b.clientName}</td>
@@ -239,6 +244,67 @@ const AdminBookings: React.FC = () => {
                             )}
                         </tbody>
                     </table>
+                </div>
+            )}
+
+            {/* Project Details Modal */}
+            {viewProject && (
+                <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setViewProject(null)}>
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ ...modalStyle, maxWidth: '600px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '1rem' }}>
+                            <div>
+                                <h2 style={{ fontWeight: 800, color: 'var(--color-accent)', fontSize: '1.5rem' }}>Chi tiết dự án</h2>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Mã: {viewProject.id}</p>
+                            </div>
+                            <button onClick={() => setViewProject(null)} style={{ color: 'var(--color-text-muted)', height: 'fit-content', background: 'none', border: 'none', cursor: 'pointer' }}><X size={24} /></button>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+                            <div>
+                                <label style={labelStyle}>Tên dự án</label>
+                                <p style={{ fontWeight: 600, color: 'var(--color-text)' }}>{viewProject.name}</p>
+                            </div>
+                            <div>
+                                <label style={labelStyle}>Gói dịch vụ</label>
+                                <p style={{ fontWeight: 600, color: 'var(--color-text)' }}>{viewProject.packageName}</p>
+                            </div>
+                            <div>
+                                <label style={labelStyle}>Khách hàng</label>
+                                <p style={{ color: 'var(--color-text)' }}>{viewProject.clientName}</p>
+                            </div>
+                            <div>
+                                <label style={labelStyle}>Photographer</label>
+                                <p style={{ color: 'var(--color-text)' }}>{viewProject.staffName || 'Chưa phân công'}</p>
+                            </div>
+                            <div>
+                                <label style={labelStyle}>Ngày chụp dự kiến</label>
+                                <p style={{ color: 'var(--color-text)' }}>{fmtDate(viewProject.deadline)}</p>
+                            </div>
+                            <div>
+                                <label style={labelStyle}>Tổng doanh thu</label>
+                                <p style={{ fontWeight: 700, color: 'var(--color-accent)' }}>
+                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(viewProject.revenue)}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style={{ padding: '1.5rem', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
+                            <label style={labelStyle}>Yêu cầu đặc biệt từ khách hàng</label>
+                            <p style={{
+                                whiteSpace: 'pre-wrap',
+                                fontSize: '0.95rem',
+                                color: 'var(--color-text)',
+                                lineHeight: 1.6,
+                                fontStyle: viewProject.description ? 'normal' : 'italic'
+                            }}>
+                                {viewProject.description || 'Không có ghi chú thêm.'}
+                            </p>
+                        </div>
+
+                        <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
+                            <button onClick={() => setViewProject(null)} style={btnPrimary}>Đóng</button>
+                        </div>
+                    </motion.div>
                 </div>
             )}
 
@@ -299,7 +365,7 @@ const AdminBookings: React.FC = () => {
                             <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Cập Nhật Dự Án</h2>
                             <button onClick={() => setStatusUpdateId(null)} style={{ color: 'var(--color-text-muted)' }}><X size={20} /></button>
                         </div>
-                        
+
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '1.5rem' }}>
                             <div>
                                 <label style={labelStyle}>Trạng thái dự án</label>
@@ -307,15 +373,15 @@ const AdminBookings: React.FC = () => {
                                     value={selectedStatus}
                                     disabled={bookings.find(b => b.id === statusUpdateId)?.status === 'Completed'}
                                     onChange={e => setSelectedStatus(e.target.value as ProjectStatus)}
-                                    style={{ 
-                                        ...inputStyle, 
+                                    style={{
+                                        ...inputStyle,
                                         opacity: bookings.find(b => b.id === statusUpdateId)?.status === 'Completed' ? 0.6 : 1,
                                         cursor: bookings.find(b => b.id === statusUpdateId)?.status === 'Completed' ? 'not-allowed' : 'pointer',
-                                        appearance: 'none', 
-                                        backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'white\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', 
-                                        backgroundRepeat: 'no-repeat', 
-                                        backgroundPosition: 'right 1rem center', 
-                                        backgroundSize: '1em' 
+                                        appearance: 'none',
+                                        backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'white\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")',
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: 'right 1rem center',
+                                        backgroundSize: '1em'
                                     }}
                                 >
                                     {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
@@ -326,9 +392,9 @@ const AdminBookings: React.FC = () => {
 
                             <div>
                                 <label style={labelStyle}>Link bàn giao (Google Drive)</label>
-                                <input 
-                                    type="url" 
-                                    placeholder="https://drive.google.com/..." 
+                                <input
+                                    type="url"
+                                    placeholder="https://drive.google.com/..."
                                     value={resultLink}
                                     onChange={e => setResultLink(e.target.value)}
                                     style={inputStyle}
