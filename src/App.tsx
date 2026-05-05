@@ -28,6 +28,7 @@ import AdminBookings from './pages/admin/Bookings';
 import AdminCustomers from './pages/admin/Customers';
 import AdminStatistics from './pages/admin/Statistics';
 import AdminAIKnowledge from './pages/admin/AIKnowledge';
+import AdminPortfolio from './pages/admin/Portfolio';
 
 import { ScrollToTop } from './components/ScrollToTop';
 import ChatWidget from './components/ChatWidget';
@@ -85,6 +86,7 @@ function App() {
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="statistics" element={<AdminStatistics />} />
           <Route path="ai" element={<AdminAIKnowledge />} />
+          <Route path="portfolio" element={<AdminPortfolio />} />
         </Route>
       </Routes>
     </>

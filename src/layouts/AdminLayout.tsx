@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, Users, LogOut, Camera, CalendarCheck, BarChart3, Bot } from 'lucide-react';
+import { LayoutDashboard, Package, Users, LogOut, Camera, CalendarCheck, BarChart3, Bot, Image } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const AdminLayout: React.FC = () => {
@@ -19,6 +19,7 @@ export const AdminLayout: React.FC = () => {
         { name: 'AI Trí Tuệ', path: '/admin/ai', icon: <Bot size={20} /> },
         { name: 'Photographer', path: '/admin/photographers', icon: <Camera size={20} /> },
         { name: 'Dự Án', path: '/admin/projects', icon: <CalendarCheck size={20} /> },
+        { name: 'Portfolio', path: '/admin/portfolio', icon: <Image size={20} /> },
         { name: 'Khách Hàng', path: '/admin/customers', icon: <Users size={20} /> },
         { name: 'Thống Kê', path: '/admin/statistics', icon: <BarChart3 size={20} /> },
     ];
