@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Mail, Phone, Calendar, User, Loader2, X, ShieldCheck } from 'lucide-react';
+import { Search, Mail, Phone, Calendar, User, Loader2, X } from 'lucide-react';
 import { customerApi } from '../../services/userApi';
 import type { UserDTO } from '../../types/user.types';
 

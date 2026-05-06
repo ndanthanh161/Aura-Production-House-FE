@@ -6,7 +6,6 @@ import { photographerApi } from '../../services/userApi';
 import { useAuth } from '../../context/AuthContext';
 import type { Project } from '../../types/project.types';
 import type { UserDTO } from '../../types/user.types';
-import { Link } from 'react-router-dom';
 
 const STATUS_COLORS: Record<string, string> = {
     Scheduled: '#3b82f6',

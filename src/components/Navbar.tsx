@@ -84,15 +84,6 @@ export const Navbar: React.FC = () => {
 
     const authSection = (
         <>
-            {role === 'staff' && (
-                <Link
-                    to="/staff"
-                    style={linkStyle(location.pathname.startsWith('/staff'))}
-                    className="hover-link"
-                >
-                    Thống Kê
-                </Link>
-            )}
             {role === 'photographer' && (
                 <Link
                     to="/photographer"
@@ -245,15 +236,6 @@ export const Navbar: React.FC = () => {
 
                 {/* Auth links */}
                 <div className="nav-group right-auth" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginLeft: '2.5rem' }}>
-                    {role === 'staff' && (
-                        <Link
-                            to="/staff"
-                            style={homeLinkStyle(location.pathname.startsWith('/staff'))}
-                            className="hover-link-dark"
-                        >
-                            Thống Kê
-                        </Link>
-                    )}
                     {role === 'photographer' && (
                         <Link
                             to="/photographer"

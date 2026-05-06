@@ -84,85 +84,82 @@ const Portfolio: React.FC = () => {
                     style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px', backgroundColor: 'var(--color-bg)' }}
                 >
                     <AnimatePresence mode='popLayout'>
-                        {filteredItems.map((item) => {
-                            const thumbnail = item.thumbnailUrl || item.mediaItems.find(m => m.mediaType === 'image')?.url;
-                            return (
-                                <motion.div
-                                    key={item.id}
-                                    layout
-                                    initial={{ opacity: 0 }}
-                                    whileInView={{ opacity: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.8 }}
-                                    className="portfolio-item-cinematic"
-                                    style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
-                                    onClick={() => setSelectedItem(item)}
-                                >
-                                    <div style={{ aspectRatio: '21/9', overflow: 'hidden', backgroundColor: '#111' }}>
-                                        {(() => {
-                                            const video = item.mediaItems.find(m => m.mediaType === 'video');
-                                            if (video) {
-                                                return (
-                                                    <video
-                                                        src={video.url}
-                                                        autoPlay
-                                                        muted
-                                                        loop
-                                                        playsInline
-                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                    />
-                                                );
-                                            }
-                                            const thumbnail = item.thumbnailUrl || item.mediaItems.find(m => m.mediaType === 'image')?.url;
-                                            return thumbnail ? (
-                                                <motion.img
-                                                    src={thumbnail}
-                                                    alt={item.title}
-                                                    whileHover={{ scale: 1.05 }}
-                                                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                        {filteredItems.map((item) => (
+                            <motion.div
+                                key={item.id}
+                                layout
+                                initial={{ opacity: 0 }}
+                                whileInView={{ opacity: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.8 }}
+                                className="portfolio-item-cinematic"
+                                style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
+                                onClick={() => setSelectedItem(item)}
+                            >
+                                <div style={{ aspectRatio: '21/9', overflow: 'hidden', backgroundColor: '#111' }}>
+                                    {(() => {
+                                        const video = item.mediaItems.find(m => m.mediaType === 'video');
+                                        if (video) {
+                                            return (
+                                                <video
+                                                    src={video.url}
+                                                    autoPlay
+                                                    muted
+                                                    loop
+                                                    playsInline
                                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                                 />
-                                            ) : (
-                                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <ImageIcon size={48} style={{ opacity: 0.1, color: '#fff' }} />
-                                                </div>
                                             );
-                                        })()}
-                                    </div>
-                                    <div className="portfolio-overlay-cinematic" style={{
-                                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                                        background: 'linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%)',
-                                        display: 'flex', alignItems: 'flex-end', padding: '3rem',
-                                        opacity: 0, transition: 'opacity 0.6s ease',
-                                    }}>
-                                        <div>
-                                            <span style={{ color: 'var(--color-accent)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.2em' }}>
-                                                {getCategoryLabel(item.category)}
+                                        }
+                                        const thumbnail = item.thumbnailUrl || item.mediaItems.find(m => m.mediaType === 'image')?.url;
+                                        return thumbnail ? (
+                                            <motion.img
+                                                src={thumbnail}
+                                                alt={item.title}
+                                                whileHover={{ scale: 1.05 }}
+                                                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                            />
+                                        ) : (
+                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <ImageIcon size={48} style={{ opacity: 0.1, color: '#fff' }} />
+                                            </div>
+                                        );
+                                    })()}
+                                </div>
+                                <div className="portfolio-overlay-cinematic" style={{
+                                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                                    background: 'linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 50%)',
+                                    display: 'flex', alignItems: 'flex-end', padding: '3rem',
+                                    opacity: 0, transition: 'opacity 0.6s ease',
+                                }}>
+                                    <div>
+                                        <span style={{ color: 'var(--color-accent)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.2em' }}>
+                                            {getCategoryLabel(item.category)}
+                                        </span>
+                                        <h3 style={{ fontSize: '2rem', color: '#fff', marginTop: '0.5rem', textTransform: 'none' }}>
+                                            {item.title}
+                                        </h3>
+                                        {item.clientName && (
+                                            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>
+                                                {item.clientName}
                                             </span>
-                                            <h3 style={{ fontSize: '2rem', color: '#fff', marginTop: '0.5rem', textTransform: 'none' }}>
-                                                {item.title}
-                                            </h3>
-                                            {item.clientName && (
-                                                <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>
-                                                    {item.clientName}
-                                                </span>
-                                            )}
-                                        </div>
+                                        )}
                                     </div>
-                                    {/* Video indicator */}
-                                    {item.mediaItems.some(m => m.mediaType === 'video') && (
-                                        <div style={{
-                                            position: 'absolute', top: '1rem', right: '1rem',
-                                            backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff',
-                                            padding: '4px 10px', borderRadius: '4px', fontSize: '0.7rem',
-                                            display: 'flex', alignItems: 'center', gap: '4px',
-                                        }}>
-                                            <Play size={10} fill="#fff" /> Video
-                                        </div>
-                                    )}
-                                </motion.div>
-                            );
-                        })}
+                                </div>
+                                {/* Video indicator */}
+                                {item.mediaItems.some(m => m.mediaType === 'video') && (
+                                    <div style={{
+                                        position: 'absolute', top: '1rem', right: '1rem',
+                                        backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff',
+                                        padding: '4px 10px', borderRadius: '4px', fontSize: '0.7rem',
+                                        display: 'flex', alignItems: 'center', gap: '4px',
+                                    }}>
+                                        <Play size={10} fill="#fff" /> Video
+                                    </div>
+                                )}
+                            </motion.div>
+                        ))}
                     </AnimatePresence>
                 </motion.div>
             )}

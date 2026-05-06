@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, CalendarDays, Clock, CheckCircle, XCircle, AlertCircle, Loader2, X, RefreshCw } from 'lucide-react';
+import { Search, CalendarDays, Loader2, X, RefreshCw } from 'lucide-react';
 import { projectApi } from '../../services/projectApi';
 import type { Project, ProjectStatus } from '../../types/project.types';
 

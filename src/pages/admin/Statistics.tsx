@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-    AreaChart, Area, XAxis, YAxis, CartesianGrid,
-    Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend
-} from 'recharts';
 import { 
-    TrendingUp, Loader2, Target, 
-    Activity, Star, Zap
+    TrendingUp, Loader2, Target, Star, Zap
 } from 'lucide-react';
+import { 
+    AreaChart, Area, XAxis, YAxis, CartesianGrid, 
+    Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend 
+} from 'recharts';
 import { statisticsApi } from '../../services/statisticsApi';
 import type { DashboardStats, MonthlyRevenue, StaffPerformance } from '../../types/statistics.types';
 
-const fmtMoney = (n: number) =>
-    new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
-
 const COLORS = ['#c5a059', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+
+const fmtMoney = (v: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v);
 
 const AdminStatistics: React.FC = () => {
     const [stats, setStats] = useState<DashboardStats | null>(null);

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Bot, Send, X } from 'lucide-react';
 import axios from 'axios';
 import './ChatWidget.css';
 

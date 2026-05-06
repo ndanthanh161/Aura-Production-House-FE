@@ -137,7 +137,7 @@ export const portfolioApi = {
     uploadMedia: async (id: string, file: File): Promise<ApiResponse<PortfolioMedia>> => {
         // 1. Get signature from Backend
         const sigRes = await axiosInstance.get<ApiResponse<any>>('/Portfolio/upload-signature');
-        const { signature, timestamp, cloudName, apiKey, folder } = sigRes.data.data;
+        const { signature, timestamp, cloudName, apiKey } = sigRes.data.data;
 
         // 2. Upload directly to Cloudinary
         const formData = new FormData();
@@ -145,13 +145,10 @@ export const portfolioApi = {
         formData.append('api_key', apiKey);
         formData.append('timestamp', timestamp);
         formData.append('signature', signature);
-        // Bỏ folder khỏi formData vì không đưa vào signature nữa cho chắc chắn
 
         const resourceType = file.type.startsWith('video/') ? 'video' : 'image';
         const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
         
-        // Dùng axiosInstance nhưng bỏ baseURL để gọi Cloudinary trực tiếp hoặc dùng axios gốc
-        // Ở đây dùng fetch cho đơn giản và tránh interceptors của axiosInstance nếu có
         const cloudRes = await fetch(cloudinaryUrl, {
             method: 'POST',
             body: formData
