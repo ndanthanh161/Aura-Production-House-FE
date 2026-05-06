@@ -47,7 +47,7 @@ export const PhotographerLayout: React.FC = () => {
                         Photographer
                     </span>
                     {user && (
-                        <div style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                        <div style={{ marginTop: '0.75rem', fontSize: '0.9rem', color: 'var(--color-text)', fontWeight: 600 }}>
                             {user.fullName}
                         </div>
                     )}

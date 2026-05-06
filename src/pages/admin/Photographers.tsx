@@ -13,8 +13,8 @@ const AdminPhotographers: React.FC = () => {
     const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editItem, setEditItem] = useState<UserDTO | null>(null);
-    const [form, setForm] = useState<CreatePhotographerRequest & { id?: string, role: string }>({
-        fullName: '', email: '', password: '', phone: '', role: 'Photographer'
+    const [form, setForm] = useState<CreatePhotographerRequest & { id?: string, role: string, bio?: string, specialization?: string }>({
+        fullName: '', email: '', password: '', phone: '', role: 'Photographer', bio: '', specialization: ''
     });
 
     const fetch = async () => {
@@ -41,13 +41,21 @@ const AdminPhotographers: React.FC = () => {
 
     const openAdd = () => {
         setEditItem(null);
-        setForm({ fullName: '', email: '', password: '', phone: '', role: 'Photographer' });
+        setForm({ fullName: '', email: '', password: '', phone: '', role: 'Photographer', bio: '', specialization: '' });
         setShowModal(true);
     };
 
     const openEdit = (p: UserDTO) => {
         setEditItem(p);
-        setForm({ id: p.id, fullName: p.fullName, email: p.email, phone: p.phone || '', role: p.role });
+        setForm({ 
+            id: p.id, 
+            fullName: p.fullName, 
+            email: p.email, 
+            phone: p.phone || '', 
+            role: p.role,
+            bio: p.bio || '',
+            specialization: p.specialization || ''
+        });
         setShowModal(true);
     };
 
@@ -231,6 +239,18 @@ const AdminPhotographers: React.FC = () => {
                                 <div>
                                     <label style={labelStyle}>Số điện thoại</label>
                                     <input value={form.phone || ''} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} style={inputStyle} />
+                                </div>
+                                <div>
+                                    <label style={labelStyle}>Chuyên môn</label>
+                                    <input value={form.specialization || ''} onChange={e => setForm(p => ({ ...p, specialization: e.target.value }))} style={inputStyle} placeholder="Chụp ảnh cưới, Sự kiện..." />
+                                </div>
+                                <div style={{ gridColumn: 'span 2' }}>
+                                    <label style={labelStyle}>Giới thiệu</label>
+                                    <textarea 
+                                        value={form.bio || ''} 
+                                        onChange={e => setForm(p => ({ ...p, bio: e.target.value }))} 
+                                        style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} 
+                                    />
                                 </div>
                                 {error && <div style={alertStyle}>{error}</div>}
                                 <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>

@@ -99,19 +99,35 @@ const Portfolio: React.FC = () => {
                                     onClick={() => setSelectedItem(item)}
                                 >
                                     <div style={{ aspectRatio: '21/9', overflow: 'hidden', backgroundColor: '#111' }}>
-                                        {thumbnail ? (
-                                            <motion.img
-                                                src={thumbnail}
-                                                alt={item.title}
-                                                whileHover={{ scale: 1.05 }}
-                                                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                            />
-                                        ) : (
-                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <ImageIcon size={48} style={{ opacity: 0.1, color: '#fff' }} />
-                                            </div>
-                                        )}
+                                        {(() => {
+                                            const video = item.mediaItems.find(m => m.mediaType === 'video');
+                                            if (video) {
+                                                return (
+                                                    <video
+                                                        src={video.url}
+                                                        autoPlay
+                                                        muted
+                                                        loop
+                                                        playsInline
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    />
+                                                );
+                                            }
+                                            const thumbnail = item.thumbnailUrl || item.mediaItems.find(m => m.mediaType === 'image')?.url;
+                                            return thumbnail ? (
+                                                <motion.img
+                                                    src={thumbnail}
+                                                    alt={item.title}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                            ) : (
+                                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <ImageIcon size={48} style={{ opacity: 0.1, color: '#fff' }} />
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                     <div className="portfolio-overlay-cinematic" style={{
                                         position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
@@ -190,8 +206,21 @@ const Portfolio: React.FC = () => {
                                 <X size={24} />
                             </button>
 
-                            {/* Hero Image */}
+                            {/* Hero Media */}
                             {(() => {
+                                const video = selectedItem.mediaItems.find(m => m.mediaType === 'video');
+                                if (video) {
+                                    return (
+                                        <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#000' }}>
+                                            <video 
+                                                src={video.url} 
+                                                controls 
+                                                autoPlay 
+                                                style={{ width: '100%', height: '100%' }} 
+                                            />
+                                        </div>
+                                    );
+                                }
                                 const hero = selectedItem.thumbnailUrl || selectedItem.mediaItems.find(m => m.mediaType === 'image')?.url;
                                 return hero ? (
                                     <div style={{ width: '100%', aspectRatio: '16/10', overflow: 'hidden' }}>
@@ -227,27 +256,37 @@ const Portfolio: React.FC = () => {
                                     </div>
                                 )}
 
-                                {/* Media Gallery - exclude thumbnail */}
+                                {/* Media Gallery - exclude hero media and thumbnail */}
                                 {(() => {
-                                    const galleryMedia = selectedItem.mediaItems.filter(m => m.url !== selectedItem.thumbnailUrl);
+                                    const heroVideo = selectedItem.mediaItems.find(m => m.mediaType === 'video');
+                                    const galleryMedia = selectedItem.mediaItems.filter(m => 
+                                        m.url !== selectedItem.thumbnailUrl && 
+                                        m.id !== heroVideo?.id
+                                    );
                                     return galleryMedia.length > 0 ? (
                                         <div style={{ marginTop: '3rem', width: '100%' }}>
-                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px' }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
                                                 {galleryMedia.map((media, idx) => (
                                                     <div
                                                         key={media.id}
-                                                        style={{ aspectRatio: '4/3', overflow: 'hidden', borderRadius: '4px', cursor: 'pointer', position: 'relative' }}
+                                                        style={{ aspectRatio: '16/10', overflow: 'hidden', borderRadius: '8px', cursor: 'pointer', position: 'relative', border: '1px solid rgba(255,255,255,0.05)' }}
                                                         onClick={() => setLightboxMedia({ media: galleryMedia, index: idx })}
                                                     >
                                                         {media.mediaType === 'video' ? (
                                                             <>
                                                                 <video src={media.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted />
                                                                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)' }}>
-                                                                    <Play size={32} fill="#fff" style={{ opacity: 0.8 }} />
+                                                                    <Play size={24} fill="#fff" style={{ opacity: 0.8 }} />
                                                                 </div>
                                                             </>
                                                         ) : (
-                                                            <img src={media.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} />
+                                                            <img 
+                                                                src={media.url} 
+                                                                alt="" 
+                                                                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s' }} 
+                                                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                                                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                                            />
                                                         )}
                                                     </div>
                                                 ))}

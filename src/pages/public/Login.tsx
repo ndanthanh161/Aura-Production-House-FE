@@ -18,14 +18,20 @@ const Login: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
+        // Basic validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError('Email không đúng định dạng.');
+            return;
+        }
+
         setLoading(true);
 
         try {
             const role = await login(email, password);
             if (role === 'admin') {
                 navigate('/admin', { replace: true });
-            } else if (role === 'staff') {
-                navigate('/staff', { replace: true });
             } else if (role === 'photographer') {
                 navigate('/photographer', { replace: true });
             } else {
@@ -289,21 +295,5 @@ const Login: React.FC = () => {
     );
 };
 
-const socialButtonStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.6rem',
-    width: '100%',
-    padding: '0.75rem',
-    borderRadius: '10px',
-    border: '1px solid #E5E7EB',
-    backgroundColor: '#F9FAFB',
-    color: '#4B5563',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'background-color 0.2s'
-};
 
 export default Login;

@@ -45,13 +45,13 @@ export const Footer: React.FC = () => {
                         <h4 style={{ marginBottom: '2rem', color: '#0F0F0F', letterSpacing: '0.1em', fontSize: '0.85rem', fontWeight: 800 }}>LIÊN HỆ</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#444', fontSize: '0.9rem' }}>
-                                <Mail size={18} strokeWidth={1.5} /> info@auraproduction.com
+                                <Mail size={18} strokeWidth={1.5} /> auraproduction21@gmail.com
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#444', fontSize: '0.9rem' }}>
-                                <Phone size={18} strokeWidth={1.5} /> +1 (555) 123-4567
+                                <Phone size={18} strokeWidth={1.5} /> 0941676736
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#444', fontSize: '0.9rem' }}>
-                                <MapPin size={18} strokeWidth={1.5} /> 123 Studio Sáng Tạo, NY
+                                <MapPin size={18} strokeWidth={1.5} /> Lô E2a-7, Đường D1, Long Thạnh Mỹ, TP. Thủ Đức, HCM
                             </div>
                         </div>
                     </div>

@@ -5,7 +5,7 @@ import { portfolioApi, PORTFOLIO_CATEGORIES, getCategoryLabel } from '../../serv
 import type { PortfolioItem, CreatePortfolioRequest, PortfolioMedia } from '../../services/portfolioApi';
 
 const emptyForm: CreatePortfolioRequest = {
-    title: '', category: 0, content: '', clientName: '', displayOrder: 0,
+    title: '', category: 0, content: '', clientName: '', displayOrder: 0, isHot: false,
 };
 
 
@@ -65,6 +65,7 @@ const AdminPortfolio: React.FC = () => {
             content: item.content || '',
             clientName: item.clientName || '',
             displayOrder: 0,
+            isHot: item.isHot,
         });
         setShowModal(true);
     };
@@ -343,6 +344,16 @@ const AdminPortfolio: React.FC = () => {
                                                 }}>
                                                     {item.isPublished ? 'Đã đăng' : 'Nháp'}
                                                 </span>
+                                                {item.isHot && (
+                                                    <span style={{
+                                                        fontSize: '0.65rem', padding: '2px 8px', borderRadius: '20px', fontWeight: 800, flexShrink: 0, marginLeft: '4px',
+                                                        backgroundColor: 'rgba(239,68,68,0.15)',
+                                                        color: '#ef4444',
+                                                        border: '1px solid rgba(239,68,68,0.3)'
+                                                    }}>
+                                                        HOT
+                                                    </span>
+                                                )}
                                             </div>
                                             <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.78rem', color: 'var(--color-text-muted)', flexWrap: 'wrap' }}>
                                                 <span style={badgeStyle}>{getCategoryLabel(item.category)}</span>
@@ -537,6 +548,19 @@ const AdminPortfolio: React.FC = () => {
                                         style={{ ...inputStyle, fontFamily: 'inherit', resize: 'vertical' }}
                                         placeholder="Mô tả chi tiết về dự án, câu chuyện đằng sau, quá trình thực hiện..."
                                     />
+                                </div>
+
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
+                                    <input 
+                                        type="checkbox"
+                                        id="isHot"
+                                        checked={form.isHot}
+                                        onChange={e => setForm(prev => ({ ...prev, isHot: e.target.checked }))}
+                                        style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                                    />
+                                    <label htmlFor="isHot" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text)', cursor: 'pointer' }}>
+                                        Đánh dấu là Dự án nổi bật (Hiển thị tại trang chủ)
+                                    </label>
                                 </div>
 
                                 <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>

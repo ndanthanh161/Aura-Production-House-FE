@@ -13,10 +13,10 @@ import MyBookings from './pages/public/MyBookings';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
 
-import { PhotographerLayout } from './layouts/StaffLayout'; // Sử dụng StaffLayout cũ
-import PhotographerOverview from './pages/staff/Overview';
-import PhotographerProjects from './pages/staff/Projects';
-import PhotographerProfile from './pages/staff/Profile';
+import { PhotographerLayout } from './layouts/PhotographerLayout';
+import PhotographerOverview from './pages/photographer/Overview';
+import PhotographerProjects from './pages/photographer/Projects';
+import PhotographerProfile from './pages/photographer/Profile';
 
 import { AdminLayout } from './layouts/AdminLayout';
 import AdminOverview from './pages/admin/Overview';
@@ -29,6 +29,7 @@ import AdminCustomers from './pages/admin/Customers';
 import AdminStatistics from './pages/admin/Statistics';
 import AdminAIKnowledge from './pages/admin/AIKnowledge';
 import AdminPortfolio from './pages/admin/Portfolio';
+import AdminContactMessages from './pages/admin/ContactMessages';
 
 import { ScrollToTop } from './components/ScrollToTop';
 import ChatWidget from './components/ChatWidget';
@@ -87,6 +88,7 @@ function App() {
           <Route path="statistics" element={<AdminStatistics />} />
           <Route path="ai" element={<AdminAIKnowledge />} />
           <Route path="portfolio" element={<AdminPortfolio />} />
+          <Route path="contacts" element={<AdminContactMessages />} />
         </Route>
       </Routes>
     </>

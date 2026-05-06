@@ -1,108 +1,78 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, ChevronRight, ChevronLeft } from 'lucide-react';
+import { ArrowUpRight, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react';
 import { ProjectDetailModal } from '../../../components/ProjectDetailModal';
-
-const projects = [
-    {
-        id: 1,
-        title: 'Hiện Đại Tối Giản',
-        category: 'Nhiếp Ảnh',
-        year: '2024',
-        client: 'Modern Living',
-        image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=1200',
-        description: 'Dự án nhiếp ảnh kiến trúc tập trung vào sự tối giản, sử dụng ánh sáng tự nhiên để làm nổi bật những đường nét tinh tế của không gian sống hiện đại.',
-        credits: [
-            { role: 'Director', name: 'Hoàng Anh' },
-            { role: 'DOP', name: 'Minh Trần' },
-            { role: 'Editor', name: 'Thanh Sơn' },
-            { role: 'Stylist', name: 'Lê Vy' }
-        ]
-    },
-    {
-        id: 2,
-        title: 'Bản Đạo Diễn',
-        category: 'Quay Phim',
-        year: '2024',
-        client: 'Indie Film Fest',
-        image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&q=80&w=1200',
-        description: 'Tác phẩm phim ngắn mang đậm dấu ấn cá nhân, kết hợp giữa kỹ thuật quay phim truyền thống và phong cách biên tập hiện đại để kể một câu chuyện đầy cảm xúc.',
-        credits: [
-            { role: 'Director', name: 'Tuấn Nguyễn' },
-            { role: 'DOP', name: 'Huy Phạm' },
-            { role: 'Music', name: 'Đức Phúc' },
-            { role: 'Colorist', name: 'Nam Lê' }
-        ]
-    },
-    {
-        id: 3,
-        title: 'Nhận Diện Thương Hiệu 2024',
-        category: 'Thương Hiệu Cá Nhân',
-        year: '2023',
-        client: 'Creative Leaders',
-        image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=1200',
-        description: 'Chiến dịch xây dựng hình ảnh thương hiệu toàn diện cho các chuyên gia sáng tạo, giúp họ khẳng định vị thế và ghi dấu ấn riêng trong ngành.',
-        credits: [
-            { role: 'Director', name: 'Lan Hương' },
-            { role: 'Lighting', name: 'Quốc Bảo' },
-            { role: 'MUA', name: 'Kim Chi' },
-            { role: 'Agency', name: 'Aura House' }
-        ]
-    },
-    {
-        id: 4,
-        title: 'Bộ Sưu Tập Lumière',
-        category: 'Biên Tập',
-        year: '2023',
-        client: 'Lumière Gallery',
-        image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&q=80&w=1200',
-        description: 'Loạt hình ảnh và video được biên tập tỉ mỉ, lấy cảm hứng từ sự chuyển động của ánh sáng và màu sắc để tạo ra trải nghiệm thị giác ấn tượng.',
-        credits: [
-            { role: 'Director', name: 'Việt Anh' },
-            { role: 'VFX', name: 'Quang Huy' },
-            { role: 'DOP', name: 'Hải Đăng' },
-            { role: 'Concept', name: 'Neo Seoul' }
-        ]
-    },
-];
+import { portfolioApi, getCategoryLabel } from '../../../services/portfolioApi';
+import type { PortfolioItem } from '../../../services/portfolioApi';
 
 export const FeaturedProjects: React.FC = () => {
     const listRef = useRef<HTMLDivElement>(null);
-    const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+    const [projects, setProjects] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedProject, setSelectedProject] = useState<any | null>(null);
 
-    // Duplicating projects 11 times to create a robust infinite loop effect that survives rapid clicking
-    const SETS = 11;
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const res = await portfolioApi.getPublished();
+                const data = res.data || [];
+                
+                // Lọc các dự án HOT và sắp xếp theo ngày tạo mới nhất
+                const hotProjects = data
+                    .filter((p: PortfolioItem) => p.isHot)
+                    .sort((a: PortfolioItem, b: PortfolioItem) => 
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    )
+                    .map((p: PortfolioItem) => ({
+                        id: p.id,
+                        title: p.title,
+                        category: getCategoryLabel(p.category),
+                        year: new Date(p.createdAt).getFullYear().toString(),
+                        client: p.clientName || 'Aura Client',
+                        image: p.thumbnailUrl || (p.mediaItems.find(m => m.mediaType === 'image')?.url) || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=1200',
+                        description: p.content || '',
+                    }));
+                setProjects(hotProjects);
+            } catch (error) {
+                console.error('Failed to fetch featured projects:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProjects();
+    }, []);
+
+    // Duplicating projects to create a robust infinite loop effect
+    const SETS = projects.length > 0 ? 11 : 0;
     const MIDDLE_SET = 5;
-    const extendedProjects = Array(SETS).fill(projects).flat();
+    const extendedProjects = projects.length > 0 ? Array(SETS).fill(projects).flat() : [];
 
     const targetIndexRef = useRef<number>(MIDDLE_SET * projects.length);
     const isScrollingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         // Initial scroll to the middle set of projects
-        if (listRef.current) {
+        if (listRef.current && projects.length > 0) {
             setTimeout(() => {
                 if (!listRef.current) return;
                 const targetElement = listRef.current.children[targetIndexRef.current] as HTMLElement;
                 if (targetElement) {
                     listRef.current.scrollLeft = targetElement.offsetLeft;
                 }
-            }, 100);
+            }, 500);
         }
-    }, []);
+    }, [projects.length]);
 
     const handleScroll = () => {
-        if (!listRef.current) return;
+        if (!listRef.current || projects.length === 0) return;
 
         const scrollContainer = listRef.current;
         if (isScrollingTimeout.current) clearTimeout(isScrollingTimeout.current);
 
-        // Only trigger the snap loop when the user has stopped scrolling
         isScrollingTimeout.current = setTimeout(() => {
             const scrollLeft = scrollContainer.scrollLeft;
             const children = Array.from(scrollContainer.children) as HTMLElement[];
 
-            // Find the index of the child closest to the current scrollLeft
             let closestIndex = 0;
             let minDiff = Infinity;
             children.forEach((child, index) => {
@@ -113,48 +83,54 @@ export const FeaturedProjects: React.FC = () => {
                 }
             });
 
-            // If scrolled near the edges (less than 2 sets remaining), jump back to middle silently
             if (closestIndex < projects.length * 2 || closestIndex > projects.length * (SETS - 2)) {
-                scrollContainer.style.scrollSnapType = 'none'; // Disable snap to avoid jitter
-
+                scrollContainer.style.scrollSnapType = 'none';
                 const offsetWithinSet = closestIndex % projects.length;
                 const newIndex = (MIDDLE_SET * projects.length) + offsetWithinSet;
-
                 const targetElement = children[newIndex];
                 if (targetElement) {
                     scrollContainer.scrollLeft = targetElement.offsetLeft;
                     targetIndexRef.current = newIndex;
                 }
-
-                void scrollContainer.offsetWidth; // Force CSS reflow
+                void scrollContainer.offsetWidth;
                 scrollContainer.style.scrollSnapType = 'x mandatory';
             } else {
-                targetIndexRef.current = closestIndex; // Sync target ref with actual rest position
+                targetIndexRef.current = closestIndex;
             }
         }, 150);
     };
 
     const scrollLeftBtn = () => {
-        if (!listRef.current) return;
+        if (!listRef.current || projects.length === 0) return;
         targetIndexRef.current -= 1;
         const targetElement = listRef.current.children[targetIndexRef.current] as HTMLElement;
         if (targetElement) {
             listRef.current.scrollTo({ left: targetElement.offsetLeft, behavior: 'smooth' });
         } else {
-            targetIndexRef.current += 1; // Fallback bound
+            targetIndexRef.current += 1;
         }
     };
 
     const scrollRightBtn = () => {
-        if (!listRef.current) return;
+        if (!listRef.current || projects.length === 0) return;
         targetIndexRef.current += 1;
         const targetElement = listRef.current.children[targetIndexRef.current] as HTMLElement;
         if (targetElement) {
             listRef.current.scrollTo({ left: targetElement.offsetLeft, behavior: 'smooth' });
         } else {
-            targetIndexRef.current -= 1; // Fallback bound
+            targetIndexRef.current -= 1;
         }
     };
+
+    if (loading) {
+        return (
+            <div style={{ backgroundColor: 'var(--color-bg)', padding: '8rem 0', display: 'flex', justifyContent: 'center' }}>
+                <Loader2 size={40} className="animate-spin" style={{ color: 'var(--color-accent)' }} />
+            </div>
+        );
+    }
+
+    if (projects.length === 0) return null;
 
     return (
         <section style={{ backgroundColor: 'var(--color-bg)', paddingTop: '8rem', paddingBottom: '8rem' }}>
@@ -192,8 +168,8 @@ export const FeaturedProjects: React.FC = () => {
                         gap: '2rem',
                         padding: '1rem 0 3rem 0',
                         scrollSnapType: 'x mandatory',
-                        scrollbarWidth: 'none', /* Firefox */
-                        WebkitOverflowScrolling: 'touch', /* iOS */
+                        scrollbarWidth: 'none',
+                        WebkitOverflowScrolling: 'touch',
                     }}
                 >
                     {extendedProjects.map((project, index) => (
@@ -310,7 +286,7 @@ export const FeaturedProjects: React.FC = () => {
 
             <style>{`
                 .projects-slider::-webkit-scrollbar {
-                    display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+                    display: none;
                 }
                 .slider-nav-btn:hover {
                     background-color: var(--color-neon) !important;
@@ -321,11 +297,18 @@ export const FeaturedProjects: React.FC = () => {
                     transform: scale(1.05);
                 }
                 .project-card-v3:hover .project-overlay {
-                    padding-bottom: 3.5rem !important; /* Push up content slightly */
+                    padding-bottom: 3.5rem !important;
                 }
                 .project-card-v3:hover .project-arrow-v3 {
                     transform: scale(1) rotate(0deg) !important;
                     opacity: 1 !important;
+                }
+                .animate-spin {
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
                 }
                 @media (max-width: 768px) {
                     .projects-slider {
@@ -345,11 +328,6 @@ export const FeaturedProjects: React.FC = () => {
                     .project-arrow-v3 svg {
                         color: #fff !important;
                     }
-                }
-                .modal-close-btn:hover {
-                    background: var(--color-neon) !important;
-                    color: #0F0F0F !important;
-                    transform: scale(1.1);
                 }
             `}</style>
         </section>

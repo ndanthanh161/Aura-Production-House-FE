@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-    AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
-    Tooltip, ResponsiveContainer, Cell
+    AreaChart, Area, XAxis, YAxis, CartesianGrid,
+    Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend
 } from 'recharts';
-import { TrendingUp, TrendingDown, Users, CalendarCheck, Package, Briefcase, Loader2 } from 'lucide-react';
+import { 
+    TrendingUp, Loader2, Target, 
+    Activity, Star, Zap
+} from 'lucide-react';
 import { statisticsApi } from '../../services/statisticsApi';
 import type { DashboardStats, MonthlyRevenue, StaffPerformance } from '../../types/statistics.types';
 
-const MONTH_NAMES = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
-
 const fmtMoney = (n: number) =>
-    n >= 1_000_000
-        ? `${(n / 1_000_000).toFixed(1)}M ₫`
-        : new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
+    new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
+
+const COLORS = ['#c5a059', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 const AdminStatistics: React.FC = () => {
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [revenue, setRevenue] = useState<MonthlyRevenue[]>([]);
     const [performance, setPerformance] = useState<StaffPerformance[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
 
     useEffect(() => {
         const load = async () => {
@@ -34,8 +34,8 @@ const AdminStatistics: React.FC = () => {
                 setStats(s.data);
                 setRevenue(r.data || []);
                 setPerformance(p.data || []);
-            } catch {
-                setError('Không thể tải dữ liệu thống kê. Kiểm tra kết nối server.');
+            } catch (err) {
+                console.error('Failed to load stats:', err);
             } finally {
                 setLoading(false);
             }
@@ -43,174 +43,204 @@ const AdminStatistics: React.FC = () => {
         load();
     }, []);
 
-    const revenueChartData = revenue.map(r => ({
-        name: `${MONTH_NAMES[r.month - 1]}/${r.year}`,
-        'Doanh thu': r.revenue,
-        'Dự án': r.projectCount,
-    }));
+    if (loading) return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh' }}>
+            <Loader2 size={40} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-accent)' }} />
+        </div>
+    );
 
-    const projectStatusData = stats ? [
-        { name: 'Scheduled', value: stats.projectsScheduled, color: '#3b82f6', label: 'Đã lên lịch' },
-        { name: 'InProduction', value: stats.projectsInProduction, color: '#f59e0b', label: 'Đang thực hiện' },
-        { name: 'Completed', value: stats.projectsCompleted, color: '#22c55e', label: 'Hoàn thành' },
-        { name: 'Cancelled', value: stats.projectsCancelled, color: '#ef4444', label: 'Đã hủy' },
+    const revenueByPackageData = stats?.revenueByPackage 
+        ? Object.entries(stats.revenueByPackage).map(([name, value]) => ({ name, value }))
+        : [];
+
+    const funnelData = stats ? [
+        { name: 'Tổng Booking', value: stats.totalBookings, fill: '#3b82f6', context: 'Nhu cầu thị trường' },
+        { name: 'Đã Thanh Toán', value: stats.totalProjects - stats.projectsScheduled - stats.projectsCancelled, fill: '#f59e0b', context: 'Hiệu quả chuyển đổi' },
+        { name: 'Hoàn Thành', value: stats.projectsCompleted, fill: '#22c55e', context: 'Năng lực triển khai' },
     ] : [];
 
-    const revenueTrend = stats && stats.revenueLastMonth > 0
-        ? ((stats.revenueThisMonth - stats.revenueLastMonth) / stats.revenueLastMonth * 100).toFixed(1)
-        : null;
-
-    if (loading) return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-            <div style={{ textAlign: 'center' }}>
-                <Loader2 size={40} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-accent)', marginBottom: '1rem' }} />
-                <p style={{ color: 'var(--color-text-muted)' }}>Đang tải dữ liệu...</p>
-            </div>
-        </div>
-    );
-
-    if (error) return (
-        <div style={{ textAlign: 'center', padding: '4rem', color: '#ef4444' }}>
-            <p>{error}</p>
-        </div>
-    );
+    const analysisCards = [
+        { 
+            group: 'HIỆU QUẢ KINH DOANH',
+            items: [
+                { label: 'Doanh Thu Trung Bình (AOV)', value: fmtMoney(stats?.averageOrderValue || 0), desc: 'Độ lớn trung bình mỗi đơn hàng', icon: <Target size={18} />, color: 'var(--color-text-muted)' },
+                { label: 'Tăng Trưởng Doanh Thu', value: `${stats?.revenueGrowth || 0}%`, desc: 'Tốc độ phát triển so với tháng trước', icon: <TrendingUp size={18} />, color: 'var(--color-text-muted)' }
+            ]
+        },
+        { 
+            group: 'HIỆU SUẤT VẬN HÀNH',
+            items: [
+                { label: 'Tỉ Lệ Chuyển Đổi (CR)', value: `${stats?.conversionRate || 0}%`, desc: 'Khả năng chốt đơn thành công', icon: <Zap size={18} />, color: 'var(--color-text-muted)' },
+                { label: 'Tỉ Lệ Hoàn Thành', value: stats?.totalProjects ? `${((stats.projectsCompleted / stats.totalProjects) * 100).toFixed(1)}%` : '0%', desc: 'Tỉ lệ bàn giao dự án đúng hạn', icon: <Star size={18} />, color: 'var(--color-text-muted)' }
+            ]
+        }
+    ];
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
             <header>
-                <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--color-text)' }}>Thống Kê & Báo Cáo</h1>
-                <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
-                    Số liệu cập nhật lúc: {stats ? new Date(stats.generatedAt).toLocaleTimeString('vi-VN') : '—'}
-                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>BÁO CÁO CHIẾN LƯỢC</h1>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-muted)', backgroundColor: 'rgba(255,255,255,0.03)', padding: '4px 12px', borderRadius: '20px', border: '1px solid var(--color-border)' }}>Dữ liệu sạch</div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-muted)', backgroundColor: 'rgba(255,255,255,0.03)', padding: '4px 12px', borderRadius: '20px', border: '1px solid var(--color-border)' }}>Thời gian thực</div>
+                    </div>
+                </div>
+                <p style={{ color: 'var(--color-text-muted)', maxWidth: '600px' }}>Phân tích chuyên sâu về các chỉ số sức khỏe doanh nghiệp, hỗ trợ tối ưu hóa quy trình vận hành và chiến lược tăng trưởng.</p>
             </header>
 
-            {/* KPI Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
-                {[
-                    {
-                        label: 'Tổng Doanh Thu', value: fmtMoney(stats?.totalRevenue || 0),
-                        sub: `Tháng này: ${fmtMoney(stats?.revenueThisMonth || 0)}`,
-                        icon: <TrendingUp size={22} />, color: 'var(--color-accent)',
-                        trend: revenueTrend ? { val: revenueTrend, up: parseFloat(revenueTrend) >= 0 } : null,
-                    },
-                    {
-                        label: 'Tổng Dự Án', value: stats?.totalProjects || 0,
-                        sub: `Hoàn thành: ${stats?.projectsCompleted || 0}`,
-                        icon: <Briefcase size={22} />, color: '#3b82f6', trend: null,
-                    },
-                    {
-                        label: 'Khách Hàng', value: stats?.totalCustomers || 0,
-                        sub: `Mới tháng này: +${stats?.newCustomersThisMonth || 0}`,
-                        icon: <Users size={22} />, color: '#22c55e', trend: null,
-                    },
-                    {
-                        label: 'Booking Tháng Này', value: stats?.bookingsThisMonth || 0,
-                        sub: `Đã hủy: ${stats?.cancelledThisMonth || 0}`,
-                        icon: <CalendarCheck size={22} />, color: '#f59e0b', trend: null,
-                    },
-                    {
-                        label: 'Gói Dịch Vụ', value: stats?.totalActivePackages || 0,
-                        sub: `Đang hoạt động`,
-                        icon: <Package size={22} />, color: '#8b5cf6', trend: null,
-                    },
-                    {
-                        label: 'Photographer', value: stats?.totalStaff || 0,
-                        sub: `Nhân viên chụp ảnh`,
-                        icon: <Users size={22} />, color: '#ec4899', trend: null,
-                    },
-                ].map((kpi, i) => (
-                    <motion.div key={kpi.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-                        style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.5rem', position: 'relative', overflow: 'hidden' }}>
-                        <div style={{ position: 'absolute', top: 0, left: 0, width: '3px', height: '100%', backgroundColor: kpi.color }} />
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                            <div style={{ color: kpi.color, opacity: 0.9 }}>{kpi.icon}</div>
-                            {kpi.trend && (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.75rem', fontWeight: 600, color: kpi.trend.up ? '#22c55e' : '#ef4444' }}>
-                                    {kpi.trend.up ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
-                                    {kpi.trend.val}%
-                                </div>
-                            )}
+            {/* Strategy KPIs grouped by story */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                {analysisCards.map((group, gIdx) => (
+                    <div key={group.group}>
+                        <h4 style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', letterSpacing: '0.1em', marginBottom: '1rem' }}>
+                            {group.group}
+                        </h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            {group.items.map((item, i) => (
+                                <motion.div
+                                    key={item.label}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: (gIdx * 2 + i) * 0.1 }}
+                                    style={{
+                                        backgroundColor: 'var(--color-bg-secondary)',
+                                        padding: '1.25rem',
+                                        borderRadius: '12px',
+                                        border: '1px solid var(--color-border)',
+                                    }}
+                                >
+                                    <div style={{ color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>{item.icon}</div>
+                                    <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-text)' }}>{item.value}</div>
+                                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text)', marginTop: '2px' }}>{item.label}</div>
+                                    <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>{item.desc}</div>
+                                </motion.div>
+                            ))}
                         </div>
-                        <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text)', lineHeight: 1 }}>{kpi.value}</div>
-                        <div style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text)', marginTop: '4px' }}>{kpi.label}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>{kpi.sub}</div>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
 
-            {/* Revenue Chart */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.75rem' }}>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '1.5rem' }}>Doanh Thu 12 Tháng Gần Nhất</h3>
-                {revenueChartData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={280}>
-                        <AreaChart data={revenueChartData}>
+            {/* Main Trend Chart Section */}
+            <section>
+                <div style={{ marginBottom: '1.5rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text)' }}>Phân Tích Xu Hướng & Tăng Trưởng</h3>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Mối tương quan giữa doanh thu và khối lượng dự án qua các tháng.</p>
+                </div>
+                <div style={{ backgroundColor: 'var(--color-bg-secondary)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--color-border)' }}>
+                    <ResponsiveContainer width="100%" height={320}>
+                        <AreaChart data={revenue.map(r => ({ ...r, name: `T${r.month}/${r.year}` }))}>
                             <defs>
-                                <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.25} />
+                                <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.2} />
                                     <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-                            <XAxis dataKey="name" stroke="var(--color-text-muted)" fontSize={11} tickLine={false} axisLine={false} />
-                            <YAxis stroke="var(--color-text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={v => fmtMoney(v)} />
-                            <Tooltip contentStyle={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '8px' }} formatter={(v: number | undefined) => [fmtMoney(v ?? 0), 'Doanh thu']} />
-                            <Area type="monotone" dataKey="Doanh thu" stroke="var(--color-accent)" fill="url(#revGrad)" strokeWidth={2.5} dot={{ r: 4, fill: 'var(--color-accent)' }} activeDot={{ r: 6 }} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} strokeOpacity={0.5} />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={11} tick={{ fill: 'var(--color-text-muted)' }} />
+                            <YAxis axisLine={false} tickLine={false} fontSize={10} tickFormatter={v => `${(v/1000000).toFixed(0)}M`} tick={{ fill: 'var(--color-text-muted)' }} />
+                            <Tooltip 
+                                contentStyle={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                                formatter={(v: any) => [fmtMoney(v), 'Doanh thu']}
+                            />
+                            <Area type="monotone" dataKey="revenue" stroke="var(--color-accent)" strokeWidth={3} fill="url(#colorRev)" />
                         </AreaChart>
                     </ResponsiveContainer>
-                ) : (
-                    <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>Chưa có dữ liệu doanh thu.</div>
-                )}
-            </motion.div>
+                </div>
+            </section>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                {/* Project Status */}
-                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                    style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.75rem' }}>
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '1.5rem' }}>Trạng Thái Dự Án</h3>
-                    {projectStatusData.map(s => (
-                        <div key={s.name} style={{ marginBottom: '1rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>{s.label}</span>
-                                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text)' }}>{s.value}</span>
+            {/* Deep Dive Breakdown Section */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '2rem' }}>
+                {/* Revenue Composition */}
+                <div style={{ backgroundColor: 'var(--color-bg-secondary)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--color-border)' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.25rem' }}>Cơ Cấu Doanh Thu</h3>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>Phân bổ tỉ trọng theo gói dịch vụ.</p>
+                    <ResponsiveContainer width="100%" height={240}>
+                        <PieChart>
+                            <Pie
+                                data={revenueByPackageData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={60}
+                                outerRadius={85}
+                                paddingAngle={8}
+                                dataKey="value"
+                            >
+                                {revenueByPackageData.map((_, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
+                                ))}
+                            </Pie>
+                            <Tooltip formatter={(v: any) => fmtMoney(v)} />
+                            <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ fontSize: '0.7rem', paddingTop: '20px' }} />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+
+                {/* Conversion Funnel */}
+                <div style={{ backgroundColor: 'var(--color-bg-secondary)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--color-border)' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.25rem' }}>Hiệu Quả Phễu Chuyển Đổi</h3>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '2rem' }}>Hành trình từ nhu cầu đến bàn giao thực tế.</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+                        {funnelData.map((item, idx) => {
+                            const percent = ((item.value / (funnelData[0]?.value || 1)) * 100).toFixed(0);
+                            return (
+                                <div key={item.name} style={{ position: 'relative' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
+                                        <span style={{ color: 'var(--color-text)', fontWeight: 600 }}>{item.name}</span>
+                                        <span style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>{item.value} đơn vị — <span style={{ color: 'var(--color-text)', fontWeight: 700 }}>{percent}%</span></span>
+                                    </div>
+                                    <div style={{ height: '8px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '4px', overflow: 'hidden' }}>
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${percent}%` }}
+                                            transition={{ duration: 1.2, delay: idx * 0.2 }}
+                                            style={{ height: '100%', backgroundColor: 'var(--color-accent)', borderRadius: '4px', opacity: 0.8 }}
+                                        />
+                                    </div>
+                                    <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginTop: '4px', fontStyle: 'italic' }}>{item.context}</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+
+            {/* High Performance Leaderboard */}
+            <section style={{ backgroundColor: 'var(--color-bg-secondary)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--color-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                    <div>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Xếp Hạng Nhân Sự Xuất Sắc</h3>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Top 5 Photographer đóng góp doanh thu lớn nhất.</p>
+                    </div>
+                    <button style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, padding: '6px 16px', border: '1px solid var(--color-border)', borderRadius: '6px', backgroundColor: 'transparent' }}>Xem tất cả</button>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+                    {performance.slice(0, 5).map((p, idx) => (
+                        <div key={p.staffId} style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.25rem', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
+                            <div style={{ 
+                                width: '40px', height: '40px', borderRadius: '12px', 
+                                backgroundColor: 'rgba(255,255,255,0.05)', 
+                                color: 'var(--color-text)', 
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem' 
+                            }}>
+                                {idx + 1}
                             </div>
-                            <div style={{ height: '6px', backgroundColor: 'var(--color-bg)', borderRadius: '3px', overflow: 'hidden' }}>
-                                <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{ width: stats?.totalProjects ? `${(s.value / stats.totalProjects) * 100}%` : '0%' }}
-                                    transition={{ duration: 0.8, delay: 0.5 }}
-                                    style={{ height: '100%', backgroundColor: s.color, borderRadius: '3px' }}
-                                />
+                            <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-text)' }}>{p.staffName}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{p.completed} dự án • {((p.completed / (p.totalAssigned || 1)) * 100).toFixed(0)}% hiệu suất</div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontWeight: 800, color: 'var(--color-accent)', fontSize: '1rem' }}>{fmtMoney(p.totalRevenue)}</div>
+                                <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Đóng góp</div>
                             </div>
                         </div>
                     ))}
-                </motion.div>
+                </div>
+            </section>
 
-                {/* Staff Performance */}
-                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-                    style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '1.75rem' }}>
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-text)', marginBottom: '1.5rem' }}>Hiệu Suất Photographer</h3>
-                    {performance.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={220}>
-                            <BarChart data={performance} layout="vertical">
-                                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" horizontal={false} />
-                                <XAxis type="number" stroke="var(--color-text-muted)" fontSize={11} tickLine={false} axisLine={false} />
-                                <YAxis type="category" dataKey="staffName" stroke="var(--color-text-muted)" fontSize={11} tickLine={false} axisLine={false} width={90} />
-                                <Tooltip contentStyle={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', borderRadius: '8px' }} />
-                                <Bar dataKey="completed" name="Hoàn thành" radius={[0, 4, 4, 0]}>
-                                    {performance.map((_, idx) => (
-                                        <Cell key={idx} fill="var(--color-accent)" />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>Chưa có dữ liệu.</div>
-                    )}
-                </motion.div>
-            </div>
-
-            <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+            <style>{`
+                @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+            `}</style>
         </div>
     );
 };

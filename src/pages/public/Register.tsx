@@ -4,26 +4,39 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Loader2 } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import logoColor from '../../assets/LOGO COLOR.png';
 
 const Register: React.FC = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
-    const { register } = useAuth();
+    const { register, googleLogin } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
+
+        // Basic validation
+        if (password.length < 8) {
+            setError('Mật khẩu phải có ít nhất 8 ký tự.');
+            return;
+        }
+        if (password !== confirmPassword) {
+            setError('Mật khẩu nhập lại không khớp.');
+            return;
+        }
+
         setLoading(true);
 
         try {
-            await register({ fullName: name, email, password });
+            await register({ fullName: name, email, password, confirmPassword });
             setSuccess('Tạo tài khoản thành công! Đang chuyển hướng đến trang đăng nhập...');
             setTimeout(() => {
                 navigate('/login', { replace: true });
@@ -31,6 +44,29 @@ const Register: React.FC = () => {
         } catch (err) {
             console.error('Register error:', err);
             setError(err instanceof Error ? err.message : 'Đăng ký thất bại. Vui lòng thử lại.');
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
+        if (!credentialResponse.credential) {
+            setError('Google registration failed: No credential received.');
+            return;
+        }
+        setError('');
+        setLoading(true);
+        try {
+            const role = await googleLogin(credentialResponse.credential);
+            if (role === 'admin') {
+                navigate('/admin', { replace: true });
+            } else if (role === 'photographer') {
+                navigate('/photographer', { replace: true });
+            } else {
+                navigate('/', { replace: true });
+            }
+        } catch (err) {
+            console.error('Google login error:', err);
+            setError(err instanceof Error ? err.message : 'Đăng ký Google thất bại.');
             setLoading(false);
         }
     };
@@ -180,6 +216,29 @@ const Register: React.FC = () => {
                             />
                         </div>
 
+                        <div className="form-group">
+                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem' }}>Nhập lại mật khẩu</label>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Xác nhận mật khẩu của bạn"
+                                required
+                                disabled={loading}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem 1rem',
+                                    borderRadius: '10px',
+                                    border: '1px solid #E5E7EB',
+                                    backgroundColor: '#F9FAFB',
+                                    outline: 'none',
+                                    fontSize: '0.9rem',
+                                    transition: 'border-color 0.2s'
+                                }}
+                                className="auth-input"
+                            />
+                        </div>
+
                         <Button
                             type="submit"
                             disabled={loading}
@@ -202,15 +261,18 @@ const Register: React.FC = () => {
                             <div style={{ flex: 1, height: '1px', backgroundColor: '#E5E7EB' }} />
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                            <button type="button" style={socialButtonStyle}>
-                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style={{ width: '18px', height: '18px' }} />
-                                Đăng nhập với Google
-                            </button>
-                            <button type="button" style={socialButtonStyle}>
-                                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" style={{ width: '18px', height: '18px' }} />
-                                Đăng nhập với Facebook
-                            </button>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', alignItems: 'center' }}>
+                            <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                                <GoogleLogin
+                                    onSuccess={handleGoogleSuccess}
+                                    onError={() => setError('Đăng ký qua Google thất bại.')}
+                                    size="large"
+                                    width="400"
+                                    text="signup_with"
+                                    shape="rectangular"
+                                    logo_alignment="center"
+                                />
+                            </div>
                         </div>
 
                         <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#666' }}>
@@ -291,21 +353,5 @@ const Register: React.FC = () => {
     );
 };
 
-const socialButtonStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.6rem',
-    width: '100%',
-    padding: '0.75rem',
-    borderRadius: '10px',
-    border: '1px solid #E5E7EB',
-    backgroundColor: '#F9FAFB',
-    color: '#4B5563',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'background-color 0.2s'
-};
 
 export default Register;

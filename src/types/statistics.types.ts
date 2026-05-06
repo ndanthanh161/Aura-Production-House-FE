@@ -9,9 +9,14 @@ export interface DashboardStats {
     totalRevenue: number;
     revenueThisMonth: number;
     revenueLastMonth: number;
+    revenueGrowth: number;
+    averageOrderValue: number;
     totalCustomers: number;
     totalStaff: number;
     newCustomersThisMonth: number;
+    conversionRate: number;
+    revenueByPackage: Record<string, number>;
+    projectsByCategory: Record<string, number>;
     totalBookings: number;
     bookingsThisMonth: number;
     cancelledThisMonth: number;

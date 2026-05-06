@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone } from 'lucide-react';
+import { contactApi } from '../../services/contactApi';
 
 const Contact: React.FC = () => {
     return (
@@ -30,9 +31,9 @@ const Contact: React.FC = () => {
                 <div className="container">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
                         {[
-                            { icon: <Mail size={24} />, title: 'EMAIL', detail: 'hello@auraproduction.com', sub: 'Chúng tôi phản hồi trong 24 giờ' },
-                            { icon: <Phone size={24} />, title: 'ĐIỆN THOẠI', detail: '+1 (555) 123-4567', sub: 'Thứ 2–Thứ 6, 9h–18h' },
-                            { icon: <MapPin size={24} />, title: 'STUDIO', detail: 'Thành phố New York, NY', sub: 'Chỉ theo lịch hẹn' },
+                            { icon: <Mail size={24} />, title: 'EMAIL', detail: 'auraproduction21@gmail.com', sub: 'Chúng tôi phản hồi trong 24 giờ' },
+                            { icon: <Phone size={24} />, title: 'ĐIỆN THOẠI', detail: '0941676736', sub: 'Thứ 2–Thứ 6, 9h–18h' },
+                            { icon: <MapPin size={24} />, title: 'STUDIO', detail: 'Lô E2a-7, Đường D1, Đ. Võ Chí Công, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh', sub: 'Chỉ theo lịch hẹn' },
                         ].map((item, i) => (
                             <motion.div
                                 key={i}
@@ -80,28 +81,59 @@ const Contact: React.FC = () => {
                         </h2>
                     </div>
 
-                    <form onSubmit={(e) => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                            <input type="text" placeholder="Họ và Tên" style={{
+                    <form 
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            const target = e.target as any;
+                            const data = {
+                                name: target[0].value,
+                                email: target[1].value,
+                                phoneNumber: target[2].value,
+                                subject: target[3].value,
+                                message: target[4].value
+                            };
+                            
+                            try {
+                                const btn = document.getElementById('submit-btn');
+                                if (btn) btn.innerText = 'ĐANG GỬI...';
+                                
+                                await contactApi.sendMessage(data);
+                                alert('Cảm ơn bạn! Tin nhắn đã được gửi thành công.');
+                                target.reset();
+                            } catch (error) {
+                                alert('Có lỗi xảy ra. Vui lòng thử lại sau.');
+                            } finally {
+                                const btn = document.getElementById('submit-btn');
+                                if (btn) btn.innerText = 'GỬI TIN NHẮN';
+                            }
+                        }} 
+                        style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+                    >
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                            <input required type="text" placeholder="Họ và Tên" style={{
                                 width: '100%', border: '1px solid #EEE', padding: '1.25rem',
                                 color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFF'
                             }} />
-                            <input type="email" placeholder="Email" style={{
+                            <input required type="email" placeholder="Email" style={{
+                                width: '100%', border: '1px solid #EEE', padding: '1.25rem',
+                                color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFF'
+                            }} />
+                            <input required type="tel" placeholder="Số điện thoại" style={{
                                 width: '100%', border: '1px solid #EEE', padding: '1.25rem',
                                 color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFF'
                             }} />
                         </div>
-                        <input type="text" placeholder="Chủ đề" style={{
+                        <input required type="text" placeholder="Chủ đề" style={{
                             width: '100%', border: '1px solid #EEE', padding: '1.25rem',
                             color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFF'
                         }} />
-                        <textarea placeholder="Hãy cho chúng tôi biết về dự án của bạn..." rows={8} style={{
+                        <textarea required placeholder="Hãy cho chúng tôi biết về dự án của bạn..." rows={8} style={{
                             width: '100%', border: '1px solid #EEE', padding: '1.25rem',
                             color: '#0F0F0F', fontSize: '0.85rem', outline: 'none', resize: 'vertical', backgroundColor: '#FFF'
                         }} />
-
+ 
                         <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-                            <button type="submit" style={{
+                            <button id="submit-btn" type="submit" style={{
                                 backgroundColor: '#071FD9', color: '#FFFFFF', padding: '1.25rem 3rem',
                                 fontSize: '0.8rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 900,
                                 cursor: 'pointer', border: 'none', minWidth: '220px', transition: 'all 0.3s ease'

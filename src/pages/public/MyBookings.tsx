@@ -2,15 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ChevronRight, ChevronLeft, CalendarDays, Loader2, X,
-    ArrowRight, CreditCard
+    ArrowRight, CreditCard, AlertCircle, CheckCircle2, XCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { projectApi } from '../../services/projectApi';
 import { useAuth } from '../../context/AuthContext';
 import type { Project, ProjectStatus } from '../../types/project.types';
 import { Button } from '../../components/ui/Button';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
+import { useToast } from '../../components/ui/Toast';
 
 const MyBookings: React.FC = () => {
+    const { showToast, ToastContainer } = useToast();
     const { user, isLoading: authLoading } = useAuth();
     const navigate = useNavigate();
     const [bookings, setBookings] = useState<Project[]>([]);
@@ -24,9 +27,18 @@ const MyBookings: React.FC = () => {
     const [slotAvailable, setSlotAvailable] = useState<boolean | null>(null);
     const [rescheduling, setRescheduling] = useState(false);
 
+    // Details Modal state
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 5;
+
+    // Cancellation state
+    const [cancelModal, setCancelModal] = useState<{ isOpen: boolean; projectId: string | null }>({
+        isOpen: false,
+        projectId: null
+    });
 
     useEffect(() => {
         if (user) {
@@ -41,8 +53,8 @@ const MyBookings: React.FC = () => {
         try {
             const res = await projectApi.getSchedules();
             if (res.succeeded && res.data) {
-                // Sort by date descending
-                setBookings(res.data.sort((a, b) => new Date(b.deadline).getTime() - new Date(a.deadline).getTime()));
+                // Sort by creation date descending
+                setBookings(res.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
             } else if (!res.succeeded) {
                 setError(res.message || 'Không thể tải danh sách lịch hẹn.');
             }
@@ -53,18 +65,21 @@ const MyBookings: React.FC = () => {
         }
     };
 
-    const handleCancel = async (projectId: string) => {
-        if (!window.confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?')) return;
+    const handleCancel = async () => {
+        if (!cancelModal.projectId) return;
+        const projectId = cancelModal.projectId;
         try {
             const res = await projectApi.cancel(projectId);
             if (res.succeeded) {
-                alert('Hủy lịch thành công.');
+                showToast('Hủy lịch thành công.', 'success');
+                setCancelModal({ isOpen: false, projectId: null });
                 fetchBookings();
+                setSelectedProject(null);
             } else {
-                alert(res.message || 'Hủy lịch thất bại.');
+                showToast(res.message || 'Hủy lịch thất bại.', 'error');
             }
         } catch (err) {
-            alert('Đã có lỗi xảy ra.');
+            showToast('Đã có lỗi xảy ra.', 'error');
         }
     };
 
@@ -91,28 +106,28 @@ const MyBookings: React.FC = () => {
                 newShootingDate: newDate
             });
             if (res.succeeded) {
-                alert('Đổi lịch thành công.');
+                showToast('Đổi lịch thành công.', 'success');
                 setRescheduleTarget(null);
                 setNewDate('');
                 setSlotAvailable(null);
                 fetchBookings();
             } else {
-                alert(res.message || 'Đổi lịch thất bại.');
+                showToast(res.message || 'Đổi lịch thất bại.', 'error');
             }
         } catch (err) {
-            alert('Đã có lỗi xảy ra.');
+            showToast('Đã có lỗi xảy ra.', 'error');
         } finally {
             setRescheduling(false);
         }
     };
 
-    const getStatusStyle = (status: ProjectStatus) => {
+    const getStatusInfo = (status: ProjectStatus) => {
         switch (status) {
-            case 'Scheduled': return { color: '#ADFF00' };
-            case 'InProduction': return { color: '#3b82f6' };
-            case 'Completed': return { color: '#10b981' };
-            case 'Cancelled': return { color: '#ef4444' };
-            default: return { color: '#94a3b8' };
+            case 'Scheduled': return { color: '#ADFF00', label: 'Chờ thanh toán', desc: 'Đã lên lịch, vui lòng hoàn tất thanh toán để triển khai.' };
+            case 'InProduction': return { color: '#3b82f6', label: 'Đang sản xuất', desc: 'Đội ngũ AURA đang trong quá trình ghi hình và hậu kỳ.' };
+            case 'Completed': return { color: '#10b981', label: 'Hoàn thành', desc: 'Dự án đã kết thúc và bàn giao sản phẩm thành công.' };
+            case 'Cancelled': return { color: '#ef4444', label: 'Đã hủy', desc: 'Dự án đã được hủy theo yêu cầu hoặc quá hạn.' };
+            default: return { color: '#94a3b8', label: status, desc: '' };
         }
     };
 
@@ -156,7 +171,7 @@ const MyBookings: React.FC = () => {
                             color: 'var(--color-accent)',
                             marginBottom: '1rem'
                         }}>
-                            Dashboard — Thành viên
+                            Thành viên — Dashboard
                         </span>
                         <h1 style={{
                             fontSize: 'clamp(3rem, 6vw, 4.5rem)',
@@ -261,7 +276,7 @@ const MyBookings: React.FC = () => {
                             style={{ display: 'grid', gap: '2rem' }}
                         >
                             {bookings.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map((booking, index) => {
-                                const style = getStatusStyle(booking.status);
+                                const statusInfo = getStatusInfo(booking.status);
                                 return (
                                     <motion.div
                                         key={booking.id}
@@ -272,7 +287,7 @@ const MyBookings: React.FC = () => {
                                             backgroundColor: 'var(--color-bg-secondary)',
                                             border: '1px solid var(--color-border)',
                                             borderRadius: '32px',
-                                            padding: '2.5rem',
+                                            padding: '2rem 2.5rem',
                                             display: 'flex',
                                             flexWrap: 'wrap',
                                             alignItems: 'center',
@@ -294,23 +309,23 @@ const MyBookings: React.FC = () => {
                                                     fontWeight: 800,
                                                     textTransform: 'uppercase',
                                                     letterSpacing: '0.15em',
-                                                    color: style.color,
+                                                    color: statusInfo.color,
                                                     display: 'inline-flex',
-                                                    alignItems: 'center'
+                                                    alignItems: 'center',
+                                                    backgroundColor: `${statusInfo.color}15`,
+                                                    padding: '4px 12px',
+                                                    borderRadius: '100px'
                                                 }}>
-                                                    {booking.status === 'Scheduled' ? 'Đã lên lịch' :
-                                                        booking.status === 'InProduction' ? 'Đang thực hiện' :
-                                                            booking.status === 'Completed' ? 'Hoàn thành' :
-                                                                booking.status === 'Cancelled' ? 'Đã hủy' : booking.status}
+                                                    {statusInfo.label}
                                                 </span>
                                                 <div style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--color-border)' }} />
                                                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>
-                                                    REF: {booking.id.slice(0, 8).toUpperCase()}
+                                                    {formatDate(booking.createdAt)}
                                                 </span>
                                             </div>
 
                                             <h3 style={{
-                                                fontSize: '2rem',
+                                                fontSize: '1.75rem',
                                                 fontFamily: 'var(--font-sans)',
                                                 fontWeight: 800,
                                                 marginBottom: '1rem',
@@ -321,24 +336,17 @@ const MyBookings: React.FC = () => {
                                             </h3>
 
                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2.5rem', color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-
-                                                    <div>
-                                                        <span style={{ display: 'block', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em' }}>Dự kiến hoàn thành</span>
-                                                        <span style={{ fontWeight: 600, color: 'var(--color-text)' }}>{formatDate(booking.deadline)}</span>
-                                                    </div>
+                                                <div>
+                                                    <span style={{ display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em', marginBottom: '4px' }}>Dự kiến</span>
+                                                    <span style={{ fontWeight: 600, color: 'var(--color-text)' }}>{formatDate(booking.deadline)}</span>
                                                 </div>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                    <div>
-                                                        <span style={{ display: 'block', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em' }}>Gói dịch vụ</span>
-                                                        <span style={{ fontWeight: 600, color: 'var(--color-text)' }}>{booking.packageName}</span>
-                                                    </div>
+                                                <div>
+                                                    <span style={{ display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em', marginBottom: '4px' }}>Gói dịch vụ</span>
+                                                    <span style={{ fontWeight: 600, color: 'var(--color-text)' }}>{booking.packageName}</span>
                                                 </div>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                    <div>
-                                                        <span style={{ display: 'block', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em' }}>Tổng thanh toán</span>
-                                                        <span style={{ fontWeight: 600, color: 'var(--color-accent)' }}>{formatMoney(booking.revenue)}</span>
-                                                    </div>
+                                                <div>
+                                                    <span style={{ display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em', marginBottom: '4px' }}>Ngân sách</span>
+                                                    <span style={{ fontWeight: 700, color: 'var(--color-accent)' }}>{formatMoney(booking.revenue)}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -354,21 +362,15 @@ const MyBookings: React.FC = () => {
                                                         gap: '8px'
                                                     }}
                                                 >
-                                                    <CreditCard size={18} /> Thanh toán ngay
+                                                    <CreditCard size={18} /> Thanh toán
                                                 </Button>
                                             )}
                                             <Button
                                                 variant="ghost"
-                                                onClick={() => {
-                                                    if (booking.resultLink) {
-                                                        window.open(booking.resultLink, '_blank');
-                                                    } else {
-                                                        navigate('/portfolio');
-                                                    }
-                                                }}
+                                                onClick={() => setSelectedProject(booking)}
                                                 style={{ gap: '10px' }}
                                             >
-                                                {booking.resultLink ? 'Xem sản phẩm' : 'Xem chi tiết'} <ArrowRight size={18} />
+                                                Chi tiết <ArrowRight size={18} />
                                             </Button>
                                         </div>
                                     </motion.div>
@@ -453,15 +455,181 @@ const MyBookings: React.FC = () => {
                 </AnimatePresence>
             </div>
 
+            {/* Project Details Modal */}
+            <AnimatePresence>
+                {selectedProject && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        style={{
+                            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(12px)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+                            padding: '1.5rem'
+                        }}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            style={{
+                                backgroundColor: 'var(--color-bg)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: '40px',
+                                maxWidth: '800px',
+                                width: '100%',
+                                maxHeight: '90vh',
+                                position: 'relative',
+                                boxShadow: '0 50px 100px rgba(0,0,0,0.5)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                overflow: 'hidden' // Clip the inner scroll
+                            }}
+                        >
+                            {/* Fixed Close Button */}
+                            <button
+                                onClick={() => setSelectedProject(null)}
+                                style={{
+                                    position: 'absolute', right: '1.5rem', top: '1.5rem',
+                                    background: 'var(--color-bg-secondary)', 
+                                    border: '1px solid var(--color-border)',
+                                    color: 'var(--color-text)', 
+                                    cursor: 'pointer',
+                                    width: '44px', height: '44px', borderRadius: '50%',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                                    zIndex: 100,
+                                    boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = 'var(--color-accent)';
+                                    e.currentTarget.style.color = 'white';
+                                    e.currentTarget.style.transform = 'rotate(90deg) scale(1.1)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'var(--color-bg-secondary)';
+                                    e.currentTarget.style.color = 'var(--color-text)';
+                                    e.currentTarget.style.transform = 'rotate(0deg) scale(1)';
+                                }}
+                            >
+                                <X size={24} />
+                            </button>
+
+                            {/* Scrollable Content */}
+                            <div style={{
+                                padding: '4rem 3.5rem 3.5rem',
+                                overflowY: 'auto',
+                                width: '100%'
+                            }}>
+                                <div style={{ marginBottom: '3rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
+                                        <span style={{ 
+                                            color: getStatusInfo(selectedProject.status).color,
+                                            fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em'
+                                        }}>
+                                            {getStatusInfo(selectedProject.status).label}
+                                        </span>
+                                        <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>•</span>
+                                        <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>REF: {selectedProject.id.toUpperCase()}</span>
+                                    </div>
+                                    <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '1rem', fontFamily: 'var(--font-display)', letterSpacing: 'var(--ls-tight)' }}>
+                                        {selectedProject.name}
+                                    </h2>
+                                    <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.6, fontSize: '1.1rem' }}>
+                                        {getStatusInfo(selectedProject.status).desc}
+                                    </p>
+                                </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+                                    <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '20px', border: '1px solid var(--color-border)' }}>
+                                        <div style={{ color: 'var(--color-text-muted)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.5 }}>Ngày đăng ký</div>
+                                        <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>{formatDate(selectedProject.createdAt)}</div>
+                                    </div>
+                                    <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '20px', border: '1px solid var(--color-border)' }}>
+                                        <div style={{ color: 'var(--color-text-muted)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.5 }}>Hạn hoàn thành</div>
+                                        <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>{formatDate(selectedProject.deadline)}</div>
+                                    </div>
+                                    <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '20px', border: '1px solid var(--color-border)' }}>
+                                        <div style={{ color: 'var(--color-text-muted)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.5 }}>Tổng ngân sách</div>
+                                        <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--color-accent)' }}>{formatMoney(selectedProject.revenue)}</div>
+                                    </div>
+                                </div>
+
+                                <div style={{ marginBottom: '3rem' }}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '1.5rem', letterSpacing: '0.1em' }}>Chi tiết gói: {selectedProject.packageName}</h4>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                        {selectedProject.benefits?.map((benefit, i) => (
+                                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                                                <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--color-accent)' }} />
+                                                {benefit}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {selectedProject.description && (
+                                    <div style={{ marginBottom: '3rem', padding: '1.5rem', backgroundColor: 'rgba(173, 255, 0, 0.03)', borderRadius: '20px', borderLeft: '4px solid var(--color-accent)' }}>
+                                        <h4 style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Ghi chú từ khách hàng:</h4>
+                                        <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--color-text)', fontStyle: 'italic' }}>"{selectedProject.description}"</p>
+                                    </div>
+                                )}
+
+                                <div style={{ display: 'flex', gap: '1.5rem', paddingTop: '2rem', borderTop: '1px solid var(--color-border)' }}>
+                                    {selectedProject.status === 'Scheduled' && (
+                                        <>
+                                            <Button
+                                                onClick={() => navigate(`/purchase/${selectedProject.packageId}?projectId=${selectedProject.id}`)}
+                                                style={{ flex: 1, height: '60px' }}
+                                            >
+                                                <CreditCard size={18} style={{ marginRight: '8px' }} /> Tiến hành thanh toán
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => setCancelModal({ isOpen: true, projectId: selectedProject.id })}
+                                                style={{ borderColor: '#ef4444', color: '#ef4444', height: '60px' }}
+                                            >
+                                                Hủy dự án
+                                            </Button>
+                                        </>
+                                    )}
+                                    {selectedProject.resultLink && (
+                                        <Button
+                                            onClick={() => window.open(selectedProject.resultLink, '_blank')}
+                                            style={{ flex: 1, height: '60px' }}
+                                        >
+                                            Xem thành phẩm <ChevronRight size={18} style={{ marginLeft: '8px' }} />
+                                        </Button>
+                                    )}
+                                    {selectedProject.status === 'InProduction' && !selectedProject.resultLink && (
+                                        <div style={{ flex: 1, textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+                                            Dự án đang trong quá trình thực hiện. Chúng tôi sẽ cập nhật sản phẩm sớm nhất.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Reschedule Modal */}
             <AnimatePresence>
                 {rescheduleTarget && (
-                    <div style={{
-                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                        backgroundColor: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(20px)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-                        padding: '1rem'
-                    }}>
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        style={{
+                            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(12px)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+                            padding: '1rem'
+                        }}
+                    >
                         <motion.div
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -481,17 +649,24 @@ const MyBookings: React.FC = () => {
                             <button
                                 onClick={() => { setRescheduleTarget(null); setSlotAvailable(null); }}
                                 style={{
-                                    position: 'absolute', right: '2rem', top: '2rem',
-                                    background: 'rgba(255,255,255,0.05)', border: 'none',
+                                    position: 'absolute', right: '1.5rem', top: '1.5rem',
+                                    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)',
                                     color: 'white', cursor: 'pointer',
-                                    width: '40px', height: '40px', borderRadius: '50%',
+                                    width: '44px', height: '44px', borderRadius: '50%',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    transition: 'all 0.3s ease'
+                                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                                    zIndex: 10
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = 'var(--color-accent)';
+                                    e.currentTarget.style.transform = 'rotate(90deg)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                    e.currentTarget.style.transform = 'rotate(0deg)';
+                                }}
                             >
-                                <X size={20} />
+                                <X size={24} />
                             </button>
 
                             <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '1rem', fontFamily: 'var(--font-display)', letterSpacing: 'var(--ls-tight)' }}>Đổi lịch dự án</h2>
@@ -566,9 +741,21 @@ const MyBookings: React.FC = () => {
                                 </Button>
                             </div>
                         </motion.div>
-                    </div>
+                    </motion.div>
                 )}
             </AnimatePresence>
+
+            <ConfirmModal 
+                isOpen={cancelModal.isOpen}
+                title="Hủy lịch hẹn"
+                message="Bạn có chắc chắn muốn hủy dự án này? Sau khi hủy, bạn sẽ không thể thực hiện thanh toán hoặc tiếp tục dự án."
+                confirmText="Hủy lịch ngay"
+                onConfirm={handleCancel}
+                onCancel={() => setCancelModal({ isOpen: false, projectId: null })}
+                type="danger"
+            />
+
+            <ToastContainer />
 
             <style>{`
                 .animate-spin { animation: spin 1s linear infinite; }

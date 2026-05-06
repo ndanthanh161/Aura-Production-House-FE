@@ -6,6 +6,8 @@ export interface UserDTO {
     email: string;
     phone?: string;
     avatar?: string;
+    bio?: string;
+    specialization?: string;
     role: string;
     createdAt: string;
     updatedAt: string;
@@ -16,6 +18,8 @@ export interface UpdateUserRequest {
     fullName: string;
     phone?: string;
     avatar?: string;
+    bio?: string;
+    specialization?: string;
 }
 
 export interface CreatePhotographerRequest {

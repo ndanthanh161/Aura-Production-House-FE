@@ -4,7 +4,7 @@ import type { AuthResponse, RegisterRequest } from '../types/auth.types';
 
 // ─── Types ───────────────────────────────────────────────────────
 
-export type Role = 'user' | 'staff' | 'photographer' | 'admin' | null;
+export type Role = 'user' | 'photographer' | 'admin' | null;
 
 interface User {
     userId: string;
@@ -38,7 +38,6 @@ const STORAGE_KEYS = {
 function mapRole(beRole: string): Role {
     const lower = beRole.toLowerCase();
     if (lower === 'admin') return 'admin';
-    if (lower === 'staff') return 'staff';
     if (lower === 'photographer') return 'photographer';
     return 'user';
 }
