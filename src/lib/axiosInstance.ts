@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import type { ApiResponse } from '../types/auth.types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://localhost:7283/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:7283/api';
 
 // ─── Normalize BE response: hỗ trợ cả PascalCase lẫn camelCase ─
 
