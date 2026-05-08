@@ -63,9 +63,12 @@ function clearAuthFromStorage() {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [accessToken, setAccessToken] = useState<string | null>(null);
-    const [role, setRole] = useState<Role>(null);
+    const [user, setUser] = useState<User | null>(() => {
+        const stored = localStorage.getItem(STORAGE_KEYS.USER);
+        return stored ? JSON.parse(stored) : null;
+    });
+    const [accessToken, setAccessToken] = useState<string | null>(() => localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN));
+    const [role, setRole] = useState<Role>(() => (localStorage.getItem(STORAGE_KEYS.ROLE) as Role) || null);
     const [isLoading, setIsLoading] = useState(true);
 
     // ── Restore auth state on mount ──────────────────────────────

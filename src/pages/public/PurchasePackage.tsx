@@ -518,6 +518,11 @@ const PurchasePackage: React.FC = () => {
                                         {/* Payment Info Table */}
                                         <div style={{ textAlign: 'left', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '1.5rem', border: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                                             <div>
+                                                <div style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Ngân hàng:</div>
+                                                <div style={{ fontWeight: 700, color: 'var(--color-accent)', fontSize: '1.125rem' }}>TPBank</div>
+                                            </div>
+                                            
+                                            <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
                                                 <div style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Chủ tài khoản:</div>
                                                 <div style={{ fontWeight: 700, color: 'var(--color-text)', textTransform: 'uppercase', fontSize: '1rem' }}>{sepayInfo?.accountName}</div>
                                             </div>
