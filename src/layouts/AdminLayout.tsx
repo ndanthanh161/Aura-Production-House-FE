@@ -43,7 +43,6 @@ export const AdminLayout: React.FC = () => {
                     <h2 style={{ fontFamily: 'var(--font-serif)', letterSpacing: '0.2em', color: 'var(--color-accent)', fontSize: '1.5rem' }}>AURA</h2>
                     <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.5, letterSpacing: '0.1em' }}>Quản Trị</span>
                 </div>
-
                 <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                     {navItems.map(item => (
                         <Link
