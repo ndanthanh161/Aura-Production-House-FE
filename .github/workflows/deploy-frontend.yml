@@ -22,7 +22,9 @@ jobs:
 
       - name: Build and push image to ACR
         run: |
-          docker build -t aura01registry.azurecr.io/aura-frontend:${{ github.sha }} .
+          docker build \
+            --build-arg VITE_API_URL=https://api.auraproduction.com.vn/api \
+            -t aura01registry.azurecr.io/aura-frontend:${{ github.sha }} .
           docker push aura01registry.azurecr.io/aura-frontend:${{ github.sha }}
 
       - name: Deploy to Azure Container App
