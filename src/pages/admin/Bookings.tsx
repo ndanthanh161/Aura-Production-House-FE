@@ -170,7 +170,7 @@ const AdminBookings: React.FC = () => {
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'rgba(255,255,255,0.02)' }}>
-                                {['Dự án', 'Khách hàng', 'Photographer', 'Giá gói', 'Dự kiến', 'Trạng thái', 'Thao tác'].map(h => (
+                                {['Dự án', 'Khách hàng', 'Photographer', 'Giá gói', 'Ngày hoàn thành', 'Trạng thái', 'Thao tác'].map(h => (
                                     <th key={h} style={{ padding: '1rem 1.25rem', textAlign: 'left', fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
                                 ))}
                             </tr>
@@ -313,10 +313,10 @@ const AdminBookings: React.FC = () => {
                 <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setRescheduleId(null)}>
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={modalStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Ngày Dự Kiến</h2>
+                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Ngày Hoàn Thành</h2>
                             <button onClick={() => setRescheduleId(null)} style={{ color: 'var(--color-text-muted)' }}><X size={20} /></button>
                         </div>
-                        <label style={labelStyle}>Ngày chụp mới *</label>
+                        <label style={labelStyle}>Ngày hoàn thành mới *</label>
                         <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)} style={{ ...inputStyle, marginBottom: '1.25rem' }} />
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
                             <button onClick={handleReschedule} disabled={!newDate || saving} style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }}>
