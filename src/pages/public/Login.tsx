@@ -175,7 +175,7 @@ const Login: React.FC = () => {
                                 className="login-input"
                             />
                             <div style={{ textAlign: 'right', marginTop: '0.4rem' }}>
-                                <Link to="#" style={{ fontSize: '0.8rem', color: '#3182CE', textDecoration: 'none', fontWeight: 500 }}>
+                                <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: '#3182CE', textDecoration: 'none', fontWeight: 500 }}>
                                     Quên mật khẩu?
                                 </Link>
                             </div>

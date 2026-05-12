@@ -313,11 +313,11 @@ const AdminBookings: React.FC = () => {
                 <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setRescheduleId(null)}>
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={modalStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Đổi Lịch Chụp</h2>
+                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Ngày Dự Kiến</h2>
                             <button onClick={() => setRescheduleId(null)} style={{ color: 'var(--color-text-muted)' }}><X size={20} /></button>
                         </div>
                         <label style={labelStyle}>Ngày chụp mới *</label>
-                        <input type="datetime-local" value={newDate} onChange={e => setNewDate(e.target.value)} style={{ ...inputStyle, marginBottom: '1.25rem' }} />
+                        <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)} style={{ ...inputStyle, marginBottom: '1.25rem' }} />
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
                             <button onClick={handleReschedule} disabled={!newDate || saving} style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }}>
                                 {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <RefreshCw size={16} />} Xác Nhận

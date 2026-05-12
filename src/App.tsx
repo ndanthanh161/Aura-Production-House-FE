@@ -12,6 +12,8 @@ import PurchasePackage from './pages/public/PurchasePackage';
 import MyBookings from './pages/public/MyBookings';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
+import ForgotPassword from './pages/public/ForgotPassword';
+import ResetPassword from './pages/public/ResetPassword';
 
 import { PhotographerLayout } from './layouts/PhotographerLayout';
 import PhotographerOverview from './pages/photographer/Overview';
@@ -54,6 +56,8 @@ function App() {
 
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="reset-password" element={<ResetPassword />} />
 
         {/* Photographer Routes */}
         <Route
