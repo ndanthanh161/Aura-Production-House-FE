@@ -4,18 +4,18 @@ import type { DashboardStats, MonthlyRevenue, StaffPerformance } from '../types/
 
 export const statisticsApi = {
     getDashboard: async (): Promise<ApiResponse<DashboardStats>> => {
-        const res = await axiosInstance.get<ApiResponse<DashboardStats>>('/v1/Statistics/dashboard');
+        const res = await axiosInstance.get<ApiResponse<DashboardStats>>('Statistics/dashboard');
         return res.data;
     },
     getMonthlyRevenue: async (months = 12): Promise<ApiResponse<MonthlyRevenue[]>> => {
         const res = await axiosInstance.get<ApiResponse<MonthlyRevenue[]>>(
-            `/v1/Statistics/revenue?months=${months}`
+            `Statistics/revenue?months=${months}`
         );
         return res.data;
     },
     getStaffPerformance: async (): Promise<ApiResponse<StaffPerformance[]>> => {
         const res = await axiosInstance.get<ApiResponse<StaffPerformance[]>>(
-            '/v1/Statistics/staff-performance'
+            'Statistics/staff-performance'
         );
         return res.data;
     },

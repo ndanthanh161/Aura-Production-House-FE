@@ -1,6 +1,8 @@
 import React from 'react';
+import logo from '../assets/LOGO COLOR.png';
+
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, User as UserIcon, LogOut, ChevronRight, Home, Camera } from 'lucide-react';
+import { LayoutDashboard, Briefcase, User as UserIcon, LogOut, ChevronRight, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const PhotographerLayout: React.FC = () => {
@@ -36,15 +38,25 @@ export const PhotographerLayout: React.FC = () => {
                 position: 'fixed',
                 height: '100vh',
             }}>
+
                 <div style={{ marginBottom: '2.5rem', padding: '0 0.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                        <Camera size={18} style={{ color: 'var(--color-accent)' }} />
-                        <h2 style={{ fontFamily: 'var(--font-serif)', letterSpacing: '0.2em', color: 'var(--color-accent)', fontSize: '1.1rem' }}>
-                            AURA
-                        </h2>
-                    </div>
-                    <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', opacity: 0.5, letterSpacing: '0.1em' }}>
-                        Photographer
+                    <Link to="/" style={{ textDecoration: 'none', display: 'block', marginBottom: '0.5rem' }}>
+                        <img 
+                            src={logo} 
+                            alt="Aura Logo" 
+                            style={{ height: '28px', display: 'block' }} 
+                        />
+                    </Link>
+                    <span style={{ 
+                        fontFamily: 'var(--font-display)',
+                        fontSize: '0.75rem', 
+                        textTransform: 'uppercase', 
+                        color: 'var(--color-accent)',
+                        opacity: 0.8, 
+                        letterSpacing: '0.15em',
+                        fontWeight: 700
+                    }}>
+                        Photographer Portal
                     </span>
                     {user && (
                         <div style={{ marginTop: '0.75rem', fontSize: '0.9rem', color: 'var(--color-text)', fontWeight: 600 }}>
@@ -52,6 +64,7 @@ export const PhotographerLayout: React.FC = () => {
                         </div>
                     )}
                 </div>
+
 
                 <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                     {navItems.map(item => (

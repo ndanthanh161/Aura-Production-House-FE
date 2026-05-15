@@ -1,4 +1,6 @@
 import React from 'react';
+import logo from '../assets/LOGO COLOR.png';
+
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Package, Users, LogOut, Camera, CalendarCheck, BarChart3, Bot, Image, Mail } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -39,10 +41,26 @@ export const AdminLayout: React.FC = () => {
                 height: '100vh',
                 zIndex: 100
             }}>
+
                 <div style={{ marginBottom: '3rem', padding: '0 1rem' }}>
-                    <h2 style={{ fontFamily: 'var(--font-serif)', letterSpacing: '0.2em', color: 'var(--color-accent)', fontSize: '1.5rem' }}>AURA</h2>
-                    <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.5, letterSpacing: '0.1em' }}>Quản Trị</span>
+                    <img 
+                        src={logo} 
+                        alt="Aura Logo" 
+                        style={{ height: '32px', marginBottom: '0.5rem', display: 'block' }} 
+                    />
+                    <span style={{ 
+                        fontFamily: 'var(--font-display)',
+                        fontSize: '0.8rem', 
+                        textTransform: 'uppercase', 
+                        color: 'var(--color-accent)',
+                        opacity: 0.8, 
+                        letterSpacing: '0.15em',
+                        fontWeight: 700
+                    }}>
+                        Hệ Thống Quản Trị
+                    </span>
                 </div>
+
                 <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                     {navItems.map(item => (
                         <Link

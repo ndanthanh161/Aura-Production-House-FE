@@ -6,29 +6,29 @@ import type { UserDTO, UpdateUserRequest } from '../types/user.types';
 
 export const photographerApi = {
     getAll: async (): Promise<ApiResponse<UserDTO[]>> => {
-        const res = await axiosInstance.get<ApiResponse<UserDTO[]>>('/v1/Photographer');
+        const res = await axiosInstance.get<ApiResponse<UserDTO[]>>('Photographer');
         return res.data;
     },
     create: async (data: any): Promise<ApiResponse<UserDTO>> => {
-        const res = await axiosInstance.post<ApiResponse<UserDTO>>('/v1/Photographer', data);
+        const res = await axiosInstance.post<ApiResponse<UserDTO>>('Photographer', data);
         return res.data;
     },
     getById: async (id: string): Promise<ApiResponse<UserDTO>> => {
-        const res = await axiosInstance.get<ApiResponse<UserDTO>>(`/v1/Photographer/${id}`);
+        const res = await axiosInstance.get<ApiResponse<UserDTO>>(`Photographer/${id}`);
         return res.data;
     },
     update: async (data: UpdateUserRequest): Promise<ApiResponse<UserDTO>> => {
-        const res = await axiosInstance.put<ApiResponse<UserDTO>>('/v1/Photographer', data);
+        const res = await axiosInstance.put<ApiResponse<UserDTO>>('Photographer', data);
         return res.data;
     },
     assignToProject: async (photographerId: string, projectId: string): Promise<ApiResponse<string>> => {
         const res = await axiosInstance.patch<ApiResponse<string>>(
-            `/v1/Photographer/${photographerId}/assign/${projectId}`
+            `/Photographer/${photographerId}/assign/${projectId}`
         );
         return res.data;
     },
     deactivate: async (id: string): Promise<ApiResponse<string>> => {
-        const res = await axiosInstance.patch<ApiResponse<string>>(`/v1/Photographer/${id}/deactivate`);
+        const res = await axiosInstance.patch<ApiResponse<string>>(`Photographer/${id}/deactivate`);
         return res.data;
     },
 };
@@ -37,19 +37,19 @@ export const photographerApi = {
 
 export const customerApi = {
     getAll: async (): Promise<ApiResponse<UserDTO[]>> => {
-        const res = await axiosInstance.get<ApiResponse<UserDTO[]>>('/v1/Customer');
+        const res = await axiosInstance.get<ApiResponse<UserDTO[]>>('Customer');
         return res.data;
     },
     getById: async (id: string): Promise<ApiResponse<UserDTO>> => {
-        const res = await axiosInstance.get<ApiResponse<UserDTO>>(`/v1/Customer/${id}`);
+        const res = await axiosInstance.get<ApiResponse<UserDTO>>(`Customer/${id}`);
         return res.data;
     },
     update: async (data: UpdateUserRequest): Promise<ApiResponse<UserDTO>> => {
-        const res = await axiosInstance.put<ApiResponse<UserDTO>>('/v1/Customer', data);
+        const res = await axiosInstance.put<ApiResponse<UserDTO>>('Customer', data);
         return res.data;
     },
     deactivate: async (id: string): Promise<ApiResponse<string>> => {
-        const res = await axiosInstance.patch<ApiResponse<string>>(`/v1/Customer/${id}/deactivate`);
+        const res = await axiosInstance.patch<ApiResponse<string>>(`Customer/${id}/deactivate`);
         return res.data;
     },
 };

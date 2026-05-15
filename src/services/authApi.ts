@@ -10,22 +10,22 @@ import type {
 
 export const authApi = {
     login: async (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
-        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('/Auth/login', data);
+        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('Auth/login', data);
         return res.data;
     },
 
     googleLogin: async (idToken: string): Promise<ApiResponse<AuthResponse>> => {
-        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('/Auth/google-login', { idToken });
+        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('Auth/google-login', { idToken });
         return res.data;
     },
 
     register: async (data: RegisterRequest): Promise<ApiResponse<AuthResponse>> => {
-        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('/Auth/register', data);
+        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('Auth/register', data);
         return res.data;
     },
 
     refreshToken: async (refreshToken: string): Promise<ApiResponse<AuthResponse>> => {
-        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('/Auth/refresh-token', {
+        const res = await axiosInstance.post<ApiResponse<AuthResponse>>('Auth/refresh-token', {
             refreshToken,
         });
         return res.data;
@@ -33,11 +33,11 @@ export const authApi = {
 
     // Authorization header tự được gắn qua request interceptor
     logout: async (): Promise<void> => {
-        await axiosInstance.post('/Auth/logout');
+        await axiosInstance.post('Auth/logout');
     },
 
     getMe: async (): Promise<ApiResponse<MeResponse>> => {
-        const res = await axiosInstance.get<ApiResponse<MeResponse>>('/Auth/me');
+        const res = await axiosInstance.get<ApiResponse<MeResponse>>('Auth/me');
         return res.data;
     },
 
@@ -51,4 +51,3 @@ export const authApi = {
         return res.data;
     },
 };
-

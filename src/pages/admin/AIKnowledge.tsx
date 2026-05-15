@@ -39,8 +39,8 @@ const AdminAIKnowledge: React.FC = () => {
                 chatApi.getKnowledge(),
                 chatApi.getLogs()
             ]);
-            setKnowledge(kRes.data || []);
-            setLogs(lRes.data || []);
+            setKnowledge(kRes.data.data || []);
+            setLogs(lRes.data.data || []);
         } catch {
             setError('Không thể tải dữ liệu AI.');
         } finally {

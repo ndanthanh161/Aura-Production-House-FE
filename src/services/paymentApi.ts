@@ -9,7 +9,7 @@ export interface SePayInfo {
 
 export const paymentApi = {
     getSePayInfo: async (): Promise<ApiResponse<SePayInfo>> => {
-        const res = await axiosInstance.get<ApiResponse<SePayInfo>>('/v1/SePay/info');
+        const res = await axiosInstance.get<ApiResponse<SePayInfo>>('SePay/info');
         return res.data;
     }
 };

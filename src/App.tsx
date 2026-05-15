@@ -35,12 +35,15 @@ import AdminContactMessages from './pages/admin/ContactMessages';
 
 import { ScrollToTop } from './components/ScrollToTop';
 import ChatWidget from './components/ChatWidget';
+import { useAuth } from './context/AuthContext';
 
 function App() {
+  const { user } = useAuth();
+
   return (
     <>
       <ScrollToTop />
-      <ChatWidget />
+      {user && <ChatWidget />}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<PublicLayout />}>

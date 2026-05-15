@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, X } from 'lucide-react';
-import axios from 'axios';
+import { axiosInstance } from '../lib/axiosInstance';
 import './ChatWidget.css';
 
 const ChatWidget: React.FC = () => {
@@ -32,9 +32,13 @@ const ChatWidget: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-            const response = await axios.post(`${apiBaseUrl}/chat/message`, { message: userMessage });
-            setChatHistory(prev => [...prev, { role: 'bot', text: response.data.response }]);
+            // Dùng axiosInstance đã cấu hình baseURL là /api/v1/
+            const response = await axiosInstance.post('Chat/message', { message: userMessage });
+            // axiosInstance đã normalize response về camelCase và bóc tách data
+            // data trả về là { succeeded: true, message: "...", data: { response: "..." } }
+            // Do normalizeApiResponse trong axiosInstance.ts bóc ra response.data = normalized
+            // Nên response.data chính là ApiResponse object.
+            setChatHistory(prev => [...prev, { role: 'bot', text: response.data.data.response }]);
         } catch (error) {
             console.error('Chat error:', error);
             setChatHistory(prev => [...prev, { role: 'bot', text: 'Xin lỗi, tôi đang gặp sự cố kỹ thuật. Vui lòng thử lại sau!' }]);

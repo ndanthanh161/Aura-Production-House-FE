@@ -76,23 +76,23 @@ const toCategoryEnumName = (value: number | string): string => {
 export const portfolioApi = {
     // Public
     getPublished: async (): Promise<ApiResponse<PortfolioItem[]>> => {
-        const res = await axiosInstance.get<ApiResponse<PortfolioItem[]>>('/Portfolio/published');
+        const res = await axiosInstance.get<ApiResponse<PortfolioItem[]>>('Portfolio/published');
         return res.data;
     },
 
     getById: async (id: string): Promise<ApiResponse<PortfolioItem>> => {
-        const res = await axiosInstance.get<ApiResponse<PortfolioItem>>(`/Portfolio/${id}`);
+        const res = await axiosInstance.get<ApiResponse<PortfolioItem>>(`Portfolio/${id}`);
         return res.data;
     },
 
     // Admin
     getAll: async (): Promise<ApiResponse<PortfolioItem[]>> => {
-        const res = await axiosInstance.get<ApiResponse<PortfolioItem[]>>('/Portfolio');
+        const res = await axiosInstance.get<ApiResponse<PortfolioItem[]>>('Portfolio');
         return res.data;
     },
 
     create: async (data: CreatePortfolioRequest): Promise<ApiResponse<PortfolioItem>> => {
-        const res = await axiosInstance.post<ApiResponse<PortfolioItem>>('/Portfolio', {
+        const res = await axiosInstance.post<ApiResponse<PortfolioItem>>('Portfolio', {
             ...data,
             category: toCategoryEnumName(data.category),
         });
@@ -100,7 +100,7 @@ export const portfolioApi = {
     },
 
     update: async (data: UpdatePortfolioRequest): Promise<ApiResponse<PortfolioItem>> => {
-        const res = await axiosInstance.put<ApiResponse<PortfolioItem>>('/Portfolio', {
+        const res = await axiosInstance.put<ApiResponse<PortfolioItem>>('Portfolio', {
             ...data,
             category: toCategoryEnumName(data.category),
             isHot: data.isHot,
@@ -109,14 +109,14 @@ export const portfolioApi = {
     },
 
     togglePublish: async (id: string): Promise<ApiResponse<null>> => {
-        const res = await axiosInstance.patch<ApiResponse<null>>(`/Portfolio/${id}/toggle-publish`);
+        const res = await axiosInstance.patch<ApiResponse<null>>(`Portfolio/${id}/toggle-publish`);
         return res.data;
     },
 
     setThumbnail: async (id: string, thumbnailUrl: string): Promise<ApiResponse<PortfolioItem>> => {
         const item = await portfolioApi.getById(id);
         if (!item.data) throw new Error('Không tìm thấy portfolio');
-        const res = await axiosInstance.put<ApiResponse<PortfolioItem>>('/Portfolio', {
+        const res = await axiosInstance.put<ApiResponse<PortfolioItem>>('Portfolio', {
             id,
             title: item.data.title,
             category: toCategoryEnumName(item.data.category), // Đảm bảo luôn gửi string
@@ -130,13 +130,13 @@ export const portfolioApi = {
     },
 
     delete: async (id: string): Promise<ApiResponse<null>> => {
-        const res = await axiosInstance.delete<ApiResponse<null>>(`/Portfolio/${id}`);
+        const res = await axiosInstance.delete<ApiResponse<null>>(`Portfolio/${id}`);
         return res.data;
     },
 
     uploadMedia: async (id: string, file: File): Promise<ApiResponse<PortfolioMedia>> => {
         // 1. Get signature from Backend
-        const sigRes = await axiosInstance.get<ApiResponse<any>>('/Portfolio/upload-signature');
+        const sigRes = await axiosInstance.get<ApiResponse<any>>('Portfolio/upload-signature');
         const { signature, timestamp, cloudName, apiKey } = sigRes.data.data;
 
         // 2. Upload directly to Cloudinary
@@ -158,7 +158,7 @@ export const portfolioApi = {
         const cloudData = await cloudRes.json();
 
         // 3. Save info to Backend
-        const saveRes = await axiosInstance.post<ApiResponse<PortfolioMedia>>(`/Portfolio/${id}/media-direct`, {
+        const saveRes = await axiosInstance.post<ApiResponse<PortfolioMedia>>(`Portfolio/${id}/media-direct`, {
             url: cloudData.secure_url,
             publicId: cloudData.public_id,
             mediaType: file.type.startsWith('video/') ? 'video' : 'image'
@@ -168,7 +168,7 @@ export const portfolioApi = {
     },
 
     deleteMedia: async (mediaId: string): Promise<ApiResponse<null>> => {
-        const res = await axiosInstance.delete<ApiResponse<null>>(`/Portfolio/media/${mediaId}`);
+        const res = await axiosInstance.delete<ApiResponse<null>>(`Portfolio/media/${mediaId}`);
         return res.data;
     },
 
@@ -181,7 +181,7 @@ export const portfolioApi = {
         // Set as thumbnail
         const item = await portfolioApi.getById(id);
         if (!item.data) throw new Error('Không tìm thấy portfolio');
-        await axiosInstance.put<ApiResponse<PortfolioItem>>('/Portfolio', {
+        await axiosInstance.put<ApiResponse<PortfolioItem>>('Portfolio', {
             id,
             title: item.data.title,
             category: toCategoryEnumName(item.data.category), // Đảm bảo gửi string
