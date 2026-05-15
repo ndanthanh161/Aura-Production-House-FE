@@ -23,7 +23,7 @@ jobs:
       - name: Build and push image to ACR
         run: |
           docker build \
-            --build-arg VITE_API_URL=https://api.auraproduction.com.vn/api \
+            --build-arg VITE_API_URL=https://api.auraproduction.com.vn/api/v1 \
             --build-arg VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }} \
             -t aura01registry.azurecr.io/aura-frontend:${{ github.sha }} .
           docker push aura01registry.azurecr.io/aura-frontend:${{ github.sha }}
