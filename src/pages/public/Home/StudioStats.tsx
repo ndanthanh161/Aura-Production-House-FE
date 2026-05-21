@@ -96,7 +96,7 @@ const TunnelItem = ({ item, index, total, scrollYProgress }: { item: any, index:
                     textAlign: 'center',
                     color: '#fff',
                     zIndex: 10,
-                    padding: '0 10vw',
+                    padding: '0 clamp(1rem, 5vw, 10vw)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -121,7 +121,7 @@ const TunnelItem = ({ item, index, total, scrollYProgress }: { item: any, index:
                     </motion.span>
 
                     <h2 style={{
-                        fontSize: 'clamp(3rem, 10vw, 8rem)',
+                        fontSize: 'clamp(2rem, 8vw, 6rem)',
                         fontWeight: 900,
                         fontFamily: 'var(--font-display)',
                         lineHeight: 1.1,
@@ -133,7 +133,7 @@ const TunnelItem = ({ item, index, total, scrollYProgress }: { item: any, index:
                     </h2>
 
                     <p style={{
-                        fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
+                        fontSize: 'clamp(0.85rem, 3.5vw, 1.2rem)',
                         maxWidth: '650px',
                         margin: '0 auto',
                         opacity: 0.9,
@@ -203,7 +203,7 @@ export const StudioStats: React.FC = () => {
                     >
                         Khám Phá Aura
                     </motion.span>
-                    <h2 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', fontFamily: 'var(--font-display)', fontWeight: 900, color: 'var(--color-text)', textTransform: 'uppercase', lineHeight: 1.15 }}>
+                    <h2 style={{ fontSize: 'clamp(2rem, 6vw, 4rem)', fontFamily: 'var(--font-display)', fontWeight: 900, color: 'var(--color-text)', textTransform: 'uppercase', lineHeight: 1.15 }}>
                         Dấn Thân Vào <br /> <span className="text-gradient">Không Gian Số</span>
                     </h2>
                     <p style={{ color: 'var(--color-text-muted)', marginTop: '2rem', letterSpacing: '0.3em', fontWeight: 600 }}>SCROLL TO EXPLORE</p>

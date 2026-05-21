@@ -281,7 +281,7 @@ const PurchasePackage: React.FC = () => {
                 </button>
 
                 {/* Step Progress */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0', marginBottom: '3rem' }}>
+                <div className="purchase-steps" style={{ display: 'flex', alignItems: 'center', gap: '0', marginBottom: '3rem' }}>
                     {STEPS.map((s, i) => {
                         const n = i + 1;
                         const active = step === n;
@@ -289,7 +289,7 @@ const PurchasePackage: React.FC = () => {
                         return (
                             <React.Fragment key={s.label}>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', flex: '0 0 auto' }}>
-                                    <div style={{
+                                    <div className="step-circle" style={{
                                         width: '38px', height: '38px', borderRadius: '50%',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         backgroundColor: done ? 'var(--color-accent)' : active ? 'var(--color-accent)' : 'var(--color-bg-secondary)',
@@ -481,7 +481,7 @@ const PurchasePackage: React.FC = () => {
                                 {createdProject ? (
                                     <div style={{ padding: '2rem', borderTop: '1px solid var(--color-border)', textAlign: 'center' }}>
                                         {/* Step Guide */}
-                                        <div style={{ display: 'flex', gap: '10px', marginBottom: '2rem', textAlign: 'left' }}>
+                                        <div className="qr-steps" style={{ display: 'flex', gap: '10px', marginBottom: '2rem', textAlign: 'left' }}>
                                             {[
                                                 { step: 1, text: 'Quét mã QR' },
                                                 { step: 2, text: 'Kiểm tra tiền' },
@@ -634,7 +634,27 @@ const PurchasePackage: React.FC = () => {
                 <ToastContainer />
             </div>
 
-            <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+            <style>{`
+                @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+                @media (max-width: 480px) {
+                    .purchase-steps span {
+                        font-size: 0.6rem !important;
+                    }
+                    .purchase-steps .step-circle {
+                        width: 30px !important;
+                        height: 30px !important;
+                        font-size: 0.75rem !important;
+                    }
+                    .qr-steps {
+                        flex-direction: column !important;
+                        gap: 0.5rem !important;
+                    }
+                    .qr-steps > div {
+                        width: 100% !important;
+                        box-sizing: border-box !important;
+                    }
+                }
+            `}</style>
         </div>
     );
 };

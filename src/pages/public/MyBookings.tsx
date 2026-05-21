@@ -283,6 +283,7 @@ const MyBookings: React.FC = () => {
                                         initial={{ opacity: 0, y: 30 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                        className="booking-card"
                                         style={{
                                             backgroundColor: 'var(--color-bg-secondary)',
                                             border: '1px solid var(--color-border)',
@@ -351,7 +352,7 @@ const MyBookings: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                        <div className="booking-card-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                             {booking.status === 'Scheduled' && (
                                                 <Button
                                                     onClick={() => navigate(`/purchase/${booking.packageId}?projectId=${booking.id}`)}
@@ -519,8 +520,8 @@ const MyBookings: React.FC = () => {
                             </button>
 
                             {/* Scrollable Content */}
-                            <div style={{
-                                padding: '4rem 3.5rem 3.5rem',
+                            <div className="booking-modal-body" style={{
+                                padding: 'clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 3.5rem) 2.5rem',
                                 overflowY: 'auto',
                                 width: '100%'
                             }}>
@@ -577,7 +578,7 @@ const MyBookings: React.FC = () => {
                                     </div>
                                 )}
 
-                                <div style={{ display: 'flex', gap: '1.5rem', paddingTop: '2rem', borderTop: '1px solid var(--color-border)' }}>
+                                <div className="booking-modal-actions" style={{ display: 'flex', gap: '1.5rem', paddingTop: '2rem', borderTop: '1px solid var(--color-border)' }}>
                                     {selectedProject.status === 'Scheduled' && (
                                         <>
                                             <Button
@@ -769,6 +770,29 @@ const MyBookings: React.FC = () => {
                 }
                 input[type="date"]::-webkit-calendar-picker-indicator:hover {
                     opacity: 1;
+                }
+                
+                @media (max-width: 640px) {
+                    .booking-card {
+                        padding: 1.5rem !important;
+                        gap: 1.5rem !important;
+                    }
+                    .booking-card-actions {
+                        width: 100% !important;
+                        flex-direction: column !important;
+                        align-items: stretch !important;
+                    }
+                    .booking-card-actions button {
+                        width: 100% !important;
+                    }
+                    .booking-modal-actions {
+                        flex-direction: column !important;
+                        gap: 1rem !important;
+                    }
+                    .booking-modal-actions button {
+                        width: 100% !important;
+                        height: 50px !important;
+                    }
                 }
             `}</style>
         </div>

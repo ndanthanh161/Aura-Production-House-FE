@@ -47,7 +47,7 @@ const Home: React.FC = () => {
             <FeaturedProjects />
             {/* Cinematic Quote / Vision Statement */}
             <section style={{
-                backgroundColor: 'var(--color-bg)', padding: '10rem 0',
+                backgroundColor: 'var(--color-bg)', padding: 'var(--spacing-xl) 0',
                 position: 'relative', overflow: 'hidden', color: '#F8FFFF'
             }}>
                 {/* Decorative: Film Grain Overlay */}
@@ -125,7 +125,7 @@ const Home: React.FC = () => {
             </section>
 
             {/* Services Section - Home Page Redesign */}
-            <section style={{ backgroundColor: '#FFFFFF', padding: '10rem 0' }}>
+            <section style={{ backgroundColor: '#FFFFFF', padding: 'var(--spacing-xl) 0' }}>
                 <div className="container">
                     <header style={{ textAlign: 'center', marginBottom: '6rem' }}>
                         <motion.span
@@ -162,7 +162,7 @@ const Home: React.FC = () => {
                         </p>
                     </header>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '6rem' }}>
+                    <div className="home-services-grid">
                         {[
                             {
                                 icon: <Camera size={40} />,
@@ -273,6 +273,28 @@ const Home: React.FC = () => {
                     </div>
 
                     <style>{`
+                        .home-services-grid {
+                            display: grid;
+                            grid-template-columns: repeat(4, 1fr);
+                            gap: 1.5rem;
+                            margin-bottom: 6rem;
+                        }
+                        @media (max-width: 1024px) {
+                            .home-services-grid {
+                                grid-template-columns: repeat(2, 1fr);
+                            }
+                        }
+                        @media (max-width: 640px) {
+                            .home-services-grid {
+                                grid-template-columns: 1fr;
+                                gap: 1rem;
+                                margin-bottom: 4rem;
+                            }
+                            .svc-home-card {
+                                min-height: 400px !important;
+                                padding: 2.5rem 1.5rem !important;
+                            }
+                        }
                         .svc-home-card:hover .svc-home-bg {
                             opacity: 1 !important;
                             transform: scale(1) translateZ(0) !important;
@@ -389,7 +411,7 @@ const Home: React.FC = () => {
             {/* CTA Section - Home Page Redesign */}
             <section style={{
                 backgroundColor: '#ADFF00',
-                padding: '10rem 0',
+                padding: 'var(--spacing-xl) 0',
                 position: 'relative',
                 overflow: 'hidden',
             }}>

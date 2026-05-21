@@ -7,7 +7,7 @@ const Contact: React.FC = () => {
     return (
         <div style={{ paddingTop: '10px', backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
             {/* Header Section */}
-            <header style={{ padding: '8rem 0 4rem', textAlign: 'center', backgroundColor: '#FFFFFF', borderBottom: '1px solid #EEEEEE' }}>
+            <header style={{ padding: 'var(--spacing-xl) 0 clamp(2rem, 5vw, 4rem)', textAlign: 'center', backgroundColor: '#FFFFFF', borderBottom: '1px solid #EEEEEE' }}>
                 <div className="container">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
@@ -27,9 +27,9 @@ const Contact: React.FC = () => {
             </header>
 
             {/* Info Cards Section - Black Background */}
-            <section style={{ backgroundColor: '#FFFFFF', padding: '6rem 0' }}>
+            <section style={{ backgroundColor: '#FFFFFF', padding: 'clamp(2rem, 5vw, 4rem) 0' }}>
                 <div className="container">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+                    <div className="contact-info-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
                         {[
                             { icon: <Mail size={24} />, title: 'EMAIL', detail: 'auraproduction21@gmail.com', sub: 'Chúng tôi phản hồi trong 24 giờ' },
                             { icon: <Phone size={24} />, title: 'ĐIỆN THOẠI', detail: '0941676736', sub: 'Thứ 2–Thứ 6, 9h–18h' },
@@ -41,14 +41,14 @@ const Contact: React.FC = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.8, delay: i * 0.15 }}
+                                className="contact-info-card"
                                 style={{
                                     padding: '4rem 2.5rem',
                                     backgroundColor: '#FFFFFF',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     gap: '1.5rem',
-                                    textAlign: 'left',
-                                    borderRight: i !== 2 ? '1px solid #EEEEEE' : 'none'
+                                    textAlign: 'left'
                                 }}
                             >
                                 <div style={{ color: '#071FD9' }}>{item.icon}</div>
@@ -66,7 +66,7 @@ const Contact: React.FC = () => {
             </section>
 
             {/* Form Section - White Background */}
-            <section style={{ padding: '8rem 0', backgroundColor: '#FFFFFF' }}>
+            <section style={{ padding: 'var(--spacing-xl) 0', backgroundColor: '#FFFFFF' }}>
                 <div className="container" style={{ maxWidth: '800px' }}>
                     <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                         <h2 style={{
@@ -144,6 +144,27 @@ const Contact: React.FC = () => {
                     </form>
                 </div>
             </section>
+            <style>{`
+                .contact-info-card {
+                    border-right: 1px solid #EEEEEE;
+                }
+                .contact-info-card:last-child {
+                    border-right: none;
+                }
+                @media (max-width: 900px) {
+                    .contact-info-grid {
+                        grid-template-columns: 1fr !important;
+                    }
+                    .contact-info-card {
+                        border-right: none !important;
+                        border-bottom: 1px solid #EEEEEE;
+                        padding: 2.5rem 1.5rem !important;
+                    }
+                    .contact-info-card:last-child {
+                        border-bottom: none;
+                    }
+                }
+            `}</style>
         </div>
     );
 };

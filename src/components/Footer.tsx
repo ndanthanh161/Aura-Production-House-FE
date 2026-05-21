@@ -58,11 +58,11 @@ export const Footer: React.FC = () => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div style={{ borderTop: '1px solid #EEE', paddingTop: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+                <div className="footer-bottom" style={{ borderTop: '1px solid #EEE', paddingTop: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
                     <p style={{ color: '#888', fontSize: '0.8rem', letterSpacing: '0.02em' }}>
                         © 2026 Aura Production House. Bảo lưu mọi quyền.
                     </p>
-                    <div style={{ display: 'flex', gap: '2.5rem' }}>
+                    <div className="footer-bottom-links" style={{ display: 'flex', gap: '2.5rem' }}>
                         <Link to="/privacy" style={{ color: '#888', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>Chính Sách Bảo Mật</Link>
                         <Link to="/terms" style={{ color: '#888', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>Điều Khoản Dịch Vụ</Link>
                     </div>
@@ -85,6 +85,21 @@ export const Footer: React.FC = () => {
                 .social-icon:hover {
                     transform: translateY(-3px);
                     color: #071FD9 !important;
+                }
+                @media (max-width: 768px) {
+                    footer {
+                        padding: 3.5rem 0 2rem !important;
+                    }
+                    .footer-bottom {
+                        flex-direction: column !important;
+                        align-items: center !important;
+                        text-align: center !important;
+                        gap: 1rem !important;
+                        padding-top: 1.5rem !important;
+                    }
+                    .footer-bottom-links {
+                        gap: 1.5rem !important;
+                    }
                 }
             `}</style>
         </footer>

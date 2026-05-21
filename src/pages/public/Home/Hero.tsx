@@ -208,6 +208,7 @@ export const Hero: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.4 }}
                 transition={{ delay: 2.5, duration: 1 }}
+                className="scroll-indicator"
                 style={{
                     position: 'absolute', bottom: '4rem', right: '4rem', zIndex: 4,
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
@@ -233,8 +234,22 @@ export const Hero: React.FC = () => {
                     borderTop: '1px solid rgba(255,255,255,0.08)',
                     display: 'flex', justifyContent: 'center',
                 }}
-            >
-            </motion.div>
+            />
+
+            <style>{`
+                @media (max-width: 768px) {
+                    .scroll-indicator {
+                        right: 1.5rem !important;
+                        bottom: 1.5rem !important;
+                    }
+                    .scroll-indicator div {
+                        height: 40px !important;
+                    }
+                }
+            `}</style>
         </section>
     );
 };
+
+export default Hero;
+

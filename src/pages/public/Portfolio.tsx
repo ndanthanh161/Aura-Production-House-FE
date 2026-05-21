@@ -81,7 +81,8 @@ const Portfolio: React.FC = () => {
                 /* Cinematic Grid */
                 <motion.div
                     layout
-                    style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px', backgroundColor: 'var(--color-bg)' }}
+                    className="portfolio-grid-cinematic"
+                    style={{ backgroundColor: 'var(--color-bg)' }}
                 >
                     <AnimatePresence mode='popLayout'>
                         {filteredItems.map((item) => (
@@ -227,7 +228,7 @@ const Portfolio: React.FC = () => {
                             })()}
 
                             {/* Content */}
-                            <div style={{ padding: '4rem 3rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <div style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 3rem)', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                 <span style={{ color: 'var(--color-accent)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.2em', marginBottom: '1rem' }}>
                                     {getCategoryLabel(selectedItem.category)}
                                 </span>
@@ -350,9 +351,26 @@ const Portfolio: React.FC = () => {
             </AnimatePresence>
 
             <style>{`
+                .portfolio-grid-cinematic {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 4px;
+                }
                 .portfolio-item-cinematic:hover .portfolio-overlay-cinematic { opacity: 1; }
                 .modal-close-hover:hover { background: #FFF !important; color: #000 !important; transform: scale(1.1); }
-                @media (max-width: 1024px) { div[style*="gridTemplateColumns: repeat(2"] { grid-template-columns: 1fr !important; } }
+                @media (max-width: 1024px) {
+                    .portfolio-grid-cinematic {
+                        grid-template-columns: 1fr !important;
+                    }
+                    .portfolio-overlay-cinematic {
+                        opacity: 1 !important;
+                        background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 70%, transparent 100%) !important;
+                        padding: 1.5rem !important;
+                    }
+                    .portfolio-overlay-cinematic h3 {
+                        font-size: 1.35rem !important;
+                    }
+                }
                 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
                 ::-webkit-scrollbar { display: none; }
             `}</style>

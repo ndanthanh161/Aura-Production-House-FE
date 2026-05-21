@@ -27,8 +27,8 @@ const About: React.FC = () => {
             </header>
 
             {/* Content Section */}
-            <section className="container" style={{ paddingBottom: '10rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '5rem', alignItems: 'start' }}>
+            <section className="container" style={{ paddingBottom: 'var(--spacing-xl)' }}>
+                <div className="about-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '5rem', alignItems: 'start' }}>
                     {/* Left Column - Image */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
@@ -91,6 +91,13 @@ const About: React.FC = () => {
                     </motion.div>
                 </div>
             </section>
+            <style>{`
+                @media (max-width: 768px) {
+                    .about-grid {
+                        gap: 2.5rem !important;
+                    }
+                }
+            `}</style>
         </div>
     );
 };

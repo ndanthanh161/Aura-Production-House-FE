@@ -28,7 +28,7 @@ const Packages: React.FC = () => {
     return (
         <div style={{ paddingTop: '80px', backgroundColor: '#FFFFFF' }}>
             {/* Header Banner */}
-            <section style={{ backgroundColor: '#ADFF00', padding: '6rem 0', textAlign: 'center' }}>
+            <section style={{ backgroundColor: '#ADFF00', padding: 'clamp(3rem, 7vw, 6rem) 0', textAlign: 'center' }}>
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -46,7 +46,7 @@ const Packages: React.FC = () => {
             </section>
 
             {/* Pricing Section */}
-            <div style={{ backgroundColor: '#ADFF00', paddingBottom: '10rem' }}>
+            <div style={{ backgroundColor: '#ADFF00', paddingBottom: 'var(--spacing-xl)' }}>
                 <div className="container">
                     {loading && (
                         <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
