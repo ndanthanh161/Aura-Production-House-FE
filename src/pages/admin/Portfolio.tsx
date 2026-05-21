@@ -43,7 +43,6 @@ const AdminPortfolio: React.FC = () => {
 
     useEffect(() => { fetchItems(); }, []);
 
-    // Auto clear messages
     useEffect(() => {
         if (success) { const t = setTimeout(() => setSuccess(''), 3000); return () => clearTimeout(t); }
     }, [success]);
@@ -323,7 +322,7 @@ const AdminPortfolio: React.FC = () => {
                                                     <div key={m.id} style={{ width: '68px', height: '68px', borderRadius: '6px', overflow: 'hidden', backgroundColor: 'var(--color-bg)', flexShrink: 0, position: 'relative' }}>
                                                         {m.mediaType === 'video' ? (
                                                             <><video src={m.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted />
-                                                            <Film size={12} style={{ position: 'absolute', bottom: '3px', right: '3px', color: '#fff', filter: 'drop-shadow(0 0 2px #000)' }} /></>
+                                                                <Film size={12} style={{ position: 'absolute', bottom: '3px', right: '3px', color: '#fff', filter: 'drop-shadow(0 0 2px #000)' }} /></>
                                                         ) : (
                                                             <img src={m.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                         )}
@@ -551,7 +550,7 @@ const AdminPortfolio: React.FC = () => {
                                 </div>
 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-                                    <input 
+                                    <input
                                         type="checkbox"
                                         id="isHot"
                                         checked={form.isHot}
@@ -626,14 +625,14 @@ const AdminPortfolio: React.FC = () => {
                                         {previewItem.mediaItems
                                             .filter(m => m.url !== previewItem.thumbnailUrl)
                                             .map((media) => (
-                                            <div key={media.id} style={{ aspectRatio: '4/3', overflow: 'hidden', borderRadius: '4px', position: 'relative' }}>
-                                                {media.mediaType === 'video' ? (
-                                                    <video src={media.url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                ) : (
-                                                    <img src={media.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                )}
-                                            </div>
-                                        ))}
+                                                <div key={media.id} style={{ aspectRatio: '4/3', overflow: 'hidden', borderRadius: '4px', position: 'relative' }}>
+                                                    {media.mediaType === 'video' ? (
+                                                        <video src={media.url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    ) : (
+                                                        <img src={media.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    )}
+                                                </div>
+                                            ))}
                                     </div>
                                 )}
                             </div>
