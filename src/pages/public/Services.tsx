@@ -86,7 +86,7 @@ const Services: React.FC = () => {
                     </motion.h1>
                 </header>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
+                <div className="services-page-grid">
                     {services.map((service, index) => (
                         <motion.div
                             key={index}
@@ -169,6 +169,26 @@ const Services: React.FC = () => {
                 </div>
 
                 <style>{`
+                    .services-page-grid {
+                        display: grid;
+                        grid-template-columns: repeat(4, 1fr);
+                        gap: 1.5rem;
+                    }
+                    @media (max-width: 1024px) {
+                        .services-page-grid {
+                            grid-template-columns: repeat(2, 1fr);
+                        }
+                    }
+                    @media (max-width: 640px) {
+                        .services-page-grid {
+                            grid-template-columns: 1fr;
+                            gap: 1rem;
+                        }
+                        .svc-page-card {
+                            min-height: 400px !important;
+                            padding: 2.5rem 1.5rem !important;
+                        }
+                    }
                     .svc-page-card:hover .svc-page-bg {
                         opacity: 1 !important;
                         transform: scale(1) translateZ(0) !important;
@@ -193,13 +213,41 @@ const Services: React.FC = () => {
                     .svc-page-card:hover .svc-page-list-border {
                         border-color: rgba(255,255,255,0.2) !important;
                     }
+                    .bts-flex-container {
+                        display: flex;
+                        gap: 8rem;
+                        align-items: flex-start;
+                    }
+                    @media (max-width: 1024px) {
+                        .bts-flex-container {
+                            flex-direction: column;
+                            gap: 4rem;
+                        }
+                        .bts-flex-container > div {
+                            position: static !important;
+                            flex: none !important;
+                            width: 100% !important;
+                        }
+                    }
+                    .workflow-item {
+                        display: flex;
+                        gap: 3rem;
+                        align-items: flex-start;
+                    }
+                    @media (max-width: 640px) {
+                        .workflow-item {
+                            flex-direction: column !important;
+                            gap: 1.5rem !important;
+                            padding: 2.5rem 0 !important;
+                        }
+                    }
                 `}</style>
             </section>
 
             {/* Workflow Section - Green background with dark text */}
-            <section style={{ backgroundColor: '#ADFF00', padding: '10rem 0' }}>
+            <section style={{ backgroundColor: '#ADFF00', padding: 'var(--spacing-xl) 0' }}>
                 <div className="container">
-                    <div style={{ display: 'flex', gap: '8rem', alignItems: 'flex-start' }} className="bts-flex-container">
+                    <div className="bts-flex-container">
 
                         {/* Sticky Header Side */}
                         <div style={{ flex: '0.8', position: 'sticky', top: '150px' }}>
@@ -228,6 +276,7 @@ const Services: React.FC = () => {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ margin: "-50px", once: true }}
                                     transition={{ duration: 0.8, delay: index * 0.1 }}
+                                    className="workflow-item"
                                     style={{
                                         position: 'relative',
                                         padding: '4rem 0',
@@ -272,7 +321,7 @@ const Services: React.FC = () => {
             <section style={{
                 backgroundColor: '#000000',
                 borderTop: '1px solid #ADFF00',
-                padding: '8rem 0',
+                padding: 'var(--spacing-xl) 0',
                 textAlign: 'center'
             }}>
                 <div className="container">

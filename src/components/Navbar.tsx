@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut } from 'lucide-react';
+import { LogOut, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import logoColor from '../assets/LOGO COLOR.png';
 
 // Map routes to page titles for the inner-page header display
@@ -52,6 +53,7 @@ const homeLinkStyle = (active: boolean): React.CSSProperties => ({
 export const Navbar: React.FC = () => {
     const { role, logout } = useAuth();
     const location = useLocation();
+    const [isOpen, setIsOpen] = useState(false);
 
     const isHome = location.pathname === '/';
 
@@ -75,7 +77,7 @@ export const Navbar: React.FC = () => {
     const homeLinks = [
         { name: 'Giới Thiệu', path: '/about' },
         { name: 'Dự Án', path: '/portfolio' },
-        { name: 'QUY TRÌNH', path: '/services' },
+        { name: 'Quy Trình', path: '/services' },
         { name: 'Gói Dịch Vụ', path: '/packages' },
         { name: 'Liên Hệ', path: '/contact' },
     ];
@@ -155,11 +157,135 @@ export const Navbar: React.FC = () => {
                 color: #0F0F0F !important;
                 box-shadow: 0 0 15px rgba(173, 255, 0, 0.4);
             }
+            .mobile-menu-toggle {
+                display: none;
+                background: none;
+                border: none;
+                cursor: pointer;
+                align-items: center;
+                justify-content: center;
+                padding: 0.5rem;
+            }
             @media (max-width: 1024px) {
-                .nav-group { display: none !important; }
-                .navbar-container { justify-content: center !important; }
+                .nav-group, .nav-desktop-links, .right-auth, .nav-title-middle { display: none !important; }
+                .navbar-container { justify-content: space-between !important; padding: 0 1.5rem !important; }
+                .mobile-menu-toggle { display: flex !important; }
             }
         `}</style>
+    );
+
+    const mobileMenuDrawer = (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    {/* Backdrop */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.5 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsOpen(false)}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100vw',
+                            height: '100vh',
+                            backgroundColor: '#000000',
+                            zIndex: 99,
+                        }}
+                    />
+
+                    {/* Drawer */}
+                    <motion.div
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            right: 0,
+                            width: '100%',
+                            maxWidth: '360px',
+                            height: '100vh',
+                            backgroundColor: '#FFFFFF',
+                            boxShadow: '-10px 0 30px rgba(0,0,0,0.15)',
+                            zIndex: 100,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            padding: '2rem 1.5rem',
+                            overflowY: 'auto'
+                        }}
+                    >
+                        {/* Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3.5rem' }}>
+                            <img src={logoColor} alt="AURA Logo" style={{ height: '24px', objectFit: 'contain' }} />
+                            <button onClick={() => setIsOpen(false)} style={{ color: '#0F0F0F', cursor: 'pointer', padding: '0.25rem' }}>
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Navigation Links */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', marginBottom: 'auto' }}>
+                            {homeLinks.map((link) => (
+                                <Link
+                                    key={link.name}
+                                    to={link.path}
+                                    onClick={() => setIsOpen(false)}
+                                    style={{
+                                        fontSize: '1.1rem',
+                                        fontWeight: isActive(link.path) ? '800' : '500',
+                                        color: isActive(link.path) ? '#071FD9' : '#0F0F0F',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.15em',
+                                        transition: 'color 0.3s'
+                                    }}
+                                >
+                                    {link.name}
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* Auth actions at bottom */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', borderTop: '1px solid #EEE', paddingTop: '2rem', marginTop: '2rem' }}>
+                            {role === 'photographer' && (
+                                <Link to="/photographer" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0F0F0F', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                    Workspace
+                                </Link>
+                            )}
+                            {role === 'user' && (
+                                <Link to="/projects" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0F0F0F', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                    Dự Án Của Tôi
+                                </Link>
+                            )}
+                            {role === 'admin' && (
+                                <Link to="/admin" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#071FD9', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                    Quản trị
+                                </Link>
+                            )}
+                            {!role ? (
+                                <>
+                                    <Link to="/login" onClick={() => setIsOpen(false)} style={{
+                                        fontSize: '0.9rem', fontWeight: 600, color: '#0F0F0F', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8
+                                    }}>
+                                        Đăng Nhập
+                                    </Link>
+                                    <Link to="/register" onClick={() => setIsOpen(false)} style={{
+                                        backgroundColor: '#071FD9', color: '#FFFFFF', padding: '0.9rem', textAlign: 'center', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em'
+                                    }}>
+                                        Tham Gia
+                                    </Link>
+                                </>
+                            ) : (
+                                <button onClick={() => { logout(); setIsOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 700, color: '#FF3B30', textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer' }}>
+                                    <LogOut size={16} /> Đăng Xuất
+                                </button>
+                            )}
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
     );
 
     // ─── BOTTOM RENDER SELECTION ───
@@ -181,7 +307,7 @@ export const Navbar: React.FC = () => {
                         ))}
                     </div>
 
-                    <div style={{
+                    <div className="nav-title-middle" style={{
                         position: 'absolute', left: '50%', transform: 'translateX(-50%)',
                         zIndex: 2, pointerEvents: 'none',
                     }}>
@@ -201,8 +327,14 @@ export const Navbar: React.FC = () => {
                         ))}
                         {authSection}
                     </div>
+
+                    {/* Hamburger Button */}
+                    <button className="mobile-menu-toggle" onClick={() => setIsOpen(true)} style={{ color: 'var(--color-text)' }}>
+                        <Menu size={24} />
+                    </button>
                 </div>
                 {hoverStyles}
+                {mobileMenuDrawer}
             </nav>
         );
     }
@@ -216,17 +348,16 @@ export const Navbar: React.FC = () => {
             boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
         }}>
             <div className="container navbar-container" style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 width: '100%', position: 'relative', minHeight: '64px',
-                gap: '3rem'
             }}>
                 {/* Logo */}
-                <Link to="/" style={{ display: 'flex', alignItems: 'center', marginRight: '2.5rem' }}>
+                <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                     <img src={logoColor} alt="AURA Logo" style={{ height: '32px', maxWidth: '140px', objectFit: 'contain' }} />
                 </Link>
 
                 {/* Main Links */}
-                <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
+                <div className="nav-desktop-links" style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', margin: '0 auto' }}>
                     {homeLinks.map((link) => (
                         <Link key={link.name} to={link.path} style={homeLinkStyle(isActive(link.path))} className="hover-link-dark">
                             {link.name}
@@ -235,7 +366,7 @@ export const Navbar: React.FC = () => {
                 </div>
 
                 {/* Auth links */}
-                <div className="nav-group right-auth" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginLeft: '2.5rem' }}>
+                <div className="nav-group right-auth" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
                     {role === 'photographer' && (
                         <Link
                             to="/photographer"
@@ -286,6 +417,11 @@ export const Navbar: React.FC = () => {
                         </button>
                     )}
                 </div>
+
+                {/* Hamburger Button */}
+                <button className="mobile-menu-toggle" onClick={() => setIsOpen(true)} style={{ color: '#0F0F0F' }}>
+                    <Menu size={24} />
+                </button>
             </div>
             <style>{`
                 .hover-link-dark { position: relative; }
@@ -304,6 +440,9 @@ export const Navbar: React.FC = () => {
                 }
             `}</style>
             {hoverStyles}
+            {mobileMenuDrawer}
         </nav>
     );
 };
+
+export default Navbar;

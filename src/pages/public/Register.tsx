@@ -82,7 +82,7 @@ const Register: React.FC = () => {
             overflow: 'hidden'
         }}>
             {/* Left Side: Form Container */}
-            <div style={{
+            <div className="auth-form-container" style={{
                 flex: '0 0 45%',
                 display: 'flex',
                 alignItems: 'center',
@@ -290,7 +290,7 @@ const Register: React.FC = () => {
             </div>
 
             {/* Right Side: Visual Image Area */}
-            <div style={{
+            <div className="auth-visual-container" style={{
                 flex: '1',
                 height: '100vh',
                 padding: '1.5rem',
@@ -347,6 +347,15 @@ const Register: React.FC = () => {
                 }
                 .animate-spin {
                     animation: spin 1s linear infinite;
+                }
+                @media (max-width: 1024px) {
+                    .auth-form-container {
+                        flex: 0 0 100% !important;
+                        padding: 1.5rem !important;
+                    }
+                    .auth-visual-container {
+                        display: none !important;
+                    }
                 }
             `}</style>
         </div>

@@ -178,7 +178,7 @@ const ResetPassword: React.FC = () => {
 
                     <div className="form-group">
                         <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.8rem' }}>Mã xác thực OTP</label>
-                        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }} onPaste={handlePaste}>
+                        <div className="otp-container" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }} onPaste={handlePaste}>
                             {otpValues.map((digit, i) => (
                                 <input
                                     key={i}
@@ -279,6 +279,16 @@ const ResetPassword: React.FC = () => {
                 }
                 .animate-spin {
                     animation: spin 1s linear infinite;
+                }
+                @media (max-width: 400px) {
+                    .otp-container {
+                        gap: 0.4rem !important;
+                    }
+                    .otp-input {
+                        width: 36px !important;
+                        height: 46px !important;
+                        font-size: 1rem !important;
+                    }
                 }
             `}</style>
         </div>
