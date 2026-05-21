@@ -27,8 +27,7 @@ const AdminAIKnowledge: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const [activeTab, setActiveTab] = useState<'knowledge' | 'logs'>('knowledge');
     const [form, setForm] = useState({ content: '', category: 'General' });
-    
-    // Pagination for Logs
+
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
@@ -53,7 +52,7 @@ const AdminAIKnowledge: React.FC = () => {
     const handleIngest = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!form.content.trim()) return;
-        
+
         setSaving(true);
         setError('');
         try {
@@ -90,7 +89,7 @@ const AdminAIKnowledge: React.FC = () => {
         try {
             await chatApi.togglePin(id);
             // Cập nhật state local để mượt hơn
-            setLogs(prev => prev.map(log => 
+            setLogs(prev => prev.map(log =>
                 log.id === id ? { ...log, isPinned: !log.isPinned } : log
             ).sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
         } catch {
@@ -122,13 +121,13 @@ const AdminAIKnowledge: React.FC = () => {
 
             {/* Tabs */}
             <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--color-border)' }}>
-                <button 
+                <button
                     onClick={() => { setActiveTab('knowledge'); setCurrentPage(1); }}
                     style={activeTab === 'knowledge' ? tabActive : tabInactive}
                 >
                     <BookOpen size={18} /> Kho Kiến Thức ({knowledge.length})
                 </button>
-                <button 
+                <button
                     onClick={() => { setActiveTab('logs'); setCurrentPage(1); }}
                     style={activeTab === 'logs' ? tabActive : tabInactive}
                 >
@@ -188,16 +187,16 @@ const AdminAIKnowledge: React.FC = () => {
                     ) : (
                         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                             {currentLogs.map((log) => (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    key={log.id} 
-                                    style={{ 
-                                        border: log.isPinned ? '2px solid var(--color-accent)' : '1px solid var(--color-border)', 
-                                        borderRadius: '12px', 
-                                        padding: '1.25rem', 
-                                        backgroundColor: log.isPinned ? 'rgba(173, 255, 0, 0.05)' : 'var(--color-bg)', 
-                                        position: 'relative' 
+                                    key={log.id}
+                                    style={{
+                                        border: log.isPinned ? '2px solid var(--color-accent)' : '1px solid var(--color-border)',
+                                        borderRadius: '12px',
+                                        padding: '1.25rem',
+                                        backgroundColor: log.isPinned ? 'rgba(173, 255, 0, 0.05)' : 'var(--color-bg)',
+                                        position: 'relative'
                                     }}
                                 >
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.25rem', alignItems: 'center' }}>
@@ -205,19 +204,19 @@ const AdminAIKnowledge: React.FC = () => {
                                             🕒 {new Date(log.createdAt).toLocaleString('vi-VN')}
                                         </span>
                                         <div style={{ display: 'flex', gap: '8px' }}>
-                                            <button 
+                                            <button
                                                 title="Nạp vào FAQ"
                                                 onClick={() => handleAddToKnowledge(log.userMessage, log.botResponse)}
                                                 style={{ ...btnSecondary, padding: '4px 8px', fontSize: '0.75rem', color: 'var(--color-accent)' }}
                                             >
                                                 <PlusCircle size={14} /> Nạp vào FAQ
                                             </button>
-                                            <button 
+                                            <button
                                                 title={log.isPinned ? "Bỏ ghim" : "Ghim câu hỏi thường gặp"}
                                                 onClick={() => handleTogglePin(log.id)}
-                                                style={{ 
-                                                    ...btnSecondary, 
-                                                    padding: '4px 8px', 
+                                                style={{
+                                                    ...btnSecondary,
+                                                    padding: '4px 8px',
                                                     border: 'none',
                                                     color: log.isPinned ? '#facc15' : 'var(--color-text-muted)'
                                                 }}
@@ -250,7 +249,7 @@ const AdminAIKnowledge: React.FC = () => {
                             {/* Pagination Controls */}
                             {logs.length > itemsPerPage && (
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
-                                    <button 
+                                    <button
                                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                         disabled={currentPage === 1}
                                         style={currentPage === 1 ? btnPageDisabled : btnPage}
@@ -260,7 +259,7 @@ const AdminAIKnowledge: React.FC = () => {
                                     <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>
                                         Trang {currentPage} / {totalPages}
                                     </span>
-                                    <button 
+                                    <button
                                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                         disabled={currentPage === totalPages}
                                         style={currentPage === totalPages ? btnPageDisabled : btnPage}
@@ -304,7 +303,7 @@ const AdminAIKnowledge: React.FC = () => {
                             <form onSubmit={handleIngest} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                                 <div>
                                     <label style={labelStyle}>Phân loại</label>
-                                    <select 
+                                    <select
                                         value={form.category}
                                         onChange={e => setForm(prev => ({ ...prev, category: e.target.value }))}
                                         style={inputStyle}
