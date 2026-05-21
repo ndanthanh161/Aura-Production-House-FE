@@ -170,6 +170,7 @@ export const Navbar: React.FC = () => {
                 .nav-group, .nav-desktop-links, .right-auth, .nav-title-middle { display: none !important; }
                 .navbar-container { justify-content: space-between !important; padding: 0 1.5rem !important; }
                 .mobile-menu-toggle { display: flex !important; }
+                .mobile-logo-btn { display: flex !important; }
             }
         `}</style>
     );
@@ -219,7 +220,9 @@ export const Navbar: React.FC = () => {
                     >
                         {/* Header */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3.5rem' }}>
-                            <img src={logoColor} alt="AURA Logo" style={{ height: '24px', objectFit: 'contain' }} />
+                            <Link to="/" onClick={() => setIsOpen(false)} style={{ display: 'flex', alignItems: 'center' }}>
+                                <img src={logoColor} alt="AURA Logo" style={{ height: '24px', objectFit: 'contain' }} />
+                            </Link>
                             <button onClick={() => setIsOpen(false)} style={{ color: '#0F0F0F', cursor: 'pointer', padding: '0.25rem' }}>
                                 <X size={24} />
                             </button>
@@ -296,6 +299,11 @@ export const Navbar: React.FC = () => {
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     width: '100%', position: 'relative', minHeight: '56px',
                 }}>
+                    {/* Mobile Logo */}
+                    <Link to="/" className="mobile-logo-btn" style={{ display: 'none', alignItems: 'center', zIndex: 10 }}>
+                        <img src={logoColor} alt="AURA Logo Mobile" style={{ display: 'block', height: '24px', maxWidth: '140px', objectFit: 'contain' }} />
+                    </Link>
+
                     <div className="nav-group left" style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', flex: 1 }}>
                         <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                             <img src={logoColor} alt="AURA Logo Color" style={{ display: 'block', height: '24px', maxWidth: '140px', objectFit: 'contain' }} />
