@@ -33,7 +33,11 @@ const ChatWidget: React.FC = () => {
 
         try {
             // Dùng axiosInstance đã cấu hình baseURL là /api/v1/
-            const response = await axiosInstance.post('Chat/message', { message: userMessage });
+            // Gửi kèm lịch sử chat hiện tại lên API để AI xâu chuỗi ngữ cảnh
+            const response = await axiosInstance.post('Chat/message', { 
+                message: userMessage,
+                history: chatHistory 
+            });
             // axiosInstance đã normalize response về camelCase và bóc tách data
             // data trả về là { succeeded: true, message: "...", data: { response: "..." } }
             // Do normalizeApiResponse trong axiosInstance.ts bóc ra response.data = normalized
