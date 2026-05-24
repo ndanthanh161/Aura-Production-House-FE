@@ -11,6 +11,9 @@ interface User {
     fullName: string;
     email: string;
     role: string;
+    isVip?: boolean;
+    vipExpireAt?: string | null;
+    avatar?: string | null;
 }
 
 interface AuthContextType {
@@ -51,6 +54,9 @@ function saveAuthToStorage(data: AuthResponse) {
         fullName: data.fullName,
         email: data.email,
         role: data.role,
+        isVip: data.isVip,
+        vipExpireAt: data.vipExpireAt,
+        avatar: data.avatar,
     }));
 }
 
@@ -87,10 +93,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
                 // Validate token hiện tại
                 try {
-                    await authApi.getMe(); // token tự gắn qua interceptor
-                    setAccessToken(storedToken);
-                    setUser(JSON.parse(storedUser));
-                    setRole(storedRole);
+                    const meRes = await authApi.getMe();
+                    const me = meRes.data;
+                    if (me) {
+                        const updatedUser = {
+                            userId: me.userId,
+                            fullName: me.fullName,
+                            email: me.email,
+                            role: me.role,
+                            isVip: me.isVip,
+                            vipExpireAt: me.vipExpireAt,
+                            avatar: me.avatar,
+                        };
+                        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+                        setAccessToken(storedToken);
+                        setUser(updatedUser);
+                        setRole(storedRole);
+                    } else {
+                        clearAuthFromStorage();
+                    }
                 } catch {
                     // Token hết hạn → thử refresh
                     try {
@@ -103,6 +124,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                                 fullName: result.data.fullName,
                                 email: result.data.email,
                                 role: result.data.role,
+                                isVip: result.data.isVip,
+                                vipExpireAt: result.data.vipExpireAt,
+                                avatar: result.data.avatar,
                             });
                             setRole(mapRole(result.data.role));
                         }
@@ -127,7 +151,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         saveAuthToStorage(data);
         setAccessToken(data.accessToken);
-        setUser({ userId: data.userId, fullName: data.fullName, email: data.email, role: data.role });
+        setUser({
+            userId: data.userId,
+            fullName: data.fullName,
+            email: data.email,
+            role: data.role,
+            isVip: data.isVip,
+            vipExpireAt: data.vipExpireAt,
+            avatar: data.avatar,
+        });
         const mappedRole = mapRole(data.role);
         setRole(mappedRole);
         return mappedRole;
@@ -140,7 +172,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         saveAuthToStorage(data);
         setAccessToken(data.accessToken);
-        setUser({ userId: data.userId, fullName: data.fullName, email: data.email, role: data.role });
+        setUser({
+            userId: data.userId,
+            fullName: data.fullName,
+            email: data.email,
+            role: data.role,
+            isVip: data.isVip,
+            vipExpireAt: data.vipExpireAt,
+            avatar: data.avatar,
+        });
         const mappedRole = mapRole(data.role);
         setRole(mappedRole);
         return mappedRole;

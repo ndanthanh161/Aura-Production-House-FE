@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Menu, X } from 'lucide-react';
+import { LogOut, Menu, X, ChevronDown, Calendar, Settings, Sparkles, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logoColor from '../assets/LOGO COLOR.png';
 
@@ -50,8 +50,274 @@ const homeLinkStyle = (active: boolean): React.CSSProperties => ({
     transition: 'var(--transition-cinematic)',
 });
 
+const dropdownItemStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    background: 'none',
+    border: 'none',
+    padding: '0.6rem 0.75rem',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    color: '#374151',
+    fontSize: '0.825rem',
+    fontWeight: 600,
+    textAlign: 'left',
+    width: '100%',
+    transition: 'all 0.2s ease',
+};
+
+const UserMenu: React.FC = () => {
+    const { user, role, logout } = useAuth();
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+
+    // Click outside handler
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    if (!user) return null;
+
+    // Lấy ký tự đầu làm Avatar đại diện nếu không có ảnh
+    const initial = user.fullName ? user.fullName.charAt(0).toUpperCase() : '?';
+
+    return (
+        <div ref={dropdownRef} className="user-profile-menu-container" style={{ position: 'relative' }}>
+            {/* Button kích hoạt Dropdown */}
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="user-profile-trigger-btn"
+                style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    position: 'relative',
+                    outline: 'none',
+                }}
+            >
+                {/* Khung avatar hình tròn */}
+                <div
+                    className={`user-avatar-circle ${user.isVip ? 'vip-avatar-glow' : ''}`}
+                    style={{
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: user.isVip ? '#FFD700' : 'var(--color-bg-secondary, #F3F4F6)',
+                        border: user.isVip ? '2px solid #FFD700' : '1px solid rgba(0,0,0,0.1)',
+                        fontWeight: 700,
+                        fontSize: '0.95rem',
+                        color: user.isVip ? '#0F0F0F' : 'var(--color-text)',
+                        background: user.isVip ? 'linear-gradient(135deg, #FFE066 0%, #F5B041 100%)' : undefined,
+                        transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
+                >
+                    {user.avatar ? (
+                        <img
+                            src={user.avatar}
+                            alt={user.fullName}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    ) : (
+                        <span>{initial}</span>
+                    )}
+                </div>
+
+                {/* Huy hiệu Chevron Down góc dưới bên phải tròn tối */}
+                <div
+                    className="avatar-chevron-badge"
+                    style={{
+                        position: 'absolute',
+                        bottom: '-2px',
+                        right: '-2px',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        backgroundColor: '#1F2937',
+                        border: '1px solid #FFFFFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#FFFFFF',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    }}
+                >
+                    <ChevronDown size={10} strokeWidth={3} />
+                </div>
+            </button>
+
+            {/* Dropdown Menu với Glassmorphism */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        className="user-profile-dropdown-menu"
+                        style={{
+                            position: 'absolute',
+                            right: 0,
+                            marginTop: '0.75rem',
+                            width: '280px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                            backdropFilter: 'blur(20px)',
+                            WebkitBackdropFilter: 'blur(20px)',
+                            borderRadius: '16px',
+                            border: '1px solid rgba(0, 0, 0, 0.08)',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+                            zIndex: 100,
+                            padding: '1.25rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '1rem',
+                        }}
+                    >
+                        {/* 1. Header: User Info */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#0F0F0F', letterSpacing: '0.01em' }}>
+                                {user.fullName}
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: '#6B7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {user.email}
+                            </div>
+                        </div>
+
+                        {/* 2. Thẻ Trạng thái VIP (chỉ hiện cho tài khoản khách hàng 'user') */}
+                        {role === 'user' && (
+                            user.isVip ? (
+                                <div
+                                    className="vip-member-card"
+                                    style={{
+                                        background: 'linear-gradient(135deg, #111 0%, #222 100%)',
+                                        border: '1px solid #FFD700',
+                                        padding: '0.75rem 1rem',
+                                        borderRadius: '10px',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        boxShadow: '0 4px 10px rgba(255,215,0,0.15)',
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FFD700', fontWeight: 800, fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                                        <Sparkles size={12} className="gold-sparkle-icon" />
+                                        AURA VIP MEMBER
+                                    </div>
+                                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>
+                                        Hạn dùng: {user.vipExpireAt ? new Date(user.vipExpireAt).toLocaleDateString('vi-VN') : '1 tháng'}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div
+                                    className="basic-member-card"
+                                    style={{
+                                        backgroundColor: '#F3F4F6',
+                                        border: '1px solid rgba(0,0,0,0.05)',
+                                        padding: '0.75rem 1rem',
+                                        borderRadius: '10px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '6px',
+                                    }}
+                                >
+                                    <div style={{ fontSize: '0.72rem', color: '#4B5563', fontWeight: 600 }}>
+                                        Thành viên Thường
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            navigate('/packages');
+                                        }}
+                                        className="upgrade-vip-btn"
+                                        style={{
+                                            backgroundColor: '#071FD9',
+                                            color: '#FFFFFF',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            padding: '0.45rem',
+                                            fontSize: '0.65rem',
+                                            fontWeight: 800,
+                                            cursor: 'pointer',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.08em',
+                                            transition: 'all 0.3s ease',
+                                        }}
+                                    >
+                                        Nâng Cấp HỘI VIÊN 🌟
+                                    </button>
+                                </div>
+                            )
+                        )}
+
+                        <div style={{ height: '1px', backgroundColor: 'rgba(0,0,0,0.06)' }} />
+
+                        {/* 3. Navigation Links */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                            {role === 'photographer' && (
+                                <button
+                                    onClick={() => { setIsOpen(false); navigate('/photographer'); }}
+                                    style={dropdownItemStyle}
+                                >
+                                    <Settings size={14} />
+                                    <span>Photographer Workspace</span>
+                                </button>
+                            )}
+                            {role === 'admin' && (
+                                <button
+                                    onClick={() => { setIsOpen(false); navigate('/admin'); }}
+                                    style={dropdownItemStyle}
+                                >
+                                    <Settings size={14} />
+                                    <span>Trang Quản Trị</span>
+                                </button>
+                            )}
+                            {role === 'user' && (
+                                <button
+                                    onClick={() => { setIsOpen(false); navigate('/projects'); }}
+                                    style={dropdownItemStyle}
+                                >
+                                    <Calendar size={14} />
+                                    <span>Dự án của tôi</span>
+                                </button>
+                            )}
+                        </div>
+
+                        <div style={{ height: '1px', backgroundColor: 'rgba(0,0,0,0.06)' }} />
+
+                        {/* 4. Logout Action */}
+                        <button
+                            onClick={() => { setIsOpen(false); logout(); }}
+                            style={{
+                                ...dropdownItemStyle,
+                                color: '#EF4444',
+                                fontWeight: 700,
+                            }}
+                        >
+                            <LogOut size={14} />
+                            <span>Đăng xuất</span>
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
 export const Navbar: React.FC = () => {
-    const { role, logout } = useAuth();
+    const { role, user, logout } = useAuth();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -86,29 +352,6 @@ export const Navbar: React.FC = () => {
 
     const authSection = (
         <>
-            {role === 'photographer' && (
-                <Link
-                    to="/photographer"
-                    style={linkStyle(location.pathname.startsWith('/photographer'))}
-                    className="hover-link"
-                >
-                    Workspace
-                </Link>
-            )}
-            {role === 'user' && (
-                <Link
-                    to="/projects"
-                    style={linkStyle(isActive('/projects'))}
-                    className="hover-link"
-                >
-                    DỰ ÁN CỦA TÔI
-                </Link>
-            )}
-            {role === 'admin' && (
-                <Link to="/admin" style={{ fontSize: '0.7rem', color: 'var(--color-accent)', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
-                    Quản trị
-                </Link>
-            )}
             {!role ? (
                 <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                     <Link to="/login" style={{
@@ -127,9 +370,7 @@ export const Navbar: React.FC = () => {
                     </Link>
                 </div>
             ) : (
-                <button onClick={logout} style={{ color: 'var(--color-text)', opacity: 0.5, display: 'flex' }}>
-                    <LogOut size={14} />
-                </button>
+                <UserMenu />
             )}
         </>
     );
@@ -251,6 +492,35 @@ export const Navbar: React.FC = () => {
 
                         {/* Auth actions at bottom */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', borderTop: '1px solid #EEE', paddingTop: '2rem', marginTop: '2rem' }}>
+                            {role && user && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#F9FAFB', padding: '1rem', borderRadius: '12px', marginBottom: '0.5rem', border: '1px solid rgba(0,0,0,0.05)' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <div style={{
+                                            width: '32px',
+                                            height: '32px',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            background: user.isVip ? 'linear-gradient(135deg, #FFE066 0%, #F5B041 100%)' : '#E5E7EB',
+                                            fontWeight: 700,
+                                            fontSize: '0.85rem',
+                                            color: user.isVip ? '#0F0F0F' : '#4B5563',
+                                            overflow: 'hidden'
+                                        }}>
+                                            {user.avatar ? <img src={user.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : user.fullName.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111' }}>{user.fullName}</span>
+                                            {user.isVip ? (
+                                                <span style={{ fontSize: '0.65rem', color: '#D4AF37', fontWeight: 800 }}>AURA VIP MEMBER</span>
+                                            ) : (
+                                                <span style={{ fontSize: '0.65rem', color: '#6B7280' }}>Thành viên thường</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             {role === 'photographer' && (
                                 <Link to="/photographer" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0F0F0F', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                     Workspace
@@ -280,7 +550,7 @@ export const Navbar: React.FC = () => {
                                     </Link>
                                 </>
                             ) : (
-                                <button onClick={() => { logout(); setIsOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 700, color: '#FF3B30', textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer' }}>
+                                <button onClick={() => { logout(); setIsOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 700, color: '#FF3B30', textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}>
                                     <LogOut size={16} /> Đăng Xuất
                                 </button>
                             )}
@@ -375,32 +645,6 @@ export const Navbar: React.FC = () => {
 
                 {/* Auth links */}
                 <div className="nav-group right-auth" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                    {role === 'photographer' && (
-                        <Link
-                            to="/photographer"
-                            style={homeLinkStyle(location.pathname.startsWith('/photographer'))}
-                            className="hover-link-dark"
-                        >
-                            Workspace
-                        </Link>
-                    )}
-                    {role === 'user' && (
-                        <Link
-                            to="/projects"
-                            style={homeLinkStyle(isActive('/projects'))}
-                            className="hover-link-dark"
-                        >
-                            Dự Án Của Tôi
-                        </Link>
-                    )}
-                    {role === 'admin' && (
-                        <Link to="/admin" style={{
-                            color: '#071FD9', fontSize: '0.75rem', letterSpacing: '0.15em',
-                            textTransform: 'uppercase', fontWeight: 700, opacity: 0.9,
-                        }} className="hover-link-dark">
-                            Quản trị
-                        </Link>
-                    )}
                     {!role ? (
                         <>
                             <Link to="/login" style={{
@@ -420,9 +664,7 @@ export const Navbar: React.FC = () => {
                             </Link>
                         </>
                     ) : (
-                        <button onClick={logout} style={{ color: '#0F0F0F', opacity: 0.8, display: 'flex' }}>
-                            <LogOut size={16} />
-                        </button>
+                        <UserMenu />
                     )}
                 </div>
 
@@ -445,6 +687,53 @@ export const Navbar: React.FC = () => {
                     background-color: #0516A0 !important;
                     box-shadow: 0 4px 15px rgba(7, 31, 217, 0.2);
                     transform: translateY(-1px);
+                }
+                
+                /* Custom Profile Dropdown Styles & Animations */
+                .upgrade-vip-btn:hover {
+                    background-color: #0516A0 !important;
+                    box-shadow: 0 4px 12px rgba(7, 31, 217, 0.3) !important;
+                    transform: translateY(-1px);
+                }
+                .user-avatar-circle {
+                    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+                }
+                .user-profile-trigger-btn:hover .user-avatar-circle {
+                    transform: scale(1.04);
+                }
+                .vip-avatar-glow {
+                    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                    animation: goldGlow 2s infinite alternate;
+                }
+                @keyframes goldGlow {
+                    from { box-shadow: 0 0 4px rgba(255, 215, 0, 0.3); }
+                    to { box-shadow: 0 0 12px rgba(255, 215, 0, 0.7); }
+                }
+                .user-profile-dropdown-menu button {
+                    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .user-profile-dropdown-menu button:hover {
+                    background-color: rgba(7, 31, 217, 0.06) !important;
+                    color: #071FD9 !important;
+                    padding-left: 0.9rem !important;
+                }
+                .user-profile-dropdown-menu button:last-child:hover {
+                    background-color: rgba(239, 68, 68, 0.06) !important;
+                    color: #EF4444 !important;
+                    padding-left: 0.9rem !important;
+                }
+                
+                /* Shimmer effect for VIP card */
+                .vip-member-card::after {
+                    content: '';
+                    position: absolute;
+                    top: 0; right: 0; bottom: 0; left: 0;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 60%, transparent);
+                    transform: translateX(-100%);
+                    animation: vipShimmer 3s infinite;
+                }
+                @keyframes vipShimmer {
+                    100% { transform: translateX(100%); }
                 }
             `}</style>
             {hoverStyles}

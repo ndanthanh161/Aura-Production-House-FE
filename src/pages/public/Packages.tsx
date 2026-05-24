@@ -116,7 +116,7 @@ const Packages: React.FC = () => {
                                                 {formatPrice(pkg.price)}
                                             </div>
                                             <div style={{ fontSize: '0.65rem', color: '#888', marginTop: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
-                                                VNĐ / THÁNG
+                                                VNĐ / GÓI
                                             </div>
                                         </div>
                                         <div style={{ height: '1px', backgroundColor: '#EEE', marginTop: '2rem' }} />

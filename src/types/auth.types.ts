@@ -24,6 +24,9 @@ export interface AuthResponse {
     fullName: string;
     email: string;
     role: string;
+    isVip?: boolean;
+    vipExpireAt?: string | null;
+    avatar?: string | null;
     accessToken: string;
     refreshToken: string;
     accessTokenExpiresAt: string;
@@ -42,4 +45,7 @@ export interface MeResponse {
     email: string;
     fullName: string;
     role: string;
+    isVip?: boolean;
+    vipExpireAt?: string | null;
+    avatar?: string | null;
 }
