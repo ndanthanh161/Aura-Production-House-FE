@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Menu, X, ChevronDown, Calendar, Settings, Sparkles, User as UserIcon } from 'lucide-react';
+import { LogOut, Menu, X, ChevronDown, Calendar, Settings, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logoColor from '../assets/LOGO COLOR.png';
 
