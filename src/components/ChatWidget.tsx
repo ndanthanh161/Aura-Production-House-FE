@@ -1,15 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Send, X } from 'lucide-react';
+import { Bot, Send, X, Sparkles } from 'lucide-react';
 import { axiosInstance } from '../lib/axiosInstance';
+import { useAuth } from '../context/AuthContext';
 import './ChatWidget.css';
 
 const ChatWidget: React.FC = () => {
+    const { user } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [chatHistory, setChatHistory] = useState<{ role: 'bot' | 'user'; text: string }[]>([
-        { role: 'bot', text: 'Chào mừng bạn đến với AURA! Tôi là trợ lý AI, sẵn sàng giúp bạn chọn gói dịch vụ hoàn hảo nhất. Bạn cần tư vấn gì không?' }
-    ]);
+    const [chatHistory, setChatHistory] = useState<{ role: 'bot' | 'user'; text: string }[]>([]);
+
+    useEffect(() => {
+        const welcomeText = user?.isVip
+            ? `Kính chào Thành viên VIP ${user.fullName}! 🌟 Chào mừng bạn quay trở lại với AURA VIP Support. Tôi là Trợ lý AI đặc quyền của bạn, sẵn sàng cung cấp các giải pháp và kịch bản hình ảnh cao cấp nhất. Hôm nay tôi có thể hỗ trợ gì cho dự án đặc biệt của bạn?`
+            : 'Chào mừng bạn đến với AURA! Tôi là trợ lý AI, sẵn sàng giúp bạn chọn gói dịch vụ hoàn hảo nhất. Bạn cần tư vấn gì không?';
+        setChatHistory([{ role: 'bot', text: welcomeText }]);
+    }, [user]);
+
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -59,19 +67,19 @@ const ChatWidget: React.FC = () => {
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="chat-window"
+                        className={`chat-window ${user?.isVip ? 'vip-chat-window' : ''}`}
                     >
                         {/* Header Section */}
-                        <div className="chat-header">
+                        <div className={`chat-header ${user?.isVip ? 'vip-chat-header' : ''}`}>
                             <div className="chat-header-info">
-                                <div className="chat-bot-icon">
-                                    <Bot size={22} />
+                                <div className={`chat-bot-icon ${user?.isVip ? 'vip-bot-icon' : ''}`}>
+                                    {user?.isVip ? <Sparkles size={20} /> : <Bot size={22} />}
                                 </div>
                                 <div className="chat-header-text">
-                                    <h3>AURA ASSISTANT</h3>
+                                    <h3>{user?.isVip ? 'AURA VIP SUPPORT' : 'AURA ASSISTANT'}</h3>
                                     <div className="chat-status">
-                                        <div className="status-dot" />
-                                        <span className="status-text">Live Support</span>
+                                        <div className={`status-dot ${user?.isVip ? 'vip-status-dot' : ''}`} />
+                                        <span className="status-text">{user?.isVip ? 'VIP Privilege Active' : 'Live Support'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -128,7 +136,7 @@ const ChatWidget: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            {/* Toggle Button - Only show when closed */}
+             {/* Toggle Button - Only show when closed */}
             <AnimatePresence>
                 {!isOpen && (
                     <motion.button
@@ -138,9 +146,9 @@ const ChatWidget: React.FC = () => {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setIsOpen(true)}
-                        className="chat-toggle-button"
+                        className={`chat-toggle-button ${user?.isVip ? 'vip-toggle-btn' : ''}`}
                     >
-                        <Bot size={32} />
+                        {user?.isVip ? <Sparkles size={28} /> : <Bot size={32} />}
                     </motion.button>
                 )}
             </AnimatePresence>
