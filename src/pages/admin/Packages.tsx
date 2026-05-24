@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Plus, Edit2, Trash2, Star, X, Check, Loader2, Package, 
-    CheckCircle2, PlusCircle, MinusCircle, FileText, Eye, EyeOff, Globe 
+    CheckCircle2, PlusCircle, MinusCircle, FileText, Eye, EyeOff 
 } from 'lucide-react';
 import { packageApi } from '../../services/packageApi';
 import { documentTemplateApi } from '../../services/documentTemplateApi';
