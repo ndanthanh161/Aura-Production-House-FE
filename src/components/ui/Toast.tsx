@@ -24,9 +24,9 @@ export const Toast: React.FC<ToastProps> = ({ id, message, type, onClose }) => {
             case 'success':
                 return {
                     icon: <CheckCircle2 size={20} />,
-                    color: '#ADFF00',
-                    bg: 'rgba(173, 255, 0, 0.1)',
-                    border: 'rgba(173, 255, 0, 0.2)'
+                    color: '#C09A5A',
+                    bg: 'rgba(192, 154, 90, 0.1)',
+                    border: 'rgba(192, 154, 90, 0.2)'
                 };
             case 'error':
                 return {

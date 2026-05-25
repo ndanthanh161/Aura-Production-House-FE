@@ -244,7 +244,7 @@ const UserMenu: React.FC = () => {
                                         }}
                                         className="upgrade-vip-btn"
                                         style={{
-                                            backgroundColor: '#071FD9',
+                                            backgroundColor: '#C09A5A',
                                             color: '#FFFFFF',
                                             border: 'none',
                                             borderRadius: '6px',
@@ -506,7 +506,7 @@ export const Navbar: React.FC = () => {
                                     style={{
                                         fontSize: '1.1rem',
                                         fontWeight: isActive(link.path) ? '800' : '500',
-                                        color: isActive(link.path) ? '#071FD9' : '#0F0F0F',
+                                        color: isActive(link.path) ? '#C09A5A' : '#0F0F0F',
                                         textTransform: 'uppercase',
                                         letterSpacing: '0.15em',
                                         transition: 'color 0.3s'
@@ -559,7 +559,7 @@ export const Navbar: React.FC = () => {
                                 </Link>
                             )}
                             {role === 'admin' && (
-                                <Link to="/admin" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#071FD9', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                <Link to="/admin" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                     Quản trị
                                 </Link>
                             )}
@@ -571,7 +571,7 @@ export const Navbar: React.FC = () => {
                                         Đăng Nhập
                                     </Link>
                                     <Link to="/register" onClick={() => setIsOpen(false)} style={{
-                                        backgroundColor: '#071FD9', color: '#FFFFFF', padding: '0.9rem', textAlign: 'center', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em'
+                                        backgroundColor: '#C09A5A', color: '#FFFFFF', padding: '0.9rem', textAlign: 'center', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em'
                                     }}>
                                         Tham Gia
                                     </Link>

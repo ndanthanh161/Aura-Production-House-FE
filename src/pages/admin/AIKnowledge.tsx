@@ -235,7 +235,7 @@ const AdminAIKnowledge: React.FC = () => {
                                             </div>
                                         </div>
                                         <div style={{ display: 'flex', gap: '12px' }}>
-                                            <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: '#000', color: '#ADFF00', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: '#000', color: '#C09A5A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                                 <Bot size={18} />
                                             </div>
                                             <div style={{ border: '1px solid rgba(0,0,0,0.05)', padding: '12px 16px', borderRadius: '0 16px 16px 16px', fontSize: '0.9rem', backgroundColor: '#fff', color: '#111827', flex: 1, boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>

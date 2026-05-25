@@ -66,7 +66,7 @@ export const Button: React.FC<ButtonProps> = ({
         .btn-primary:hover {
           background-color: var(--color-accent-hover);
           border-color: var(--color-accent-hover);
-          box-shadow: 0 0 20px rgba(173, 255, 0, 0.3);
+          box-shadow: 0 0 20px rgba(192, 154, 90, 0.3);
         }
         .btn-outline:hover {
           background-color: var(--color-text);

@@ -76,16 +76,16 @@ const About: React.FC = () => {
                         {/* Stats Grid */}
                         {/* <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', marginTop: 'auto' }}>
                             <div>
-                                <div style={{ color: '#ADFF00', fontSize: '3.5rem', fontWeight: 900, fontFamily: 'var(--font-sans)', lineHeight: 1 }}>500+</div>
-                                <div style={{ color: '#ADFF00', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '1.5rem' }}>DỰ ÁN HOÀN THÀNH</div>
+                                <div style={{ color: '#C09A5A', fontSize: '3.5rem', fontWeight: 900, fontFamily: 'var(--font-sans)', lineHeight: 1 }}>500+</div>
+                                <div style={{ color: '#C09A5A', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '1.5rem' }}>DỰ ÁN HOÀN THÀNH</div>
                             </div>
                             <div>
-                                <div style={{ color: '#ADFF00', fontSize: '3.5rem', fontWeight: 900, fontFamily: 'var(--font-sans)', lineHeight: 1 }}>15+</div>
-                                <div style={{ color: '#ADFF00', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '1.5rem' }}>THÀNH TỰU</div>
+                                <div style={{ color: '#C09A5A', fontSize: '3.5rem', fontWeight: 900, fontFamily: 'var(--font-sans)', lineHeight: 1 }}>15+</div>
+                                <div style={{ color: '#C09A5A', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '1.5rem' }}>THÀNH TỰU</div>
                             </div>
                             <div>
-                                <div style={{ color: '#ADFF00', fontSize: '3.5rem', fontWeight: 900, fontFamily: 'var(--font-sans)', lineHeight: 1 }}>15+</div>
-                                <div style={{ color: '#ADFF00', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '1.5rem' }}>KHÁCH HÀNG</div>
+                                <div style={{ color: '#C09A5A', fontSize: '3.5rem', fontWeight: 900, fontFamily: 'var(--font-sans)', lineHeight: 1 }}>15+</div>
+                                <div style={{ color: '#C09A5A', fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '1.5rem' }}>KHÁCH HÀNG</div>
                             </div>
                         </div> */}
                     </motion.div>

@@ -163,7 +163,7 @@ const MyBookings: React.FC = () => {
 
     const getStatusInfo = (status: ProjectStatus) => {
         switch (status) {
-            case 'Scheduled': return { color: '#ADFF00', label: 'Chờ thanh toán', desc: 'Đã lên lịch, vui lòng hoàn tất thanh toán để triển khai.' };
+            case 'Scheduled': return { color: '#C09A5A', label: 'Chờ thanh toán', desc: 'Đã lên lịch, vui lòng hoàn tất thanh toán để triển khai.' };
             case 'InProduction': return { color: '#3b82f6', label: 'Đang sản xuất', desc: 'Đội ngũ AURA đang trong quá trình ghi hình và hậu kỳ.' };
             case 'Completed': return { color: '#10b981', label: 'Hoàn thành', desc: 'Dự án đã kết thúc và bàn giao sản phẩm thành công.' };
             case 'Cancelled': return { color: '#ef4444', label: 'Đã hủy', desc: 'Dự án đã được hủy theo yêu cầu hoặc quá hạn.' };
@@ -1056,7 +1056,7 @@ const MyBookings: React.FC = () => {
                                         <motion.div
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            style={{ color: '#ADFF00', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
+                                            style={{ color: '#C09A5A', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
                                         >
                                             <CheckCircle2 size={16} /> Ngày này hiện còn trống! Bạn có thể đặt lịch.
                                         </motion.div>

@@ -223,12 +223,12 @@ const PurchasePackage: React.FC = () => {
                     transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
                     style={{
                         width: '96px', height: '96px', borderRadius: '50%',
-                        backgroundColor: 'rgba(173,255,0,0.15)', border: '2px solid #ADFF00',
+                        backgroundColor: 'rgba(173,255,0,0.15)', border: '2px solid #C09A5A',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         margin: '0 auto 2rem'
                     }}
                 >
-                    <CheckCircle2 size={52} style={{ color: '#ADFF00' }} />
+                    <CheckCircle2 size={52} style={{ color: '#C09A5A' }} />
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>

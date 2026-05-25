@@ -26,31 +26,36 @@ const Packages: React.FC = () => {
     };
 
     return (
-        <div style={{ paddingTop: '80px', backgroundColor: '#FFFFFF' }}>
+        <div style={{ paddingTop: '80px', backgroundColor: '#0A0A0A', minHeight: '100vh' }}>
             {/* Header Banner */}
-            <section style={{ backgroundColor: '#ADFF00', padding: 'clamp(3rem, 7vw, 6rem) 0', textAlign: 'center' }}>
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    style={{
-                        fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
-                        fontFamily: 'var(--font-display)',
-                        fontWeight: 900,
-                        textTransform: 'uppercase',
-                        color: '#0F0F0F',
-                        margin: 0
-                    }}
-                >
-                    HÃY CHỌN ĐÚNG VỚI NHU CẦU
-                </motion.h1>
+            <section style={{ backgroundColor: '#0F0F0F', padding: 'clamp(4rem, 8vw, 7rem) 0', textAlign: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <div className="container">
+                    <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1.5rem' }}>
+                        Gói Dịch Vụ Của Chúng Tôi
+                    </span>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                            fontFamily: 'var(--font-display)',
+                            fontWeight: 900,
+                            textTransform: 'uppercase',
+                            color: '#FFFFFF',
+                            margin: 0
+                        }}
+                    >
+                        HÃY CHỌN ĐÚNG VỚI NHU CẦU
+                    </motion.h1>
+                </div>
             </section>
 
             {/* Pricing Section */}
-            <div style={{ backgroundColor: '#ADFF00', paddingBottom: 'var(--spacing-xl)' }}>
+            <div style={{ backgroundColor: '#0A0A0A', padding: 'var(--spacing-xl) 0' }}>
                 <div className="container">
                     {loading && (
                         <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
-                            <Loader2 size={36} style={{ animation: 'spin 1s linear infinite', color: '#0F0F0F' }} />
+                            <Loader2 size={36} style={{ animation: 'spin 1s linear infinite', color: '#C09A5A' }} />
                         </div>
                     )}
 
@@ -70,15 +75,15 @@ const Packages: React.FC = () => {
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.8, delay: index * 0.1 }}
                                     style={{
-                                        padding: '3rem 2rem',
-                                        backgroundColor: '#FFFFFF',
+                                        padding: '3.5rem 2rem',
+                                        backgroundColor: '#121212',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         position: 'relative',
                                         minHeight: '700px',
                                         transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)',
                                         overflow: 'hidden',
-                                        border: '1px solid rgba(0,0,0,0.05)'
+                                        border: '1px solid rgba(255,255,255,0.08)'
                                     }}
                                     className="pkg-card"
                                 >
@@ -86,18 +91,18 @@ const Packages: React.FC = () => {
                                     <div className="pkg-glow" style={{
                                         position: 'absolute', top: 0, left: 0, right: 0, height: '100%',
                                         background: pkg.isPopular
-                                            ? 'radial-gradient(circle at top, rgba(7,31,217,0.1) 0%, transparent 70%)'
-                                            : 'radial-gradient(circle at top, rgba(173,255,0,0.1) 0%, transparent 70%)',
+                                            ? 'radial-gradient(circle at top, rgba(192,154,90,0.15) 0%, transparent 70%)'
+                                            : 'radial-gradient(circle at top, rgba(255,255,255,0.05) 0%, transparent 70%)',
                                         opacity: 0, transition: 'opacity 0.4s ease', pointerEvents: 'none', zIndex: 0
                                     }} />
 
                                     {pkg.isPopular && (
                                         <div style={{
                                             position: 'absolute', top: '2.2rem', right: '-2.8rem',
-                                            backgroundColor: '#071FD9', color: '#FFF',
+                                            backgroundColor: '#C09A5A', color: '#0F0F0F',
                                             padding: '8px 65px', fontSize: '0.75rem', fontWeight: 900,
                                             textTransform: 'uppercase', letterSpacing: '0.15em',
-                                            transform: 'rotate(45deg)', boxShadow: '0 4px 15px rgba(7,31,217,0.3)',
+                                            transform: 'rotate(45deg)', boxShadow: '0 4px 15px rgba(192,154,90,0.3)',
                                             zIndex: 10, textAlign: 'center'
                                         }}>
                                             ĐẶC BIỆT
@@ -105,27 +110,27 @@ const Packages: React.FC = () => {
                                     )}
 
                                     <div style={{ marginBottom: '2.5rem', position: 'relative', zIndex: 1 }}>
-                                        <h3 style={{ fontSize: '0.85rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#666', fontWeight: 700 }}>
+                                        <h3 style={{ fontSize: '0.85rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#C09A5A', fontWeight: 700 }}>
                                             {pkg.name}
                                         </h3>
-                                        <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: '1.5rem', minHeight: '2.4rem' }}>
+                                        <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginBottom: '1.5rem', minHeight: '2.4rem' }}>
                                             {pkg.description}
                                         </p>
                                         <div style={{ marginBottom: '0.5rem' }}>
-                                            <div style={{ fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', fontWeight: 900, fontFamily: 'var(--font-display)', color: '#0F0F0F', lineHeight: 1 }}>
+                                            <div style={{ fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', fontWeight: 900, fontFamily: 'var(--font-display)', color: '#FFFFFF', lineHeight: 1 }}>
                                                 {formatPrice(pkg.price)}
                                             </div>
-                                            <div style={{ fontSize: '0.65rem', color: '#888', marginTop: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                                            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginTop: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
                                                 VNĐ / GÓI
                                             </div>
                                         </div>
-                                        <div style={{ height: '1px', backgroundColor: '#EEE', marginTop: '2rem' }} />
+                                        <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.08)', marginTop: '2rem' }} />
                                     </div>
 
                                     <ul style={{ listStyle: 'none', margin: 0, padding: 0, flex: 1, position: 'relative', zIndex: 1 }}>
                                         {pkg.benefits.map((benefit, i) => (
-                                            <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '1.25rem', color: '#444', fontSize: '0.85rem' }}>
-                                                <CheckCircle2 size={16} style={{ color: pkg.isPopular ? '#071FD9' : '#CCC', flexShrink: 0, marginTop: '2px' }} />
+                                            <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '1.25rem', color: 'rgba(255,255,255,0.8)', fontSize: '0.85rem' }}>
+                                                <CheckCircle2 size={16} style={{ color: pkg.isPopular ? '#C09A5A' : 'rgba(255,255,255,0.3)', flexShrink: 0, marginTop: '2px' }} />
                                                 <span>{benefit}</span>
                                             </li>
                                         ))}
@@ -138,9 +143,9 @@ const Packages: React.FC = () => {
                                                 width: '100%', padding: '1.25rem',
                                                 display: 'flex', justifyContent: 'center', alignItems: 'center',
                                                 borderRadius: 0,
-                                                backgroundColor: pkg.isPopular ? '#071FD9' : '#FFFFFF',
-                                                color: pkg.isPopular ? '#FFFFFF' : '#0F0F0F',
-                                                border: pkg.isPopular ? 'none' : '1px solid #CCC',
+                                                backgroundColor: pkg.isPopular ? '#C09A5A' : 'transparent',
+                                                color: pkg.isPopular ? '#0F0F0F' : '#FFFFFF',
+                                                border: pkg.isPopular ? 'none' : '1px solid rgba(255,255,255,0.2)',
                                                 fontSize: '0.85rem', fontWeight: 800,
                                                 letterSpacing: '0.15em', textTransform: 'uppercase',
                                                 transition: 'all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)'
@@ -170,15 +175,15 @@ const Packages: React.FC = () => {
                 @media (max-width: 768px)  { .pkg-grid { grid-template-columns: 1fr; } }
                 .pkg-card:hover {
                     transform: translateY(-12px) scale(1.02);
-                    box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-                    border-color: rgba(7,31,217,0.2) !important;
+                    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+                    border-color: rgba(192,154,90,0.3) !important;
                 }
                 .pkg-card:hover .pkg-glow { opacity: 1 !important; }
                 .pkg-card:hover .pkg-btn-arrow { transform: translateX(5px); }
                 .pkg-card:not(.popular):hover .pkg-btn {
-                    background-color: #0F0F0F !important;
-                    color: #FFFFFF !important;
-                    border-color: #0F0F0F !important;
+                    background-color: #C09A5A !important;
+                    color: #0F0F0F !important;
+                    border-color: #C09A5A !important;
                 }
             `}</style>
         </div>
