@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Hero } from './Hero';
 import { FeaturedProjects } from './FeaturedProjects';
 import { StudioStats } from './StudioStats';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 interface ServiceCategory {
     id: number;
@@ -241,15 +242,15 @@ const Home: React.FC = () => {
                                 key={cat.id}
                                 onMouseEnter={() => setActiveAccordionIndex(idx)}
                                 style={{
-                                    flex: isHovered ? '2' : '1',
+                                    flex: isHovered ? '2.5' : '1',
                                     height: '100%',
                                     position: 'relative',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',
-                                    padding: '3rem 2rem',
+                                    padding: '3rem 2.5rem',
                                     boxSizing: 'border-box',
-                                    transition: 'flex 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+                                    transition: 'flex 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
                                     borderRight: idx < serviceCategories.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none',
                                     overflow: 'hidden',
                                     cursor: 'default'
@@ -261,7 +262,7 @@ const Home: React.FC = () => {
                                     {/* Vignette Overlay for dark readability */}
                                     <div style={{
                                         position: 'absolute', inset: 0,
-                                        background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.2) 100%)',
+                                        background: 'linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 100%)',
                                         zIndex: 2,
                                     }} className="accordion-overlay" />
 
@@ -269,8 +270,8 @@ const Home: React.FC = () => {
                                         src={cat.image}
                                         alt={cat.title}
                                         animate={{
-                                            scale: isHovered ? 1.06 : 1.0,
-                                            filter: isHovered ? 'grayscale(0%) contrast(1.05)' : 'grayscale(100%) brightness(0.5)'
+                                            scale: isHovered ? 1.08 : 1.0,
+                                            filter: isHovered ? 'grayscale(0%) contrast(1.05)' : 'grayscale(100%) brightness(0.4)'
                                         }}
                                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                                         style={{
@@ -294,7 +295,7 @@ const Home: React.FC = () => {
                                     whiteSpace: 'nowrap',
                                 }}>
                                     <span style={{
-                                        color: isHovered ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+                                        color: isHovered ? '#C09A5A' : 'rgba(255,255,255,0.4)',
                                         fontSize: '0.85rem',
                                         fontWeight: 800,
                                         letterSpacing: '0.25em',
@@ -306,6 +307,81 @@ const Home: React.FC = () => {
                                     </span>
                                 </div>
 
+                                {/* Expanded Content Area */}
+                                <div style={{
+                                    zIndex: 3,
+                                    position: 'absolute',
+                                    bottom: '6.5rem',
+                                    left: '2.5rem',
+                                    right: '2.5rem',
+                                    pointerEvents: isHovered ? 'auto' : 'none',
+                                    maxWidth: '420px',
+                                }}>
+                                    <AnimatePresence>
+                                        {isHovered && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 20 }}
+                                                transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                                                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                                            >
+                                                <h3 style={{
+                                                    fontSize: '2rem',
+                                                    color: '#FFFFFF',
+                                                    margin: 0,
+                                                    fontFamily: 'var(--font-display)',
+                                                    fontWeight: 900,
+                                                    lineHeight: 1.15,
+                                                    textShadow: '0 4px 10px rgba(0,0,0,0.6)'
+                                                }}>
+                                                    {cat.title}
+                                                </h3>
+                                                <p style={{
+                                                    fontSize: '0.85rem',
+                                                    color: 'rgba(255,255,255,0.85)',
+                                                    margin: 0,
+                                                    lineHeight: 1.6,
+                                                    textShadow: '0 2px 4px rgba(0,0,0,0.6)'
+                                                }}>
+                                                    {cat.description}
+                                                </p>
+                                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+                                                    {cat.subItems.map((sub, sIdx) => (
+                                                        <span key={sIdx} style={{
+                                                            fontSize: '0.65rem',
+                                                            color: '#C09A5A',
+                                                            border: '1px solid rgba(192, 154, 90, 0.3)',
+                                                            padding: '2px 8px',
+                                                            borderRadius: '2px',
+                                                            textTransform: 'uppercase',
+                                                            letterSpacing: '0.05em',
+                                                            fontWeight: 600,
+                                                            backgroundColor: 'rgba(10, 10, 10, 0.4)'
+                                                        }}>
+                                                            {sub}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <Link to={cat.link} style={{
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    color: '#C09A5A',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 800,
+                                                    letterSpacing: '0.15em',
+                                                    textTransform: 'uppercase',
+                                                    marginTop: '0.5rem',
+                                                    width: 'fit-content'
+                                                }} className="accordion-link">
+                                                    Khám phá <ArrowRight size={14} className="accordion-link-arrow" />
+                                                </Link>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+
                                 {/* Bottom Info block (Large Number) */}
                                 <div style={{
                                     zIndex: 3,
@@ -313,14 +389,13 @@ const Home: React.FC = () => {
                                     width: '100%',
                                     display: 'flex',
                                     alignItems: 'flex-end',
-                                    justifyContent: 'flex-start',
+                                    justifyContent: 'space-between',
                                     boxSizing: 'border-box',
                                 }} className="accordion-bottom-info">
-
                                     {/* Large Serif Number */}
                                     <span style={{
                                         fontSize: 'clamp(2.5rem, 5vw, 5.5rem)',
-                                        color: isHovered ? '#FFFFFF' : 'rgba(255,255,255,0.15)',
+                                        color: isHovered ? '#C09A5A' : 'rgba(255,255,255,0.15)',
                                         fontWeight: '900',
                                         lineHeight: '0.8',
                                         fontFamily: 'var(--font-display), Georgia, serif',
@@ -413,6 +488,18 @@ const Home: React.FC = () => {
                 .intro-btn:hover {
                     background-color: var(--color-text) !important;
                     color: var(--color-bg) !important;
+                }
+                .accordion-link {
+                    transition: color 0.3s ease;
+                }
+                .accordion-link:hover {
+                    color: #FFFFFF !important;
+                }
+                .accordion-link:hover .accordion-link-arrow {
+                    transform: translateX(4px);
+                }
+                .accordion-link-arrow {
+                    transition: transform 0.3s ease;
                 }
                 .partner-brand:hover {
                     opacity: 0.8 !important;

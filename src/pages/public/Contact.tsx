@@ -150,16 +150,34 @@ const Contact: React.FC = () => {
             <style>{`
                 .contact-info-card {
                     border-right: 1px solid rgba(255,255,255,0.05);
+                    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                .contact-info-card:hover {
+                    background-color: #161616 !important;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 15px rgba(192, 154, 90, 0.05);
+                    border-color: rgba(192, 154, 90, 0.3) !important;
                 }
                 .contact-info-card:last-child {
                     border-right: none;
                 }
+                .contact-input {
+                    border-radius: 0px !important;
+                    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                }
                 .contact-input:focus {
                     border-color: #C09A5A !important;
+                    background-color: #161616 !important;
+                    box-shadow: 0 0 15px rgba(192, 154, 90, 0.15);
+                }
+                .contact-submit-btn {
+                    border-radius: 0px !important;
+                    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
                 }
                 .contact-submit-btn:hover {
-                    background-color: #D4B275 !important;
-                    transform: translateY(-2px);
+                    background-color: #FFFFFF !important;
+                    color: #0F0F0F !important;
+                    transform: translateY(-3px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
                 }
                 @media (max-width: 900px) {
                     .contact-info-grid {

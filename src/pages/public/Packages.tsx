@@ -85,7 +85,7 @@ const Packages: React.FC = () => {
                                         overflow: 'hidden',
                                         border: '1px solid rgba(255,255,255,0.08)'
                                     }}
-                                    className="pkg-card"
+                                    className={`pkg-card ${pkg.isPopular ? 'popular' : ''}`}
                                 >
                                     {/* Ambient Glow */}
                                     <div className="pkg-glow" style={{
@@ -153,7 +153,7 @@ const Packages: React.FC = () => {
                                             className="pkg-btn"
                                         >
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                BẮT ĐẦU <ArrowRight size={18} className="pkg-btn-arrow" />
+                                                BẮT ĐẦU <ArrowRight size={18} className="pkg-btn-arrow" style={{ transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }} />
                                             </div>
                                         </Button>
                                     </div>
@@ -169,21 +169,31 @@ const Packages: React.FC = () => {
                 .pkg-grid {
                     display: grid;
                     grid-template-columns: repeat(3, 1fr);
-                    gap: 1.5rem;
+                    gap: 2rem;
                 }
-                @media (max-width: 1024px) { .pkg-grid { grid-template-columns: repeat(2, 1fr); } }
+                @media (max-width: 1024px) { .pkg-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; } }
                 @media (max-width: 768px)  { .pkg-grid { grid-template-columns: 1fr; } }
+                .pkg-card {
+                    border-radius: 0px !important;
+                    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                }
+                .pkg-card.popular {
+                    border: 1px solid rgba(192, 154, 90, 0.45) !important;
+                }
                 .pkg-card:hover {
-                    transform: translateY(-12px) scale(1.02);
-                    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-                    border-color: rgba(192,154,90,0.3) !important;
+                    transform: translateY(-16px);
+                    box-shadow: 0 40px 80px rgba(0,0,0,0.8), inset 0 0 30px rgba(192, 154, 90, 0.05);
+                    border-color: rgba(192, 154, 90, 0.45) !important;
                 }
                 .pkg-card:hover .pkg-glow { opacity: 1 !important; }
-                .pkg-card:hover .pkg-btn-arrow { transform: translateX(5px); }
+                .pkg-card:hover .pkg-btn-arrow { transform: translateX(6px); }
                 .pkg-card:not(.popular):hover .pkg-btn {
                     background-color: #C09A5A !important;
                     color: #0F0F0F !important;
                     border-color: #C09A5A !important;
+                }
+                .pkg-btn {
+                    border-radius: 0px !important;
                 }
             `}</style>
         </div>

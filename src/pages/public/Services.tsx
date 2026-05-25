@@ -208,10 +208,18 @@ const Services: React.FC = () => {
                             padding: 2.5rem 1.5rem !important;
                         }
                     }
+                    .svc-page-card {
+                        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                    }
+                    .svc-page-card:hover {
+                        border-color: rgba(192, 154, 90, 0.3) !important;
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(192, 154, 90, 0.05);
+                        transform: translateY(-4px);
+                    }
                     .svc-page-card:hover .svc-page-bg {
                         opacity: 1 !important;
                         transform: scale(1) translateZ(0) !important;
-                        filter: grayscale(0%) contrast(1.05) brightness(0.6) !important;
+                        filter: grayscale(0%) contrast(1.05) brightness(0.5) !important;
                     }
                     .svc-page-card:hover .svc-page-glow {
                         opacity: 0.9 !important;
@@ -252,12 +260,30 @@ const Services: React.FC = () => {
                         display: flex;
                         gap: 3rem;
                         align-items: flex-start;
+                        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                    }
+                    .workflow-item:hover {
+                        background-color: rgba(255,255,255,0.01);
+                        padding-left: 1.5rem !important;
+                        border-bottom-color: rgba(192, 154, 90, 0.25) !important;
+                    }
+                    .workflow-item:hover .workflow-circle {
+                        border-color: #C09A5A !important;
+                        background-color: #121212 !important;
+                        box-shadow: 0 0 20px rgba(192, 154, 90, 0.25);
+                        transform: scale(1.08);
+                    }
+                    .workflow-circle {
+                        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
                     }
                     @media (max-width: 640px) {
                         .workflow-item {
                             flex-direction: column !important;
                             gap: 1.5rem !important;
                             padding: 2.5rem 0 !important;
+                        }
+                        .workflow-line {
+                            display: none !important;
                         }
                     }
                 `}</style>
@@ -290,7 +316,18 @@ const Services: React.FC = () => {
                         </div>
 
                         {/* Steps Grid */}
-                        <div style={{ flex: '1.2' }}>
+                        <div style={{ flex: '1.2', position: 'relative' }}>
+                            {/* Vertical Line Connector */}
+                            <div style={{
+                                position: 'absolute',
+                                left: '32px',
+                                top: '4rem',
+                                bottom: '8rem',
+                                width: '1px',
+                                background: 'linear-gradient(to bottom, rgba(192, 154, 90, 0.4) 0%, rgba(192, 154, 90, 0.15) 50%, transparent 100%)',
+                                zIndex: 0
+                            }} className="workflow-line" />
+
                             {workflow.map((item, index) => (
                                 <motion.div
                                     key={index}
@@ -308,20 +345,23 @@ const Services: React.FC = () => {
                                         alignItems: 'flex-start'
                                     }}
                                 >
-                                    <div style={{
-                                        width: '64px',
-                                        height: '64px',
-                                        backgroundColor: 'rgba(255,255,255,0.02)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '50%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: '#C09A5A',
-                                        flexShrink: 0,
-                                        zIndex: 1,
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
-                                    }}>
+                                    <div 
+                                        className="workflow-circle"
+                                        style={{
+                                            width: '64px',
+                                            height: '64px',
+                                            backgroundColor: '#090909',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: '#C09A5A',
+                                            flexShrink: 0,
+                                            zIndex: 1,
+                                            boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+                                        }}
+                                    >
                                         {item.icon}
                                     </div>
 
