@@ -8,34 +8,34 @@ const services = [
     {
         icon: <Camera size={40} />,
         title: 'Nhiếp Ảnh',
-        desc: 'Aura giúp bạn ghi lại hình ảnh chuyên nghiệp, nâng tầm thương hiệu cá nhân.',
-        features: ['Thương Hiệu Cá Nhân', 'Thời Trang Biên Tập', 'Sản Phẩm Thương Mại', 'Hồ Sơ Kiến Trúc'],
+        desc: 'Aura giúp bạn ghi lại hình ảnh chuyên nghiệp, nâng tầm thương hiệu cá nhân với phong cách tối giản đầy chiều sâu.',
+        features: ['Thương Hiệu Cá Nhân', 'Thời Trang Editorial', 'Sản Phẩm Thương Mại', 'Kiến Trúc & Nội Thất'],
         image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=1000',
-        colorTheme: '#071FD9'
+        colorTheme: '#C09A5A'
     },
     {
         icon: <Video size={40} />,
         title: 'Quay Phim',
-        desc: 'Aura giúp bạn sản xuất video sáng tạo, giúp bạn nổi bật trên nền tảng số.',
-        features: ['Phim Thương Hiệu', 'Phong Cách Tài Liệu', 'Quảng Cáo Thương Mại', 'Điểm Nhấn Sự Kiện'],
+        desc: 'Sản xuất các thước phim thương hiệu đỉnh cao, kết hợp nghệ thuật kể chuyện cinematic và góc quay sắc sảo.',
+        features: ['Phim Thương Hiệu', 'Phong Cách Tài Liệu', 'Quảng Cáo Commercial', 'Lookbook & Fashion Film'],
         image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&q=80&w=1000',
-        colorTheme: '#071FD9'
+        colorTheme: '#C09A5A'
     },
     {
         icon: <PenTool size={40} />,
-        title: 'Hậu Kì',
-        desc: 'Aura đảm bảo mỗi sản phẩm được chỉnh sửa chỉn chu. Từ màu sắc đến âm thanh, mang lại chất lượng hoàn thiện cao nhất.',
-        features: ['Hậu Kì Hình Ảnh', 'Hậu Kì Video', 'Thiết Kế Poster', 'Định Hướng Phong Cách'],
+        title: 'Hậu Kỳ',
+        desc: 'Đảm bảo mỗi khung hình, nhịp cắt cảnh và thiết kế âm thanh vòm được hoàn thiện ở tiêu chuẩn điện ảnh khắt khe nhất.',
+        features: ['Hậu Kỳ Hình Ảnh', 'Dựng Phim Cinematic', 'Color Grading Chuyên Nghiệp', 'Sound Design & Kỹ Xảo'],
         image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=1000',
-        colorTheme: '#071FD9'
+        colorTheme: '#C09A5A'
     },
     {
         icon: <Monitor size={40} />,
         title: 'Nội Dung Mạng Xã Hội',
-        desc: 'Aura hỗ trợ xây dựng nội dung thu hút, định hình phong cách cá nhân.',
-        features: ['Reels Mạng Xã Hội', 'Chiến Lược YouTube', 'Tài Sản Số', 'Đồ Họa Chuyển Động'],
+        desc: 'Xây dựng giải pháp nội dung video ngắn thu hút, định hình phong cách độc bản cho kênh xã hội của doanh nghiệp.',
+        features: ['Reels / TikTok Mạng Xã Hội', 'Chiến Lược YouTube', 'Đồ Họa Chuyển Động', 'Content Creator Kit'],
         image: 'https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&q=80&w=1000',
-        colorTheme: '#071FD9'
+        colorTheme: '#C09A5A'
     }
 ];
 
@@ -44,42 +44,59 @@ const workflow = [
         step: '01',
         title: 'Tư Vấn & Ý Tưởng',
         desc: 'Chúng tôi bắt đầu bằng việc lắng nghe câu chuyện của bạn. Qua các buổi brainstorm chuyên sâu, Aura sẽ cùng bạn định hình concept, phong cách và thông điệp cốt lõi cần truyền tải.',
-        icon: <Lightbulb size={32} />
+        icon: <Lightbulb size={28} />
     },
     {
         step: '02',
         title: 'Kế Hoạch Tiền Kỳ',
         desc: 'Mọi sự hoàn hảo đều đến từ khâu chuẩn bị tỉ mỉ. Aura thực hiện khảo sát địa điểm, casting, vẽ storyboard và lập bảng phân cảnh chi tiết để đảm bảo mọi khung hình đều có chủ ý.',
-        icon: <Clapperboard size={32} />
+        icon: <Clapperboard size={28} />
     },
     {
         step: '03',
         title: 'SẢN XUẤT',
         desc: 'Đội ngũ chuyên nghiệp cùng thiết bị điện ảnh tối tân sẽ hiện thực hóa bản vẽ. Chúng tôi tối ưu hóa ánh sáng, âm thanh và diễn xuất để bắt trọn những khoảnh khắc đắt giá nhất.',
-        icon: <Film size={32} />
+        icon: <Film size={28} />
     },
     {
         step: '04',
         title: 'HẬU KỲ',
         desc: 'Đây là nơi ma thuật thực sự diễn ra. Chúng tôi tinh chỉnh màu sắc, dựng phim nhịp điệu, thiết kế âm thanh vòm và thêm các hiệu ứng kỹ xảo để tạo nên một kiệt tác hoàn chỉnh.',
-        icon: <Scissors size={32} />
+        icon: <Scissors size={28} />
     }
 ];
 
 const Services: React.FC = () => {
     return (
-        <div style={{ paddingTop: '100px', backgroundColor: '#071FD9' }}>
-            <section className="container" style={{ padding: '4rem 0 8rem' }}>
+        <div style={{ paddingTop: '100px', backgroundColor: '#050505', color: '#FFFFFF' }}>
+            {/* Ambient Background Glow */}
+            <div style={{
+                position: 'absolute',
+                top: '10%',
+                left: '-10%',
+                width: '600px',
+                height: '600px',
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(192,154,90,0.03) 0%, transparent 70%)',
+                pointerEvents: 'none',
+                zIndex: 0
+            }} />
+
+            <section className="container" style={{ padding: '4rem 0 8rem', position: 'relative', zIndex: 2 }}>
                 <header style={{ maxWidth: '1000px', marginBottom: '5rem', textAlign: 'center', margin: '0 auto 5rem' }}>
+                    <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1.5rem' }}>
+                        DỊCH VỤ CỦA CHÚNG TÔI
+                    </span>
                     <motion.h1
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         style={{
-                            fontSize: 'clamp(3rem, 8vw, 5.5rem)',
+                            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
                             color: '#FFFFFF',
                             textTransform: 'uppercase',
                             fontFamily: 'var(--font-display)',
-                            fontWeight: 900
+                            fontWeight: 900,
+                            lineHeight: 1.15
                         }}
                     >
                         AURA CÓ THỂ LÀM GÌ?
@@ -99,12 +116,13 @@ const Services: React.FC = () => {
                                 position: 'relative',
                                 minHeight: '520px',
                                 padding: '3.5rem 2rem',
-                                backgroundColor: '#FFFFFF',
+                                backgroundColor: '#0F0F0F',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 overflow: 'hidden',
-                                border: 'none',
-                                '--svc-accent': '#071FD9',
+                                border: '1px solid rgba(255,255,255,0.05)',
+                                borderRadius: '0px',
+                                '--svc-accent': '#C09A5A',
                             } as React.CSSProperties}
                         >
                             {/* Hover Background Image Reveal - Preserving Effect */}
@@ -112,7 +130,7 @@ const Services: React.FC = () => {
                                 position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
                                 backgroundImage: `url(${service.image})`, backgroundSize: 'cover', backgroundPosition: 'center',
                                 opacity: 0, transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)', zIndex: 0, transform: 'scale(1.05)',
-                                filter: 'grayscale(100%) brightness(0.7)'
+                                filter: 'grayscale(100%) brightness(0.6)'
                             }} />
 
                             {/* Theme Glow Overlay */}
@@ -123,40 +141,41 @@ const Services: React.FC = () => {
                             }} />
 
                             {/* Content */}
-                            <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', height: '100%', flex: 1 }}>
                                 <div className="svc-page-icon" style={{
-                                    color: '#071FD9', marginBottom: 'auto', transition: 'all 0.4s ease',
+                                    color: '#C09A5A', marginBottom: 'auto', transition: 'all 0.4s ease',
                                     padding: '0.5rem', width: 'fit-content',
                                 }}>
                                     {service.icon}
                                 </div>
                                 <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                                     <h3 className="svc-page-title" style={{
-                                        fontSize: '1.6rem', color: '#0F0F0F', textTransform: 'uppercase',
+                                        fontSize: '1.5rem', color: '#FFFFFF', textTransform: 'uppercase',
                                         fontFamily: 'var(--font-display)', fontWeight: 800, marginBottom: '1.2rem',
-                                        transition: 'color 0.4s ease'
+                                        transition: 'color 0.4s ease', letterSpacing: '0.05em'
                                     }}>
                                         {service.title}
                                     </h3>
                                     <p className="svc-page-desc" style={{
-                                        color: '#444444', fontSize: '0.9rem', lineHeight: 1.6,
+                                        color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', lineHeight: 1.6,
                                         marginBottom: '2.5rem', transition: 'color 0.4s ease'
                                     }}>
                                         {service.desc}
                                     </p>
                                     <ul style={{
                                         listStyle: 'none', display: 'flex', flexDirection: 'column',
-                                        gap: '0.9rem', borderTop: '1px solid rgba(0,0,0,0.05)',
-                                        paddingTop: '1.8rem', transition: 'border-color 0.4s ease', marginTop: 'auto'
+                                        gap: '0.9rem', borderTop: '1px solid rgba(255,255,255,0.08)',
+                                        paddingTop: '1.8rem', transition: 'border-color 0.4s ease', marginTop: 'auto',
+                                        paddingLeft: 0
                                     }} className="svc-page-list-border">
                                         {service.features.map(f => (
                                             <li key={f} className="svc-page-feature" style={{
                                                 display: 'flex', alignItems: 'center', gap: '12px',
-                                                fontSize: '0.7rem', color: '#666666', textTransform: 'uppercase',
-                                                letterSpacing: '0.1em', transition: 'color 0.4s ease'
+                                                fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase',
+                                                letterSpacing: '0.12em', transition: 'color 0.4s ease'
                                             }}>
                                                 <div className="svc-page-bullet" style={{
-                                                    width: '4px', height: '4px', backgroundColor: '#071FD9',
+                                                    width: '4px', height: '4px', backgroundColor: '#C09A5A',
                                                     flexShrink: 0, transition: 'background-color 0.4s ease'
                                                 }} /> {f}
                                             </li>
@@ -192,13 +211,13 @@ const Services: React.FC = () => {
                     .svc-page-card:hover .svc-page-bg {
                         opacity: 1 !important;
                         transform: scale(1) translateZ(0) !important;
-                        filter: grayscale(20%) brightness(0.6) !important;
+                        filter: grayscale(0%) contrast(1.05) brightness(0.6) !important;
                     }
                     .svc-page-card:hover .svc-page-glow {
-                        opacity: 0.8 !important;
+                        opacity: 0.9 !important;
                     }
                     .svc-page-card:hover .svc-page-icon {
-                        color: #ADFF00 !important;
+                        color: #FFFFFF !important;
                         transform: translateY(-5px);
                     }
                     .svc-page-card:hover .svc-page-title,
@@ -207,8 +226,8 @@ const Services: React.FC = () => {
                         color: #FFFFFF !important;
                     }
                     .svc-page-card:hover .svc-page-bullet {
-                        background-color: #ADFF00 !important;
-                        box-shadow: 0 0 10px #ADFF00;
+                        background-color: #C09A5A !important;
+                        box-shadow: 0 0 10px #C09A5A;
                     }
                     .svc-page-card:hover .svc-page-list-border {
                         border-color: rgba(255,255,255,0.2) !important;
@@ -244,26 +263,29 @@ const Services: React.FC = () => {
                 `}</style>
             </section>
 
-            {/* Workflow Section - Green background with dark text */}
-            <section style={{ backgroundColor: '#ADFF00', padding: 'var(--spacing-xl) 0' }}>
+            {/* Workflow Section - Dark background with gold/white accents */}
+            <section style={{ backgroundColor: '#090909', padding: '8rem 0', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <div className="container">
                     <div className="bts-flex-container">
 
                         {/* Sticky Header Side */}
                         <div style={{ flex: '0.8', position: 'sticky', top: '150px' }}>
+                            <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1.5rem' }}>
+                                QUY TRÌNH LÀM VIỆC
+                            </span>
                             <h2 style={{
-                                fontSize: 'clamp(3rem, 6vw, 4.4rem)',
-                                color: '#0F0F0F',
+                                fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+                                color: '#FFFFFF',
                                 fontFamily: 'var(--font-display)',
-                                lineHeight: 1.1,
+                                lineHeight: 1.15,
                                 textTransform: 'uppercase',
                                 fontWeight: 900,
                                 marginBottom: '3rem'
                             }}>
-                                Quy Trình Làm Việc
+                                Hành Trình Kiến Tạo
                             </h2>
-                            <p style={{ color: '#1A1A1A', fontSize: '1.1rem', lineHeight: 1.8, maxWidth: '350px' }}>
-                                Chúng tôi tuân thủ các quy chuẩn điện ảnh khắt khe nhất để đảm bảo mỗi sản phẩm ra đời đều mang tầm vóc của một tác phẩm nghệ thuật.
+                            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.05rem', lineHeight: 1.8, maxWidth: '350px' }}>
+                                Chúng tôi tuân thủ các quy chuẩn sản xuất khắt khe nhất để đảm bảo mỗi sản phẩm ra đời đều mang tầm vóc của một tác phẩm nghệ thuật duy mỹ.
                             </p>
                         </div>
 
@@ -280,7 +302,7 @@ const Services: React.FC = () => {
                                     style={{
                                         position: 'relative',
                                         padding: '4rem 0',
-                                        borderBottom: '1px solid rgba(0,0,0,0.1)',
+                                        borderBottom: '1px solid rgba(255,255,255,0.08)',
                                         display: 'flex',
                                         gap: '3rem',
                                         alignItems: 'flex-start'
@@ -289,24 +311,26 @@ const Services: React.FC = () => {
                                     <div style={{
                                         width: '64px',
                                         height: '64px',
-                                        backgroundColor: '#FFFFFF',
+                                        backgroundColor: 'rgba(255,255,255,0.02)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
                                         borderRadius: '50%',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        color: '#071FD9',
+                                        color: '#C09A5A',
                                         flexShrink: 0,
                                         zIndex: 1,
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.05)'
+                                        boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
                                     }}>
                                         {item.icon}
                                     </div>
 
                                     <div style={{ zIndex: 1, position: 'relative' }}>
-                                        <h3 style={{ fontSize: '1.75rem', marginBottom: '1.5rem', fontFamily: 'var(--font-display)', fontWeight: 800, color: '#0F0F0F' }}>
+                                        <span style={{ fontSize: '0.8rem', color: '#C09A5A', letterSpacing: '0.25em', fontWeight: 800, display: 'block', marginBottom: '0.5rem' }}>BƯỚC {item.step}</span>
+                                        <h3 style={{ fontSize: '1.6rem', marginBottom: '1.5rem', fontFamily: 'var(--font-display)', fontWeight: 800, color: '#FFFFFF', letterSpacing: '0.05em' }}>
                                             {item.title}
                                         </h3>
-                                        <p style={{ color: '#1A1A1A', fontSize: '1.05rem', lineHeight: 1.8, maxWidth: '500px' }}>
+                                        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.05rem', lineHeight: 1.8, maxWidth: '500px' }}>
                                             {item.desc}
                                         </p>
                                     </div>
@@ -317,22 +341,23 @@ const Services: React.FC = () => {
                 </div>
             </section>
 
-            {/* CTA Section - Black background with lime top border */}
+            {/* CTA Section - Black background with luxury border */}
             <section style={{
                 backgroundColor: '#000000',
-                borderTop: '1px solid #ADFF00',
-                padding: 'var(--spacing-xl) 0',
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+                padding: '8rem 0',
                 textAlign: 'center'
             }}>
                 <div className="container">
                     <h2 style={{
-                        fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                        fontSize: 'clamp(2rem, 5vw, 4rem)',
                         marginBottom: '3rem',
                         textTransform: 'uppercase',
                         fontFamily: 'var(--font-display)',
                         fontWeight: 900,
                         color: '#FFFFFF',
-                        letterSpacing: '0.02em'
+                        letterSpacing: '0.02em',
+                        lineHeight: 1.2
                     }}>
                         SẴN SÀNG NÂNG TẦM HÌNH ẢNH?
                     </h2>
@@ -341,15 +366,17 @@ const Services: React.FC = () => {
                             size="lg"
                             style={{
                                 borderRadius: '0',
-                                padding: '1.2rem 3rem',
-                                backgroundColor: '#071FD9',
+                                padding: '1.2rem 3.5rem',
+                                backgroundColor: '#C09A5A',
                                 color: '#FFFFFF',
                                 fontSize: '0.8rem',
-                                letterSpacing: '0.1em',
+                                letterSpacing: '0.15em',
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
-                                border: 'none'
+                                border: 'none',
+                                transition: 'background-color 0.3s ease'
                             }}
+                            className="cta-button-hover"
                         >
                             BẮT ĐẦU DỰ ÁN <ArrowRight size={18} style={{ marginLeft: '12px' }} />
                         </Button>

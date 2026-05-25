@@ -23,30 +23,31 @@ const navStyle: React.CSSProperties = {
     left: 0,
     width: '100%',
     zIndex: 50,
-    padding: '0.5rem 0',
-    background: 'var(--glass-bg)',
+    padding: '0.75rem 0',
+    background: 'rgba(10, 10, 10, 0.95)',
     backdropFilter: 'blur(20px)',
     WebkitBackdropFilter: 'blur(20px)',
-    borderBottom: '1px solid var(--glass-border)',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)',
 };
 
 const linkStyle = (active: boolean): React.CSSProperties => ({
-    fontSize: '0.7rem',
+    fontSize: '0.72rem',
     textTransform: 'uppercase',
-    letterSpacing: '0.25em',
-    color: 'var(--color-text)',
-    opacity: active ? 1 : 0.5,
-    fontWeight: active ? 800 : 500,
+    letterSpacing: '0.2em',
+    color: '#FFFFFF',
+    opacity: active ? 1 : 0.6,
+    fontWeight: active ? 700 : 400,
     transition: 'var(--transition-cinematic)',
 });
 
 const homeLinkStyle = (active: boolean): React.CSSProperties => ({
-    fontSize: '0.75rem',
+    fontSize: '0.72rem',
     textTransform: 'uppercase',
-    letterSpacing: '0.15em',
-    color: active ? '#071FD9' : '#0F0F0F',
-    opacity: active ? 1 : 0.8,
-    fontWeight: 600,
+    letterSpacing: '0.2em',
+    color: '#FFFFFF',
+    opacity: active ? 1 : 0.6,
+    fontWeight: active ? 700 : 400,
     transition: 'var(--transition-cinematic)',
 });
 
@@ -59,7 +60,7 @@ const dropdownItemStyle: React.CSSProperties = {
     padding: '0.6rem 0.75rem',
     borderRadius: '8px',
     cursor: 'pointer',
-    color: '#374151',
+    color: '#E5E7EB',
     fontSize: '0.825rem',
     fontWeight: 600,
     textAlign: 'left',
@@ -174,12 +175,12 @@ const UserMenu: React.FC = () => {
                             right: 0,
                             marginTop: '0.75rem',
                             width: '280px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                            backgroundColor: 'rgba(18, 18, 18, 0.98)',
                             backdropFilter: 'blur(20px)',
                             WebkitBackdropFilter: 'blur(20px)',
                             borderRadius: '16px',
-                            border: '1px solid rgba(0, 0, 0, 0.08)',
-                            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
                             zIndex: 100,
                             padding: '1.25rem',
                             display: 'flex',
@@ -189,10 +190,10 @@ const UserMenu: React.FC = () => {
                     >
                         {/* 1. Header: User Info */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#0F0F0F', letterSpacing: '0.01em' }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#FFFFFF', letterSpacing: '0.01em' }}>
                                 {user.fullName}
                             </div>
-                            <div style={{ fontSize: '0.75rem', color: '#6B7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontSize: '0.75rem', color: '#9CA3AF', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {user.email}
                             </div>
                         </div>
@@ -320,8 +321,28 @@ export const Navbar: React.FC = () => {
     const { role, user, logout } = useAuth();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const isHome = location.pathname === '/';
+
+    const dynamicNavStyle: React.CSSProperties = {
+        ...navStyle,
+        background: isHome ? (isScrolled ? 'rgba(10, 10, 10, 0.95)' : 'transparent') : 'rgba(10, 10, 10, 0.95)',
+        borderBottom: isHome ? (isScrolled ? '1px solid rgba(255, 255, 255, 0.08)' : 'none') : '1px solid rgba(255, 255, 255, 0.08)',
+        boxShadow: isHome ? (isScrolled ? '0 2px 10px rgba(0, 0, 0, 0.4)' : 'none') : '0 2px 10px rgba(0, 0, 0, 0.4)',
+    };
 
     // Logic lấy tiêu đề hiển thị ở giữa Navbar
     let pageTitle = pageTitleMap[location.pathname] || '';
@@ -355,16 +376,22 @@ export const Navbar: React.FC = () => {
             {!role ? (
                 <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                     <Link to="/login" style={{
-                        color: 'var(--color-text)', fontSize: '0.7rem', letterSpacing: '0.2em',
-                        textTransform: 'uppercase', fontWeight: 600, opacity: 0.5,
+                        color: '#FFFFFF', fontSize: '0.72rem', letterSpacing: '0.15em',
+                        textTransform: 'uppercase', fontWeight: 600, opacity: 0.6,
                     }} className="hover-link">
                         Đăng Nhập
                     </Link>
                     <Link to="/register" style={{
-                        backgroundColor: 'var(--color-accent)', color: 'var(--color-bg)',
-                        padding: '0.6rem 1.2rem', fontSize: '0.65rem', letterSpacing: '0.15em',
-                        textTransform: 'uppercase', fontWeight: 800,
-                        transition: 'var(--transition-cinematic)',
+                        border: '1px solid #FFFFFF',
+                        backgroundColor: 'transparent',
+                        color: '#FFFFFF',
+                        padding: '0.55rem 1.5rem',
+                        fontSize: '0.7rem',
+                        letterSpacing: '0.15em',
+                        textTransform: 'uppercase',
+                        fontWeight: 700,
+                        borderRadius: '0',
+                        transition: 'all 0.3s ease',
                     }} className="btn-join">
                         Tham Gia
                     </Link>
@@ -379,24 +406,24 @@ export const Navbar: React.FC = () => {
         <style>{`
             .hover-link { position: relative; }
             .hover-link::after {
-                content: ''; position: absolute; bottom: -8px; left: 0;
-                width: 0; height: 1px; background-color: var(--color-accent);
-                transition: var(--transition-cinematic); transform: scaleX(0);
+                content: ''; position: absolute; bottom: -6px; left: 0;
+                width: 100%; height: 1px; background-color: #FFFFFF;
+                transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                transform: scaleX(0);
                 transform-origin: bottom left;
             }
             .hover-link:hover {
                 opacity: 1 !important;
-                color: var(--color-neon) !important;
+                color: #FFFFFF !important;
             }
             .hover-link:hover::after,
             .hover-link.active::after {
                 transform: scaleX(1);
-                background-color: var(--color-neon);
             }
             .btn-join:hover {
-                background-color: var(--color-neon) !important;
-                color: #0F0F0F !important;
-                box-shadow: 0 0 15px rgba(173, 255, 0, 0.4);
+                background-color: #FFFFFF !important;
+                color: #000000 !important;
+                box-shadow: none !important;
             }
             .mobile-menu-toggle {
                 display: none;
@@ -564,7 +591,7 @@ export const Navbar: React.FC = () => {
     // ─── BOTTOM RENDER SELECTION ───
     if (!isHome) {
         return (
-            <nav style={navStyle}>
+            <nav style={dynamicNavStyle}>
                 <div className="container navbar-container" style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     width: '100%', position: 'relative', minHeight: '56px',
@@ -619,12 +646,7 @@ export const Navbar: React.FC = () => {
 
     // ─── HOME PAGE NAVBAR (logo far left, links centered, auth far right) ───
     return (
-        <nav style={{
-            ...navStyle,
-            background: '#FFFFFF',
-            borderBottom: '1px solid rgba(0,0,0,0.05)',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)'
-        }}>
+        <nav style={dynamicNavStyle}>
             <div className="container navbar-container" style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 width: '100%', position: 'relative', minHeight: '64px',
@@ -648,17 +670,22 @@ export const Navbar: React.FC = () => {
                     {!role ? (
                         <>
                             <Link to="/login" style={{
-                                color: '#0F0F0F', fontSize: '0.75rem', letterSpacing: '0.15em',
-                                textTransform: 'uppercase', fontWeight: 600, opacity: 0.8,
+                                color: '#FFFFFF', fontSize: '0.72rem', letterSpacing: '0.15em',
+                                textTransform: 'uppercase', fontWeight: 600, opacity: 0.6,
                             }} className="hover-link-dark">
                                 Đăng Nhập
                             </Link>
                             <Link to="/register" style={{
-                                backgroundColor: '#071FD9', color: '#FFFFFF',
-                                padding: '0.7rem 1.8rem', fontSize: '0.7rem', letterSpacing: '0.15em',
-                                textTransform: 'uppercase', fontWeight: 800,
+                                border: '1px solid #FFFFFF',
+                                backgroundColor: 'transparent',
+                                color: '#FFFFFF',
+                                padding: '0.55rem 1.5rem',
+                                fontSize: '0.7rem',
+                                letterSpacing: '0.15em',
+                                textTransform: 'uppercase',
+                                fontWeight: 700,
                                 borderRadius: '0',
-                                transition: 'var(--transition-cinematic)',
+                                transition: 'all 0.3s ease',
                             }} className="btn-join-home">
                                 Tham Gia
                             </Link>
@@ -669,31 +696,32 @@ export const Navbar: React.FC = () => {
                 </div>
 
                 {/* Hamburger Button */}
-                <button className="mobile-menu-toggle" onClick={() => setIsOpen(true)} style={{ color: '#0F0F0F' }}>
+                <button className="mobile-menu-toggle" onClick={() => setIsOpen(true)} style={{ color: '#FFFFFF' }}>
                     <Menu size={24} />
                 </button>
             </div>
             <style>{`
                 .hover-link-dark { position: relative; }
                 .hover-link-dark::after {
-                    content: ''; position: absolute; bottom: -4px; left: 0;
-                    width: 0; height: 1px; background-color: #071FD9;
-                    transition: var(--transition-cinematic); transform: scaleX(0);
+                    content: ''; position: absolute; bottom: -6px; left: 0;
+                    width: 100%; height: 1px; background-color: #FFFFFF;
+                    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                    transform: scaleX(0);
                     transform-origin: bottom left;
                 }
-                .hover-link-dark:hover { opacity: 1 !important; color: #071FD9 !important; }
+                .hover-link-dark:hover { opacity: 1 !important; color: #FFFFFF !important; }
                 .hover-link-dark:hover::after, .hover-link-dark.active::after { transform: scaleX(1); }
                 .btn-join-home:hover {
-                    background-color: #0516A0 !important;
-                    box-shadow: 0 4px 15px rgba(7, 31, 217, 0.2);
-                    transform: translateY(-1px);
+                    background-color: #FFFFFF !important;
+                    color: #000000 !important;
+                    box-shadow: none !important;
                 }
                 
                 /* Custom Profile Dropdown Styles & Animations */
                 .upgrade-vip-btn:hover {
-                    background-color: #0516A0 !important;
-                    box-shadow: 0 4px 12px rgba(7, 31, 217, 0.3) !important;
-                    transform: translateY(-1px);
+                    background-color: #FFFFFF !important;
+                    color: #000000 !important;
+                    box-shadow: none !important;
                 }
                 .user-avatar-circle {
                     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
@@ -713,12 +741,12 @@ export const Navbar: React.FC = () => {
                     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
                 }
                 .user-profile-dropdown-menu button:hover {
-                    background-color: rgba(7, 31, 217, 0.06) !important;
-                    color: #071FD9 !important;
+                    background-color: rgba(255, 255, 255, 0.08) !important;
+                    color: #FFFFFF !important;
                     padding-left: 0.9rem !important;
                 }
                 .user-profile-dropdown-menu button:last-child:hover {
-                    background-color: rgba(239, 68, 68, 0.06) !important;
+                    background-color: rgba(239, 68, 68, 0.08) !important;
                     color: #EF4444 !important;
                     padding-left: 0.9rem !important;
                 }

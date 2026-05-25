@@ -23,16 +23,16 @@
 }
 
 :root {
-  /* Colors - Light Theme (Default) */
-  --color-bg: #F8FFFF;
-  --color-bg-secondary: #ffffff;
-  --color-text: #0F0F0F;
-  --color-text-muted: rgba(15, 15, 15, 0.6);
-  --color-accent: #071FD9;
+  /* Colors - Premium Dark Theme */
+  --color-bg: #0A0A0A;
+  --color-bg-secondary: #121212;
+  --color-text: #FFFFFF;
+  --color-text-muted: rgba(255, 255, 255, 0.6);
+  --color-accent: #FFFFFF;
   --color-accent-hover: #ADFF00;
   --color-neon: #ADFF00;
-  --color-border: rgba(15, 15, 15, 0.1);
-  --color-surface: #f0f2f5;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-surface: #1A1A1A;
 
   /* Typography - Editorial Style */
   --font-display: "Big Shoulders Display";
@@ -51,8 +51,8 @@
 
   /* Utilities */
   --transition-cinematic: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  --glass-bg: rgba(248, 255, 255, 0.95);
-  --glass-border: rgba(15, 15, 15, 0.08);
+  --glass-bg: rgba(10, 10, 10, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -141,7 +141,7 @@ button {
 }
 
 .text-gradient {
-  color: #000000;
+  color: #FFFFFF;
 }
 
 .accent-border {

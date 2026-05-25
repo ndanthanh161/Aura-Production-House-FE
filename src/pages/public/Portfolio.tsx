@@ -15,7 +15,18 @@ const Portfolio: React.FC = () => {
         const fetch = async () => {
             try {
                 const res = await portfolioApi.getPublished();
-                setItems(res.data || []);
+                const fetchedItems = res.data || [];
+                setItems(fetchedItems);
+
+                // Auto-open modal if 'id' query parameter is present in URL
+                const params = new URLSearchParams(window.location.search);
+                const projectId = params.get('id');
+                if (projectId && fetchedItems.length > 0) {
+                    const matchedItem = fetchedItems.find(item => String(item.id) === String(projectId));
+                    if (matchedItem) {
+                        setSelectedItem(matchedItem);
+                    }
+                }
             } catch {
                 console.error('Failed to load portfolio');
             } finally {

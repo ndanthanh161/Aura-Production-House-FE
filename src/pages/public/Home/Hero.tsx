@@ -1,249 +1,512 @@
 import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-// import { Button } from '../../../components/ui/Button';
-// import { ArrowRight, Play } from 'lucide-react';
-// import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Bookmark, ChevronLeft, ChevronRight } from 'lucide-react';
+import { portfolioApi, getCategoryLabel } from '../../../services/portfolioApi';
+import type { PortfolioItem } from '../../../services/portfolioApi';
+
+const DEFAULT_PROJECTS = [
+    {
+        id: 1,
+        category: "Sự kiện",
+        title: "LOS LANCES GALA NIGHT",
+        desc: "Ghi hình toàn bộ đêm Gala từ khai mạc đến trao giải. Multi-camera, livestream và highlight reel bàn giao trong vòng 24h.",
+        image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1600",
+    },
+    {
+        id: 2,
+        category: "Kiến trúc",
+        title: "DANANG RESORT",
+        desc: "Bộ ảnh kiến trúc và nội thất nghỉ dưỡng đẳng cấp quốc tế, khai thác trọn vẹn góc máy rộng và ánh sáng tự nhiên tuyệt mỹ.",
+        image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1600",
+    },
+    {
+        id: 3,
+        category: "Kiến trúc - nội thất",
+        title: "SKY VILLA",
+        desc: "Concept thiết kế hiện đại, truyền tải trọn vẹn không gian sang trọng và tầm nhìn panorama tuyệt đỉnh từ tầng cao.",
+        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1600",
+    },
+    {
+        id: 4,
+        category: "Video",
+        title: "NANGANO BRAND FILM",
+        desc: "Thước phim thương hiệu đỉnh cao, kết hợp nghệ thuật kể chuyện cinematic và hậu kỳ chuyên nghiệp đỉnh cao.",
+        image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=1600",
+    },
+    {
+        id: 5,
+        category: "Ẩm thực",
+        title: "MARRAKECH FOODIE",
+        desc: "Food styling và hình ảnh kích thích thị giác, tôn vinh những nét tinh hoa ẩm thực đường phố và menu F&B cao cấp.",
+        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=1600",
+    }
+];
 
 export const Hero: React.FC = () => {
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-    const { scrollY } = useScroll();
-    const bgY = useTransform(scrollY, [0, 700], [0, 200]);
-    const textY = useTransform(scrollY, [0, 700], [0, -80]);
-    const opacity = useTransform(scrollY, [0, 500], [1, 0]);
+    const [projects, setProjects] = useState<any[]>(DEFAULT_PROJECTS);
+    const [activeIndex, setActiveIndex] = useState(0);
 
-    const requestRef = React.useRef<number>(0);
-
+    // Fetch projects from the backend API
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (requestRef.current) {
-                cancelAnimationFrame(requestRef.current);
-            }
-            requestRef.current = requestAnimationFrame((_time) => {
-                setMousePos({
-                    x: (e.clientX / window.innerWidth - 0.5) * 20,
-                    y: (e.clientY / window.innerHeight - 0.5) * 20,
+        const fetchProjects = async () => {
+            try {
+                console.log("[AURA DEBUG] Bắt đầu gọi API lấy danh sách dự án...");
+                const res = await portfolioApi.getPublished();
+                const data = res.data || [];
+                console.log("[AURA DEBUG] Dữ liệu gốc nhận được từ BE:", data);
+
+                // Lọc các dự án HOT (isHot === true), sắp xếp mới nhất, lấy tối đa 5 cái và map dữ liệu
+                const hotProjects = data
+                    .filter((p: PortfolioItem) => p.isHot)
+                    .sort((a: PortfolioItem, b: PortfolioItem) =>
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    )
+                    .slice(0, 5) // Chỉ lấy tối đa 5 dự án mới nhất từ BE
+                    .map((p: PortfolioItem) => {
+                        const plainTextDesc = (p.content || '').replace(/<[^>]*>/g, '');
+                        const truncatedDesc = plainTextDesc.length > 150
+                            ? plainTextDesc.substring(0, 150) + '...'
+                            : plainTextDesc || 'Nhấp để xem chi tiết dự án sản xuất hình ảnh/video chất lượng cao của Aura.';
+
+                        return {
+                            id: p.id,
+                            category: getCategoryLabel(p.category),
+                            title: p.title,
+                            desc: truncatedDesc,
+                            image: p.thumbnailUrl || (p.mediaItems.find(m => m.mediaType === 'image')?.url) || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=1600',
+                        };
+                    });
+
+                console.log("[AURA DEBUG] Số lượng dự án được tích Hot (isHot: true):", hotProjects.length);
+
+                if (hotProjects.length > 0) {
+                    console.log("[AURA DEBUG] Thành công! Áp dụng dữ liệu thực tế từ BE.");
+                    
+                    // Preload high-resolution backend images in background browser cache
+                    hotProjects.forEach((p: any) => {
+                        const img = new Image();
+                        img.src = p.image;
+                    });
+                    
+                    setProjects(hotProjects);
+                } else {
+                    console.warn("[AURA DEBUG] Không tìm thấy dự án nào có tích 'Hot' (isHot: true) hoặc DB trống. Tự động dùng Mock Data để tránh giao diện bị lỗi.");
+                    
+                    // Preload mock images
+                    DEFAULT_PROJECTS.forEach((p: any) => {
+                        const img = new Image();
+                        img.src = p.image;
+                    });
+                    
+                    setProjects(DEFAULT_PROJECTS);
+                }
+            } catch (error) {
+                console.error('[AURA DEBUG] Lỗi kết nối hoặc gọi API thất bại:', error);
+                
+                // Preload mock images on failure
+                DEFAULT_PROJECTS.forEach((p: any) => {
+                    const img = new Image();
+                    img.src = p.image;
                 });
-            });
+                
+                setProjects(DEFAULT_PROJECTS);
+            }
         };
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-            if (requestRef.current) cancelAnimationFrame(requestRef.current);
-        };
+        fetchProjects();
     }, []);
+
+    // Auto-advance slider every 3 seconds - Balanced rhythm to prevent constant busy loading
+    useEffect(() => {
+        if (projects.length === 0) return;
+        const timer = setInterval(() => {
+            setActiveIndex((prev) => (prev + 1) % projects.length);
+        }, 3000);
+        return () => clearInterval(timer);
+    }, [projects.length]);
+
+    const nextSlide = () => {
+        if (projects.length === 0) return;
+        setActiveIndex((prev) => (prev + 1) % projects.length);
+    };
+
+    const prevSlide = () => {
+        if (projects.length === 0) return;
+        setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
+    };
+
+
+
+    if (projects.length === 0) return null;
+
+    const currentProject = projects[activeIndex];
 
     return (
         <section style={{
             height: '100vh',
-            width: '100%',
+            width: '100vw',
             position: 'relative',
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center',
             overflow: 'hidden',
-            backgroundColor: '#000',
-            paddingBottom: '8vh',
+            backgroundColor: '#000000',
         }}>
-            {/* Parallax Cinematic Background */}
-            <motion.div
-                style={{
-                    position: 'absolute',
-                    top: '-50px',
-                    left: '-50px',
-                    width: 'calc(100% + 100px)',
-                    height: 'calc(100% + 100px)',
-                    zIndex: 1,
-                    y: bgY,
-                    x: mousePos.x * 0.3,
-                    willChange: 'transform'
-                }}
-            >
-                <div style={{
-                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                    background: 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0.95) 100%)',
-                    zIndex: 2,
-                }} />
-                <img
-                    src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&q=80&w=2070"
-                    alt="Cinematic Background"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-            </motion.div>
-
-            {/* Decorative film grain removed for performance optimization */}
-
-
-
-            {/* Main Hero Content */}
-            <motion.div
-                className="container"
-                style={{ position: 'relative', zIndex: 4, textAlign: 'center', y: textY, opacity }}
-            >
-                <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+            {/* 1. Cinematic Zoom-In Background with Parallel Cross-fade (Instant cached loading) */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+                <AnimatePresence>
                     <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={{
-                            hidden: { opacity: 0 },
-                            visible: {
-                                opacity: 1,
-                                transition: { staggerChildren: 0.15, delayChildren: 0.3 },
-                            },
-                        }}
+                        key={activeIndex}
+                        initial={{ opacity: 0, scale: 1.0 }}
+                        animate={{ opacity: 1, scale: 1.08 }}
+                        exit={{ opacity: 0, scale: 1.12 }}
+                        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ position: 'absolute', inset: 0 }}
                     >
-                        {/* <motion.div
-                            variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0 } }}
-                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', marginBottom: '2.5rem' }}
+                        {/* High-end linear gradient overlay for 50/50 layout readability */}
+                        <div style={{
+                            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                            background: 'linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.85) 100%)',
+                            zIndex: 2,
+                        }} />
+                        <img
+                            src={currentProject.image}
+                            alt={currentProject.title}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+            {/* 2. Main Layout Container - Immersive Full Width */}
+            <div style={{
+                position: 'relative',
+                zIndex: 4,
+                height: '100%',
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                paddingTop: '80px',
+            }}>
+                <div className="hero-horizon-grid">
+
+                    {/* Left Column: Active Project Details - Exactly 50% width */}
+                    <div className="hero-left-column">
+                        {/* Slide Category Header */}
+                        <motion.div
+                            key={`cat-${activeIndex}`}
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}
                         >
-                            <div style={{ width: '60px', height: '2px', background: 'var(--color-accent-hover)', boxShadow: '0 0 10px var(--color-accent-hover)' }} />
+                            {/* Gold line above category */}
+                            <div style={{ width: '32px', height: '2px', backgroundColor: '#C09A5A' }} />
                             <span style={{
-                                color: 'var(--color-text)', letterSpacing: 'var(--ls-wide)',
-                                fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600
+                                color: '#C09A5A',
+                                fontSize: '0.85rem',
+                                letterSpacing: '0.15em',
+                                textTransform: 'uppercase',
+                                fontWeight: 800,
                             }}>
-                                Trải Nghiệm Sự Hiện Diện Điện Ảnh
+                                {currentProject.category}
                             </span>
-                        </motion.div> */}
+                        </motion.div>
 
-                        <div style={{ overflow: 'hidden', marginTop: '3rem' }}>
+                        {/* Slide Title */}
+                        <div style={{ overflow: 'hidden', marginBottom: '1.5rem' }}>
                             <motion.h1
-                                variants={{ hidden: { y: '110%' }, visible: { y: 0 } }}
-                                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+                                key={`title-${activeIndex}`}
+                                initial={{ y: '110%' }}
+                                animate={{ y: 0 }}
+                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                                 style={{
-                                    fontSize: 'clamp(3.5rem, 11vw, 9rem)',
-                                    lineHeight: 1.15, margin: 0,
-                                    fontWeight: '200',
+                                    fontSize: 'clamp(2.2rem, 4.5vw, 4.2rem)',
+                                    lineHeight: 1.15,
+                                    margin: 0,
+                                    fontWeight: '900',
                                     fontFamily: 'var(--font-display)',
-                                    textTransform: 'none', letterSpacing: '-0.02em',
-                                    color: 'rgba(255,255,255,0.85)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '-0.02em',
+                                    color: '#FFFFFF',
+                                    textShadow: '0 10px 30px rgba(0,0,0,0.5)',
                                 }}
                             >
-                                Creative
+                                {currentProject.title}
                             </motion.h1>
                         </div>
 
-                        {/* Title: Productions */}
-                        <div style={{ overflow: 'hidden', marginBottom: '3rem' }}>
-                            <motion.h1
-                                variants={{ hidden: { y: '110%' }, visible: { y: 0 } }}
-                                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                                style={{
-                                    fontSize: 'clamp(3.5rem, 11vw, 9rem)',
-                                    lineHeight: 1.15, margin: 0,
-                                    fontWeight: '200',
-                                    fontFamily: 'var(--font-display)',
-                                    textTransform: 'none', letterSpacing: '-0.02em',
-                                    color: 'rgba(255,255,255,0.85)',
-                                }}
-                            >
-                                Productions
-                            </motion.h1>
-                        </div>
-
-                        {/* Description */}
+                        {/* Slide Description Excerpt */}
                         <motion.p
-                            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                            transition={{ duration: 0.8 }}
+                            key={`desc-${activeIndex}`}
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.1 }}
                             style={{
-                                maxWidth: '480px', color: 'rgba(255,255,255,0.5)',
-                                fontSize: '1.1rem', margin: '0 auto 3.5rem', lineHeight: '1.7',
-                                fontWeight: 300,
+                                color: 'rgba(255,255,255,0.85)',
+                                fontSize: 'clamp(0.9rem, 1.1vw, 1.05rem)',
+                                lineHeight: '1.8',
+                                margin: '0 0 3.5rem 0',
+                                maxWidth: '540px',
+                                textShadow: '0 2px 10px rgba(0,0,0,0.3)'
                             }}
                         >
-                            Kiến tạo di sản hình ảnh cao cấp cho những người có tầm nhìn đòi hỏi sự xuất sắc.
+                            {currentProject.desc}
                         </motion.p>
 
-                        {/* CTA Buttons */}
-                        {/* <motion.div
-                            variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}
-                            transition={{ duration: 0.8 }}
-                            style={{ display: 'flex', gap: '2rem', alignItems: 'center', justifyContent: 'center' }}
+                        {/* CTA Controls */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}
                         >
-                            <Link to="/portfolio">
-                                <Button size="lg" style={{ borderRadius: '0', padding: '1.5rem 3rem' }}>
-                                    Xem Dự Án <ArrowRight size={18} style={{ marginLeft: '12px' }} />
-                                </Button>
-                            </Link>
-                            <button className="hero-play-btn" style={{
-                                color: '#fff', display: 'flex', alignItems: 'center', gap: '0.75rem',
-                                fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.15em',
-                                opacity: 0.8, background: 'none', border: 'none', cursor: 'pointer',
-                                transition: 'all 0.4s ease',
-                            }}>
-                                <div style={{
-                                    width: '48px', height: '48px', borderRadius: '50%',
-                                    border: '1px solid rgba(255,255,255,0.3)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    position: 'relative',
-                                }}>
-                                    <div className="play-ripple" style={{
-                                        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                                        borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.4)', opacity: 0,
-                                        transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)', transform: 'scale(0.5) translateZ(0)', zIndex: 1,
-                                    }} />
-                                    <Play className="play-icon" size={16} fill="#fff" style={{ position: 'relative', zIndex: 2, transition: 'all 0.4s ease' }} />
-                                </div>
-                                Giới Thiệu
+                            {/* Round Gold Bookmark style button */}
+                            <button style={{
+                                width: '48px',
+                                height: '48px',
+                                borderRadius: '50%',
+                                backgroundColor: '#C09A5A',
+                                border: 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#FFFFFF',
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                            }} className="bookmark-gold-btn">
+                                <Bookmark size={18} fill="#FFFFFF" />
                             </button>
-                            <style>{`
-                                .hero-play-btn:hover .play-ripple {
-                                    opacity: 0.3 !important;
-                                    transform: scale(1.6) translateZ(0) !important;
-                                }
-                                .hero-play-btn:hover {
-                                    color: #fff !important;
-                                    opacity: 1 !important;
-                                }
-                                .hero-play-btn:hover .play-icon {
-                                    fill: #fff !important;
-                                    color: #fff !important;
-                                }
-                            `}</style>
-                        </motion.div> */}
-                    </motion.div>
+
+                            {/* Pill outline button: XEM DỰ ÁN */}
+                            <Link to={`/portfolio?id=${currentProject.id}`} style={{
+                                border: '1px solid rgba(255,255,255,0.4)',
+                                backgroundColor: 'transparent',
+                                color: '#FFFFFF',
+                                padding: '0.85rem 2.5rem',
+                                fontSize: '0.75rem',
+                                letterSpacing: '0.2em',
+                                fontWeight: 800,
+                                borderRadius: '50px',
+                                textTransform: 'uppercase',
+                                transition: 'all 0.3s ease',
+                                display: 'inline-block',
+                            }} className="pill-outline-btn">
+                                Xem dự án
+                            </Link>
+                        </motion.div>
+                    </div>
+
+                    {/* Right Column: Carousel Horizon Cards - Exactly 50% width */}
+                    <div className="carousel-horizon-cards-container">
+                        {/* Horizontal Cards corridor (Mask Viewport) with rich vertical padding to prevent border cut-off */}
+                        <div style={{
+                            width: '100%',
+                            overflow: 'hidden',
+                            position: 'relative',
+                            padding: '2.5rem 0.75rem'
+                        }} className="cards-corridor-viewport">
+                            <motion.div
+                                animate={{ x: -activeIndex * 224 }}
+                                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                                style={{
+                                    display: 'flex',
+                                    gap: '1.5rem',
+                                    width: 'max-content',
+                                    willChange: 'transform'
+                                }}
+                            >
+                                {projects.map((project, index) => {
+                                    const isActive = activeIndex === index;
+                                    return (
+                                        <motion.div
+                                            key={project.id}
+                                            onClick={() => setActiveIndex(index)}
+                                            style={{
+                                                flex: '0 0 auto',
+                                                width: '200px',
+                                                height: '280px',
+                                                position: 'relative',
+                                                borderRadius: '12px',
+                                                overflow: 'hidden',
+                                                cursor: 'pointer',
+                                                boxShadow: isActive
+                                                    ? '0 20px 40px rgba(192, 154, 90, 0.25)'
+                                                    : '0 15px 35px rgba(0,0,0,0.4)',
+                                                border: isActive ? '2.5px solid #C09A5A' : '1px solid rgba(255,255,255,0.12)',
+                                                transformOrigin: 'bottom',
+                                                boxSizing: 'border-box',
+                                            }}
+                                            whileHover={{ scale: 1.04 }}
+                                            animate={{ scale: isActive ? 1.06 : 1.0 }}
+                                            transition={{ duration: 0.4 }}
+                                        >
+                                            {/* Card background Image */}
+                                            <div style={{ position: 'absolute', inset: 0, zIndex: 1, overflow: 'hidden' }}>
+                                                <div style={{
+                                                    position: 'absolute', inset: 0,
+                                                    background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)',
+                                                    zIndex: 2
+                                                }} />
+                                                <motion.img
+                                                    src={project.image}
+                                                    alt={project.title}
+                                                    animate={{ scale: isActive ? 1.15 : 1.0 }}
+                                                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                            </div>
+
+                                            {/* Card content overlaid */}
+                                            <div style={{
+                                                position: 'absolute',
+                                                bottom: 0, left: 0, right: 0,
+                                                padding: '1.25rem',
+                                                zIndex: 3,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                            }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '4px' }}>
+                                                    <div style={{ width: '16px', height: '1.5px', backgroundColor: '#C09A5A' }} />
+                                                    <span style={{ color: '#C09A5A', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 800 }}>
+                                                        {project.category}
+                                                    </span>
+                                                </div>
+                                                <h4 style={{ color: '#FFFFFF', fontSize: '0.9rem', fontWeight: 900, fontFamily: 'var(--font-display)', margin: 0, textTransform: 'uppercase', lineHeight: 1.2 }}>
+                                                    {project.title.substring(0, 22) + (project.title.length > 22 ? '...' : '')}
+                                                </h4>
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </motion.div>
+                        </div>
+
+                        {/* Bottom Slide Navigation Control */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '3rem', marginTop: '1rem' }} className="carousel-nav-control">
+                            {/* Arrows wrapper */}
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button onClick={prevSlide} style={{
+                                    width: '42px',
+                                    height: '42px',
+                                    borderRadius: '50%',
+                                    border: '1px solid rgba(255,255,255,0.4)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#FFFFFF',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease',
+                                    backgroundColor: 'transparent'
+                                }} className="carousel-arrow-btn">
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <button onClick={nextSlide} style={{
+                                    width: '42px',
+                                    height: '42px',
+                                    borderRadius: '50%',
+                                    border: '1px solid rgba(255,255,255,0.4)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#FFFFFF',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease',
+                                    backgroundColor: 'transparent'
+                                }} className="carousel-arrow-btn">
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+
+                            {/* Progress bar line indicator */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flex: 1 }}>
+                                <div style={{ height: '2px', backgroundColor: 'rgba(255,255,255,0.15)', flex: 1, position: 'relative' }}>
+                                    <motion.div
+                                        animate={{ width: `${((activeIndex + 1) / projects.length) * 100}%` }}
+                                        transition={{ duration: 0.4 }}
+                                        style={{ height: '100%', backgroundColor: '#C09A5A', position: 'absolute', top: 0, left: 0 }}
+                                    />
+                                </div>
+                                <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', fontWeight: 700, fontFamily: 'monospace' }}>
+                                    {projects.length}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </motion.div>
-
-            {/* Scroll Indicator */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.4 }}
-                transition={{ delay: 2.5, duration: 1 }}
-                className="scroll-indicator"
-                style={{
-                    position: 'absolute', bottom: '4rem', right: '4rem', zIndex: 4,
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
-                }}
-            >
-                {/* <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.3em', writingMode: 'vertical-rl' }}>
-                    Cuộn
-                </span> */}
-                <motion.div
-                    animate={{ height: ['0%', '100%', '0%'] }}
-                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                    style={{ width: '1px', height: '60px', backgroundColor: 'var(--color-accent)', transformOrigin: 'top' }}
-                />
-            </motion.div>
-
-            {/* Bottom Stats Bar */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2, duration: 1 }}
-                style={{
-                    position: 'absolute', bottom: 0, left: 0, width: '100%', zIndex: 4,
-                    borderTop: '1px solid rgba(255,255,255,0.08)',
-                    display: 'flex', justifyContent: 'center',
-                }}
-            />
+            </div>
 
             <style>{`
-                @media (max-width: 768px) {
-                    .scroll-indicator {
-                        right: 1.5rem !important;
-                        bottom: 1.5rem !important;
+                .hero-horizon-grid {
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+                    height: 100%;
+                    align-items: center;
+                }
+                .hero-left-column {
+                    width: 50%;
+                    display: flex;
+                    flex-direction: column;
+                    color: #FFFFFF;
+                    padding-left: 8%;
+                    padding-right: 6%;
+                    box-sizing: border-box;
+                }
+                .carousel-horizon-cards-container {
+                    width: 50%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2.5rem;
+                    padding-left: 2rem;
+                    padding-right: 8%;
+                    box-sizing: border-box;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .bookmark-gold-btn:hover {
+                    background-color: #A37F46 !important;
+                    transform: translateY(-2px);
+                }
+                .pill-outline-btn:hover {
+                    border-color: #FFFFFF !important;
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                    transform: translateY(-2px);
+                }
+                .carousel-arrow-btn:hover {
+                    border-color: #C09A5A !important;
+                    color: #C09A5A !important;
+                    background-color: rgba(192, 154, 90, 0.1) !important;
+                }
+                .animate-spin {
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                @media (max-width: 1024px) {
+                    .hero-horizon-grid {
+                        flex-direction: column !important;
+                        align-items: flex-start !important;
+                        justify-content: center !important;
+                        gap: 3rem !important;
+                        height: auto !important;
+                        padding: 7rem 1.5rem 2rem 1.5rem !important;
                     }
-                    .scroll-indicator div {
-                        height: 40px !important;
+                    .hero-left-column {
+                        width: 100% !important;
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                    }
+                    .carousel-horizon-cards-container {
+                        width: 100% !important;
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                        gap: 1.5rem !important;
+                    }
+                    .cards-corridor-viewport {
+                        overflow-x: auto !important;
+                    }
+                    .cards-corridor-viewport::-webkit-scrollbar {
+                        display: none;
                     }
                 }
             `}</style>
@@ -252,4 +515,3 @@ export const Hero: React.FC = () => {
 };
 
 export default Hero;
-

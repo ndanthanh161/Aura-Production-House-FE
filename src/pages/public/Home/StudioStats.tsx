@@ -40,22 +40,31 @@ const tunnelData = [
 ];
 
 const TunnelItem = ({ item, index, total, scrollYProgress }: { item: any, index: number, total: number, scrollYProgress: any }) => {
-    // Each item has a specific range of the total scroll
-    const start = index / total;
-    const end = (index + 1) / total;
+    // Allocate space for the intro (0 to 0.22) and distribute the rest among the items
+    const introEnd = 0.22;
+    const segment = (1.0 - introEnd) / total;
+    const start = introEnd + index * segment;
+    const end = introEnd + (index + 1) * segment;
 
     // Z-axis movement (Scale and Opacity) - cinematic zoom effect
     // Cross-fade logic: The item stays 100% visible until the next one is ready
-    // For the first item, we delay the fade-in to let the intro clear out completely
-    const actualStart = index === 0 ? start + 0.1 : start;
+    const fadeStart = start - 0.05;
+    const fadeStartFull = start;
+    const fadeEndFull = index === total - 1 ? end : end - 0.03;
+    const fadeEnd = index === total - 1 ? end + 0.05 : end;
     const opacity = useTransform(
         scrollYProgress,
-        [actualStart - 0.05, actualStart, end, end + 0.05],
+        [fadeStart, fadeStartFull, fadeEndFull, fadeEnd],
         [0, 1, 1, 0]
     );
+
+    const scaleStart = start;
+    const scaleStartFull = start + 0.04;
+    const scaleEndFull = end - 0.04;
+    const scaleEnd = end;
     const scale = useTransform(
         scrollYProgress,
-        [start, start + 0.1, end - 0.1, end],
+        [scaleStart, scaleStartFull, scaleEndFull, scaleEnd],
         [1.05, 1, 1, 0.95]
     );
 
@@ -166,7 +175,7 @@ export const StudioStats: React.FC = () => {
     });
 
     return (
-        <div ref={containerRef} style={{ height: '400vh', position: 'relative', backgroundColor: 'var(--color-bg)' }}>
+        <div ref={containerRef} style={{ height: '550vh', position: 'relative', backgroundColor: 'var(--color-bg)' }}>
             {/* The Sticky Canvas */}
             <div style={{
                 position: 'sticky',
@@ -194,8 +203,8 @@ export const StudioStats: React.FC = () => {
                         position: 'absolute',
                         zIndex: 20,
                         textAlign: 'center',
-                        opacity: useTransform(smoothProgress, [0, 0.07], [1, 0]),
-                        scale: useTransform(smoothProgress, [0, 0.07], [1, 0.8])
+                        opacity: useTransform(smoothProgress, [0, 0.14, 0.22], [1, 1, 0]),
+                        scale: useTransform(smoothProgress, [0, 0.14, 0.22], [1, 1, 0.85])
                     }}
                 >
                     <motion.span
@@ -221,12 +230,13 @@ export const StudioStats: React.FC = () => {
                 ))}
 
                 {/* Scroll Indicator */}
-                <div style={{
+                <motion.div style={{
                     position: 'absolute',
                     bottom: '40px',
                     left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 30
+                    x: '-50%',
+                    zIndex: 30,
+                    opacity: useTransform(smoothProgress, [0, 0.05], [1, 0])
                 }}>
                     <motion.div
                         animate={{ y: [0, 10, 0] }}
@@ -235,7 +245,7 @@ export const StudioStats: React.FC = () => {
                     >
                         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '40%', backgroundColor: 'var(--color-accent)' }} />
                     </motion.div>
-                </div>
+                </motion.div>
             </div>
         </div>
     );
