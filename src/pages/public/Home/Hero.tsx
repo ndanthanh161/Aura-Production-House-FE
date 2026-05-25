@@ -143,6 +143,7 @@ export const Hero: React.FC = () => {
 
     return (
         <section style={{
+            minHeight: '760px',
             height: '100vh',
             width: '100vw',
             position: 'relative',
@@ -163,7 +164,7 @@ export const Hero: React.FC = () => {
                         {/* High-end linear gradient overlay for 50/50 layout readability */}
                         <div style={{
                             position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                            background: 'linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.85) 100%)',
+                            background: 'linear-gradient(90deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.62) 34%, rgba(0,0,0,0.16) 64%, rgba(0,0,0,0.5) 100%)',
                             zIndex: 2,
                         }} />
                         <img
@@ -224,9 +225,9 @@ export const Hero: React.FC = () => {
                                     fontWeight: '900',
                                     fontFamily: 'var(--font-display)',
                                     textTransform: 'uppercase',
-                                    letterSpacing: '-0.02em',
+                                    letterSpacing: '0',
                                     color: '#FFFFFF',
-                                    textShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                                    textShadow: '0 18px 42px rgba(0,0,0,0.62)',
                                 }}
                             >
                                 {currentProject.title}
@@ -328,9 +329,9 @@ export const Hero: React.FC = () => {
                                                 overflow: 'hidden',
                                                 cursor: 'pointer',
                                                 boxShadow: isActive
-                                                    ? '0 20px 40px rgba(192, 154, 90, 0.25)'
-                                                    : '0 15px 35px rgba(0,0,0,0.4)',
-                                                border: isActive ? '2.5px solid #C09A5A' : '1px solid rgba(255,255,255,0.12)',
+                                                    ? '0 24px 56px rgba(208, 169, 104, 0.24), 0 0 0 1px rgba(255,255,255,0.08) inset'
+                                                    : '0 18px 44px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.08) inset',
+                                                border: isActive ? '2px solid #D0A968' : '1px solid rgba(255,255,255,0.12)',
                                                 transformOrigin: 'bottom',
                                                 boxSizing: 'border-box',
                                             }}
@@ -342,7 +343,7 @@ export const Hero: React.FC = () => {
                                             <div style={{ position: 'absolute', inset: 0, zIndex: 1, overflow: 'hidden' }}>
                                                 <div style={{
                                                     position: 'absolute', inset: 0,
-                                                    background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)',
+                                                    background: 'linear-gradient(to top, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.35) 54%, rgba(0,0,0,0.04) 100%)',
                                                     zIndex: 2
                                                 }} />
                                                 <motion.img
@@ -394,7 +395,8 @@ export const Hero: React.FC = () => {
                                     color: '#FFFFFF',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
-                                    backgroundColor: 'transparent'
+                                    backgroundColor: 'rgba(0,0,0,0.16)',
+                                    backdropFilter: 'blur(12px)',
                                 }} className="carousel-arrow-btn">
                                     <ChevronLeft size={20} />
                                 </button>
@@ -409,7 +411,8 @@ export const Hero: React.FC = () => {
                                     color: '#FFFFFF',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
-                                    backgroundColor: 'transparent'
+                                    backgroundColor: 'rgba(0,0,0,0.16)',
+                                    backdropFilter: 'blur(12px)',
                                 }} className="carousel-arrow-btn">
                                     <ChevronRight size={20} />
                                 </button>
@@ -446,7 +449,7 @@ export const Hero: React.FC = () => {
                     display: flex;
                     flex-direction: column;
                     color: #FFFFFF;
-                    padding-left: 8%;
+                    padding-left: clamp(3rem, 8vw, 8rem);
                     padding-right: 6%;
                     box-sizing: border-box;
                 }

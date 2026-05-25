@@ -23,20 +23,20 @@ const navStyle: React.CSSProperties = {
     left: 0,
     width: '100%',
     zIndex: 50,
-    padding: '0.75rem 0',
-    background: 'rgba(10, 10, 10, 0.95)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)',
+    padding: '0.55rem 0',
+    background: 'rgba(7, 7, 6, 0.72)',
+    backdropFilter: 'blur(22px) saturate(1.18)',
+    WebkitBackdropFilter: 'blur(22px) saturate(1.18)',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 16px 42px rgba(0, 0, 0, 0.26)',
 };
 
 const linkStyle = (active: boolean): React.CSSProperties => ({
     fontSize: '0.72rem',
     textTransform: 'uppercase',
-    letterSpacing: '0.2em',
+    letterSpacing: '0.16em',
     color: '#FFFFFF',
-    opacity: active ? 1 : 0.6,
+    opacity: active ? 1 : 0.68,
     fontWeight: active ? 700 : 400,
     transition: 'var(--transition-cinematic)',
 });
@@ -44,9 +44,9 @@ const linkStyle = (active: boolean): React.CSSProperties => ({
 const homeLinkStyle = (active: boolean): React.CSSProperties => ({
     fontSize: '0.72rem',
     textTransform: 'uppercase',
-    letterSpacing: '0.2em',
+    letterSpacing: '0.16em',
     color: '#FFFFFF',
-    opacity: active ? 1 : 0.6,
+    opacity: active ? 1 : 0.68,
     fontWeight: active ? 700 : 400,
     transition: 'var(--transition-cinematic)',
 });
@@ -339,9 +339,9 @@ export const Navbar: React.FC = () => {
 
     const dynamicNavStyle: React.CSSProperties = {
         ...navStyle,
-        background: isHome ? (isScrolled ? 'rgba(10, 10, 10, 0.95)' : 'transparent') : 'rgba(10, 10, 10, 0.95)',
-        borderBottom: isHome ? (isScrolled ? '1px solid rgba(255, 255, 255, 0.08)' : 'none') : '1px solid rgba(255, 255, 255, 0.08)',
-        boxShadow: isHome ? (isScrolled ? '0 2px 10px rgba(0, 0, 0, 0.4)' : 'none') : '0 2px 10px rgba(0, 0, 0, 0.4)',
+        background: isHome ? (isScrolled ? 'rgba(7, 7, 6, 0.84)' : 'linear-gradient(180deg, rgba(0,0,0,0.56), transparent)') : 'rgba(7, 7, 6, 0.86)',
+        borderBottom: isHome ? (isScrolled ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid transparent') : '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: isHome ? (isScrolled ? '0 16px 42px rgba(0, 0, 0, 0.28)' : 'none') : '0 16px 42px rgba(0, 0, 0, 0.28)',
     };
 
     // Logic lấy tiêu đề hiển thị ở giữa Navbar
@@ -382,7 +382,7 @@ export const Navbar: React.FC = () => {
                         Đăng Nhập
                     </Link>
                     <Link to="/register" style={{
-                        border: '1px solid #FFFFFF',
+                        border: '1px solid rgba(255,255,255,0.42)',
                         backgroundColor: 'transparent',
                         color: '#FFFFFF',
                         padding: '0.55rem 1.5rem',
@@ -390,7 +390,7 @@ export const Navbar: React.FC = () => {
                         letterSpacing: '0.15em',
                         textTransform: 'uppercase',
                         fontWeight: 700,
-                        borderRadius: '0',
+                        borderRadius: '999px',
                         transition: 'all 0.3s ease',
                     }} className="btn-join">
                         Tham Gia
@@ -477,8 +477,9 @@ export const Navbar: React.FC = () => {
                             width: '100%',
                             maxWidth: '360px',
                             height: '100vh',
-                            backgroundColor: '#FFFFFF',
-                            boxShadow: '-10px 0 30px rgba(0,0,0,0.15)',
+                            backgroundColor: '#0F0E0C',
+                            boxShadow: '-20px 0 60px rgba(0,0,0,0.45)',
+                            borderLeft: '1px solid rgba(255,255,255,0.1)',
                             zIndex: 100,
                             display: 'flex',
                             flexDirection: 'column',
@@ -491,7 +492,7 @@ export const Navbar: React.FC = () => {
                             <Link to="/" onClick={() => setIsOpen(false)} style={{ display: 'flex', alignItems: 'center' }}>
                                 <img src={logoColor} alt="AURA Logo" style={{ height: '24px', objectFit: 'contain' }} />
                             </Link>
-                            <button onClick={() => setIsOpen(false)} style={{ color: '#0F0F0F', cursor: 'pointer', padding: '0.25rem' }}>
+                            <button onClick={() => setIsOpen(false)} style={{ color: '#FFFFFF', cursor: 'pointer', padding: '0.25rem' }}>
                                 <X size={24} />
                             </button>
                         </div>
@@ -506,7 +507,7 @@ export const Navbar: React.FC = () => {
                                     style={{
                                         fontSize: '1.1rem',
                                         fontWeight: isActive(link.path) ? '800' : '500',
-                                        color: isActive(link.path) ? '#C09A5A' : '#0F0F0F',
+                                        color: isActive(link.path) ? '#D0A968' : '#FFFFFF',
                                         textTransform: 'uppercase',
                                         letterSpacing: '0.15em',
                                         transition: 'color 0.3s'
@@ -520,7 +521,7 @@ export const Navbar: React.FC = () => {
                         {/* Auth actions at bottom */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', borderTop: '1px solid #EEE', paddingTop: '2rem', marginTop: '2rem' }}>
                             {role && user && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#F9FAFB', padding: '1rem', borderRadius: '12px', marginBottom: '0.5rem', border: '1px solid rgba(0,0,0,0.05)' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', marginBottom: '0.5rem', border: '1px solid rgba(255,255,255,0.08)' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                         <div style={{
                                             width: '32px',
@@ -538,7 +539,7 @@ export const Navbar: React.FC = () => {
                                             {user.avatar ? <img src={user.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : user.fullName.charAt(0).toUpperCase()}
                                         </div>
                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111' }}>{user.fullName}</span>
+                                            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#FFFFFF' }}>{user.fullName}</span>
                                             {user.isVip ? (
                                                 <span style={{ fontSize: '0.65rem', color: '#D4AF37', fontWeight: 800 }}>AURA VIP MEMBER</span>
                                             ) : (
@@ -549,12 +550,12 @@ export const Navbar: React.FC = () => {
                                 </div>
                             )}
                             {role === 'photographer' && (
-                                <Link to="/photographer" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0F0F0F', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                <Link to="/photographer" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                     Workspace
                                 </Link>
                             )}
                             {role === 'user' && (
-                                <Link to="/projects" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0F0F0F', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                <Link to="/projects" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                     Dự Án Của Tôi
                                 </Link>
                             )}
@@ -565,13 +566,13 @@ export const Navbar: React.FC = () => {
                             )}
                             {!role ? (
                                 <>
-                                    <Link to="/login" onClick={() => setIsOpen(false)} style={{
-                                        fontSize: '0.9rem', fontWeight: 600, color: '#0F0F0F', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8
+                                <Link to="/login" onClick={() => setIsOpen(false)} style={{
+                                        fontSize: '0.9rem', fontWeight: 600, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8
                                     }}>
                                         Đăng Nhập
                                     </Link>
                                     <Link to="/register" onClick={() => setIsOpen(false)} style={{
-                                        backgroundColor: '#C09A5A', color: '#FFFFFF', padding: '0.9rem', textAlign: 'center', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em'
+                                        backgroundColor: '#D0A968', color: '#0F0F0F', padding: '0.9rem', textAlign: 'center', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', borderRadius: '999px'
                                     }}>
                                         Tham Gia
                                     </Link>
@@ -676,7 +677,7 @@ export const Navbar: React.FC = () => {
                                 Đăng Nhập
                             </Link>
                             <Link to="/register" style={{
-                                border: '1px solid #FFFFFF',
+                                border: '1px solid rgba(255,255,255,0.42)',
                                 backgroundColor: 'transparent',
                                 color: '#FFFFFF',
                                 padding: '0.55rem 1.5rem',
@@ -684,7 +685,7 @@ export const Navbar: React.FC = () => {
                                 letterSpacing: '0.15em',
                                 textTransform: 'uppercase',
                                 fontWeight: 700,
-                                borderRadius: '0',
+                                borderRadius: '999px',
                                 transition: 'all 0.3s ease',
                             }} className="btn-join-home">
                                 Tham Gia

@@ -68,16 +68,14 @@ const workflow = [
 
 const Services: React.FC = () => {
     return (
-        <div style={{ paddingTop: '100px', backgroundColor: '#050505', color: '#FFFFFF' }}>
-            {/* Ambient Background Glow */}
+        <div style={{ paddingTop: '100px', background: 'linear-gradient(180deg, #080807 0%, #050505 100%)', color: '#FFFFFF' }}>
+            {/* Subtle background texture */}
             <div style={{
                 position: 'absolute',
-                top: '10%',
-                left: '-10%',
-                width: '600px',
-                height: '600px',
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(192,154,90,0.03) 0%, transparent 70%)',
+                inset: 0,
+                background: 'linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+                backgroundSize: '96px 96px',
+                opacity: 0.3,
                 pointerEvents: 'none',
                 zIndex: 0
             }} />

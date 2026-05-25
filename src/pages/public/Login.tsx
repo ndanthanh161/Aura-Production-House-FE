@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { ArrowRight, Loader2, LockKeyhole, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
-import { Loader2 } from 'lucide-react';
-import { GoogleLogin } from '@react-oauth/google';
-import logoColor from '../../assets/LOGO COLOR.png';
+
+const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '1rem 1.1rem',
+    borderRadius: '8px',
+    border: '1px solid rgba(255,255,255,0.12)',
+    background: 'rgba(255,255,255,0.045)',
+    color: '#FFFFFF',
+    outline: 'none',
+    fontSize: '0.9rem',
+    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+};
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -19,7 +30,6 @@ const Login: React.FC = () => {
         e.preventDefault();
         setError('');
 
-        // Basic validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setError('Email không đúng định dạng.');
@@ -46,7 +56,7 @@ const Login: React.FC = () => {
 
     const handleGoogleSuccess = async (credentialResponse: { credential?: string }) => {
         if (!credentialResponse.credential) {
-            setError('Google login failed: No credential received.');
+            setError('Không nhận được thông tin xác thực từ Google.');
             return;
         }
         setError('');
@@ -68,90 +78,28 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            width: '100%',
-            display: 'flex',
-            backgroundColor: '#0A0A0A',
-            fontFamily: 'var(--font-sans)',
-            color: '#FFFFFF',
-            overflow: 'hidden'
-        }}>
-            {/* Left Side: Form Container */}
-            <div className="auth-form-container" style={{
-                flex: '0 0 45%',
-                display: 'flex',
-                gap: '1.25rem',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '3rem 2rem',
-                position: 'relative',
-                zIndex: 10,
-                backgroundColor: '#0A0A0A',
-                borderRight: '1px solid rgba(255,255,255,0.05)',
-                overflowY: 'auto'
-            }}>
+        <div className="login-page">
+            <section className="container login-shell">
                 <motion.div
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8 }}
-                    style={{ width: '100%', maxWidth: '400px' }}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                    className="login-panel"
                 >
-                    {/* Home Link Logo */}
-                    <Link to="/" style={{
-                        display: 'inline-block',
-                        marginBottom: '3rem',
-                        textDecoration: 'none',
-                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                    }} className="home-logo-link">
-                        <img src={logoColor} alt="AURA Logo" style={{ height: '28px', width: 'auto' }} />
-                    </Link>
+                    <span className="login-eyebrow">
+                        <LockKeyhole size={14} />
+                        Member Access
+                    </span>
+                    <h1>Đăng Nhập Hội Viên</h1>
+                    <p className="login-intro">
+                        Truy cập workspace để theo dõi dự án, lịch chụp và các nội dung đang được Aura sản xuất cho bạn.
+                    </p>
 
-                    <div style={{ marginBottom: '2.5rem' }}>
-                        <span style={{
-                            color: '#C09A5A',
-                            fontSize: '0.72rem',
-                            letterSpacing: '0.25em',
-                            fontWeight: 800,
-                            textTransform: 'uppercase',
-                            display: 'block',
-                            marginBottom: '0.75rem'
-                        }}>
-                            Chào Mừng Trở Lại
-                        </span>
-                        <h1 style={{
-                            fontSize: '2rem',
-                            fontWeight: 900,
-                            margin: '0 0 0.75rem 0',
-                            fontFamily: 'var(--font-display)',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.02em',
-                            color: '#FFFFFF'
-                        }}>
-                            ĐĂNG NHẬP HỘI VIÊN
-                        </h1>
-                        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>
-                            Đăng nhập tài khoản của bạn để truy cập Workspace và quản lý các dự án sản xuất hình ảnh.
-                        </p>
-                    </div>
+                    {error && <div className="login-alert">{error}</div>}
 
-                    {error && (
-                        <div style={{
-                            marginBottom: '2rem',
-                            padding: '1rem 1.25rem',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.3)',
-                            borderRadius: '0px',
-                            color: '#EF4444',
-                            fontSize: '0.85rem'
-                        }}>
-                            {error}
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                        <div className="form-group">
-                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem', color: 'rgba(255,255,255,0.5)' }}>Email</label>
+                    <form onSubmit={handleSubmit} className="login-form">
+                        <div>
+                            <label>Email</label>
                             <input
                                 type="email"
                                 value={email}
@@ -159,27 +107,15 @@ const Login: React.FC = () => {
                                 placeholder="name@domain.com"
                                 required
                                 disabled={loading}
-                                style={{
-                                    width: '100%',
-                                    padding: '0.9rem 1.1rem',
-                                    borderRadius: '0px',
-                                    border: '1px solid rgba(255,255,255,0.08)',
-                                    backgroundColor: '#121212',
-                                    color: '#FFFFFF',
-                                    outline: 'none',
-                                    fontSize: '0.85rem',
-                                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                                }}
+                                style={inputStyle}
                                 className="login-input"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', margin: 0 }}>Mật khẩu</label>
-                                <Link to="/forgot-password" style={{ fontSize: '0.75rem', color: '#C09A5A', textDecoration: 'none', fontWeight: 700, letterSpacing: '0.02em' }} className="auth-gold-link">
-                                    Quên mật khẩu?
-                                </Link>
+                        <div>
+                            <div className="login-label-row">
+                                <label>Mật khẩu</label>
+                                <Link to="/forgot-password">Quên mật khẩu?</Link>
                             </div>
                             <input
                                 type="password"
@@ -188,155 +124,232 @@ const Login: React.FC = () => {
                                 placeholder="Mật khẩu của bạn"
                                 required
                                 disabled={loading}
-                                style={{
-                                    width: '100%',
-                                    padding: '0.9rem 1.1rem',
-                                    borderRadius: '0px',
-                                    border: '1px solid rgba(255,255,255,0.08)',
-                                    backgroundColor: '#121212',
-                                    color: '#FFFFFF',
-                                    outline: 'none',
-                                    fontSize: '0.85rem',
-                                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                                }}
+                                style={inputStyle}
                                 className="login-input"
                             />
                         </div>
 
-                        <Button
-                            type="submit"
-                            disabled={loading}
-                            style={{
-                                padding: '1.1rem',
-                                borderRadius: '0px',
-                                backgroundColor: '#C09A5A',
-                                color: '#0F0F0F',
-                                fontWeight: 900,
-                                fontSize: '0.8rem',
-                                letterSpacing: '0.2rem',
-                                textTransform: 'uppercase',
-                                marginTop: '1rem',
-                                border: 'none',
-                                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                            }}
-                            className="login-submit-btn"
-                        >
-                            {loading ? <Loader2 className="animate-spin" size={18} style={{ color: '#0F0F0F' }} /> : "Đăng nhập"}
+                        <Button type="submit" disabled={loading} className="login-submit-btn">
+                            {loading ? <Loader2 className="animate-spin" size={18} /> : <>Đăng nhập <ArrowRight size={17} /></>}
                         </Button>
 
-                        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0' }}>
-                            <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.08)' }} />
-                            <span style={{ padding: '0 1.25rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 600 }}>Hoặc đăng nhập với</span>
-                            <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.08)' }} />
+                        <div className="login-divider">
+                            <span />
+                            <p>Hoặc đăng nhập với</p>
+                            <span />
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', alignItems: 'center' }}>
-                            <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }} className="google-btn-wrapper">
-                                <GoogleLogin
-                                    onSuccess={handleGoogleSuccess}
-                                    onError={() => setError('Đăng nhập Google thất bại.')}
-                                    size="large"
-                                    width="400"
-                                    text="signin_with"
-                                    shape="rectangular"
-                                    theme="filled_dark"
-                                    logo_alignment="center"
-                                />
-                            </div>
+                        <div className="login-google">
+                            <GoogleLogin
+                                onSuccess={handleGoogleSuccess}
+                                onError={() => setError('Đăng nhập Google thất bại.')}
+                                size="large"
+                                width="420"
+                                text="signin_with"
+                                shape="rectangular"
+                                theme="filled_black"
+                                logo_alignment="center"
+                            />
                         </div>
 
-                        <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
-                            Bạn chưa có tài khoản?{' '}
-                            <Link to="/register" style={{ color: '#C09A5A', fontWeight: 800, textDecoration: 'none', letterSpacing: '0.05em' }} className="auth-gold-link">
-                                ĐĂNG KÝ NGAY
-                            </Link>
-                        </div>
+                        <p className="login-register-link">
+                            Bạn chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+                        </p>
                     </form>
-
-                    <div style={{ marginTop: '4rem', textAlign: 'center', color: 'rgba(255,255,255,0.25)', fontSize: '0.7rem', letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase' }}>
-                        © 2024 Aura Studio. TẤT CẢ QUYỀN ĐƯỢC BẢO LƯU
-                    </div>
                 </motion.div>
-            </div>
 
-            {/* Right Side: Visual Image Area */}
-            <div className="auth-visual-container" style={{
-                flex: '1',
-                height: '100vh',
-                padding: '2rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#0F0F0F',
-                position: 'relative'
-            }}>
                 <motion.div
-                    initial={{ opacity: 0, scale: 1.02 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: '0px',
-                        overflow: 'hidden',
-                        position: 'relative',
-                        border: '1px solid rgba(255,255,255,0.05)',
-                        boxShadow: '0 30px 60px rgba(0,0,0,0.6)'
-                    }}
+                    transition={{ duration: 0.8, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+                    className="login-visual"
                 >
                     <img
                         src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?auto=format&fit=crop&q=80&w=2000"
-                        alt="Aura Studio Production"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            filter: 'brightness(0.7) contrast(1.1)'
-                        }}
+                        alt="Aura production workspace"
                     />
-                    {/* Dark gradient overlay blending with left side */}
-                    <div style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        background: 'linear-gradient(to right, #0F0F0F 0%, rgba(15,15,15,0.4) 60%, transparent 100%)',
-                        zIndex: 2
-                    }} />
-                    {/* Inner gold frame overlay */}
-                    <div style={{
-                        position: 'absolute',
-                        inset: '2rem',
-                        border: '1px solid rgba(192,154,90,0.15)',
-                        zIndex: 3,
-                        pointerEvents: 'none'
-                    }} />
+                    <div className="login-visual-caption">
+                        <Sparkles size={15} />
+                        <span>Creative production, tracked from brief to final delivery.</span>
+                    </div>
                 </motion.div>
-            </div>
+            </section>
 
             <style>{`
-                .home-logo-link:hover {
-                    opacity: 0.8;
+                .login-page {
+                    min-height: calc(100vh - 80px);
+                    padding: 8rem 0 5rem;
+                    background:
+                        linear-gradient(180deg, rgba(7,7,6,0.12), #070706 94%),
+                        radial-gradient(circle at 20% 10%, rgba(208,169,104,0.12), transparent 28rem),
+                        #070706;
+                    color: #FFFFFF;
+                    overflow: hidden;
+                }
+                .login-shell {
+                    display: grid;
+                    grid-template-columns: minmax(360px, 0.72fr) minmax(0, 1fr);
+                    gap: clamp(2rem, 5vw, 5rem);
+                    align-items: stretch;
+                }
+                .login-panel {
+                    padding: clamp(1.5rem, 3vw, 2.35rem);
+                    border: 1px solid rgba(255,255,255,0.13);
+                    background: rgba(13, 12, 10, 0.78);
+                    box-shadow: 0 28px 80px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.06) inset;
+                    backdrop-filter: blur(22px);
+                    border-radius: 8px;
+                    align-self: center;
+                }
+                .login-eyebrow {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.55rem;
+                    color: var(--color-accent);
+                    font-size: 0.76rem;
+                    font-weight: 800;
+                    letter-spacing: 0.18em;
+                    text-transform: uppercase;
+                    margin-bottom: 1rem;
+                }
+                .login-panel h1 {
+                    font-size: clamp(2.25rem, 5vw, 4rem);
+                    line-height: 0.98;
+                    margin: 0;
+                }
+                .login-intro {
+                    color: rgba(255,255,255,0.66);
+                    line-height: 1.75;
+                    margin: 1rem 0 2rem;
+                }
+                .login-form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                .login-form label,
+                .login-label-row label {
+                    display: block;
+                    font-size: 0.72rem;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 0.14em;
+                    margin-bottom: 0.55rem;
+                    color: rgba(255,255,255,0.58);
+                }
+                .login-label-row {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 1rem;
+                    align-items: center;
+                }
+                .login-label-row a {
+                    color: var(--color-accent);
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    margin-bottom: 0.55rem;
+                    white-space: nowrap;
                 }
                 .login-input:focus {
-                    border-color: #C09A5A !important;
-                    background-color: #1A1A1A !important;
-                    box-shadow: 0 0 15px rgba(192, 154, 90, 0.15);
+                    border-color: rgba(208, 169, 104, 0.72) !important;
+                    background: rgba(255,255,255,0.07) !important;
+                    box-shadow: 0 0 0 3px rgba(208,169,104,0.1);
+                }
+                .login-submit-btn {
+                    width: 100%;
+                    gap: 0.7rem;
+                    padding: 1rem 1.2rem !important;
+                    border-radius: 999px !important;
+                    background: var(--color-accent) !important;
+                    color: #0F0F0F !important;
+                    font-weight: 900 !important;
+                    font-size: 0.8rem !important;
+                    letter-spacing: 0.15em !important;
+                    margin-top: 0.5rem;
                 }
                 .login-submit-btn:hover {
-                    background-color: #D4B275 !important;
-                    color: #0F0F0F !important;
+                    background: var(--color-accent-hover) !important;
+                    box-shadow: var(--shadow-accent);
                 }
-                .auth-gold-link {
-                    transition: color 0.3s ease;
+                .login-alert {
+                    color: #fecaca;
+                    background: rgba(239, 68, 68, 0.11);
+                    border: 1px solid rgba(239, 68, 68, 0.32);
+                    padding: 0.9rem 1rem;
+                    border-radius: 8px;
+                    font-size: 0.86rem;
+                    margin-bottom: 1.25rem;
                 }
-                .auth-gold-link:hover {
-                    color: #FFFFFF !important;
+                .login-divider {
+                    display: grid;
+                    grid-template-columns: 1fr auto 1fr;
+                    align-items: center;
+                    gap: 1rem;
+                    margin: 0.75rem 0 0.25rem;
                 }
-                .google-btn-wrapper iframe {
-                    background-color: #121212 !important;
-                    border: 1px solid rgba(255,255,255,0.08) !important;
+                .login-divider span {
+                    height: 1px;
+                    background: rgba(255,255,255,0.1);
+                }
+                .login-divider p {
+                    color: rgba(255,255,255,0.42);
+                    font-size: 0.72rem;
+                    font-weight: 700;
+                    letter-spacing: 0.12em;
+                    margin: 0;
+                    text-transform: uppercase;
+                }
+                .login-google {
+                    display: flex;
+                    justify-content: center;
+                    min-height: 44px;
+                }
+                .login-register-link {
+                    color: rgba(255,255,255,0.66);
+                    font-size: 0.88rem;
+                    text-align: center;
+                    margin: 0.75rem 0 0;
+                }
+                .login-register-link a {
+                    color: var(--color-accent);
+                    font-weight: 800;
+                }
+                .login-visual {
+                    min-height: 620px;
+                    position: relative;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    box-shadow: 0 28px 80px rgba(0,0,0,0.45);
+                }
+                .login-visual img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    filter: brightness(0.78) contrast(1.05);
+                }
+                .login-visual::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(180deg, transparent 42%, rgba(0,0,0,0.72));
+                }
+                .login-visual-caption {
+                    position: absolute;
+                    left: 2rem;
+                    right: 2rem;
+                    bottom: 2rem;
+                    z-index: 2;
+                    display: flex;
+                    gap: 0.75rem;
+                    align-items: center;
+                    color: rgba(255,255,255,0.82);
+                    font-weight: 700;
+                    letter-spacing: 0.03em;
+                }
+                .login-visual-caption svg {
+                    color: var(--color-accent);
+                    flex-shrink: 0;
                 }
                 @keyframes spin {
                     from { transform: rotate(0deg); }
@@ -346,19 +359,19 @@ const Login: React.FC = () => {
                     animation: spin 1s linear infinite;
                 }
                 @media (max-width: 1024px) {
-                    .auth-form-container {
-                        flex: 0 0 100% !important;
-                        padding: 2.5rem 1.5rem !important;
-                        border-right: none !important;
+                    .login-page {
+                        padding: 7rem 0 4rem;
                     }
-                    .auth-visual-container {
-                        display: none !important;
+                    .login-shell {
+                        grid-template-columns: 1fr;
+                    }
+                    .login-visual {
+                        display: none;
                     }
                 }
             `}</style>
         </div>
     );
 };
-
 
 export default Login;

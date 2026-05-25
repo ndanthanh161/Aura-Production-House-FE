@@ -6,22 +6,20 @@ import logoColor from '../assets/LOGO COLOR.png';
 export const Footer: React.FC = () => {
     return (
         <footer style={{
-            backgroundColor: '#000000',
+            background: 'linear-gradient(180deg, #080807 0%, #020202 100%)',
             padding: '6rem 0 3rem',
             borderTop: '1px solid rgba(255,255,255,0.08)',
             color: '#FFFFFF',
             position: 'relative',
             overflow: 'hidden'
         }}>
-            {/* Ambient Background Glow */}
+            {/* Subtle studio grid */}
             <div style={{
                 position: 'absolute',
-                bottom: '-10%',
-                right: '-10%',
-                width: '400px',
-                height: '400px',
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(192,154,90,0.05) 0%, transparent 70%)',
+                inset: 0,
+                background: 'linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(180deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
+                backgroundSize: '96px 96px',
+                opacity: 0.22,
                 pointerEvents: 'none',
                 zIndex: 1
             }} />

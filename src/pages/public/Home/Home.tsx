@@ -75,7 +75,7 @@ const Home: React.FC = () => {
             {/* 2. Brand Marquee Ticker */}
             <div style={{
                 overflow: 'hidden',
-                backgroundColor: '#000000',
+                background: 'linear-gradient(90deg, #080807, #12100d, #080807)',
                 padding: '2rem 0',
                 borderBottom: '1px solid rgba(255,255,255,0.05)'
             }}>
@@ -104,7 +104,7 @@ const Home: React.FC = () => {
             </div>
 
             {/* 3. Giới thiệu Section (Editorial 2 columns) */}
-            <section style={{ padding: '8rem 0', backgroundColor: 'var(--color-bg)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <section style={{ padding: '8rem 0', background: 'linear-gradient(180deg, #070706 0%, #0F0E0C 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                 <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '4rem' }}>
                     <div className="giothieu-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr', gap: '6rem' }}>
                         <motion.div
@@ -121,7 +121,7 @@ const Home: React.FC = () => {
                                 color: 'var(--color-text)',
                                 margin: 0,
                                 lineHeight: 1.1,
-                                letterSpacing: '-0.02em',
+                                letterSpacing: '0',
                             }}>
                                 GIỚI THIỆU
                             </h2>
@@ -224,7 +224,7 @@ const Home: React.FC = () => {
                     height: '600px',
                     display: 'flex',
                     flexDirection: 'row',
-                    backgroundColor: '#050505',
+                    backgroundColor: '#090806',
                     overflow: 'hidden',
                     position: 'relative',
                     borderTop: '1px solid rgba(255,255,255,0.05)',
@@ -262,7 +262,7 @@ const Home: React.FC = () => {
                                     {/* Vignette Overlay for dark readability */}
                                     <div style={{
                                         position: 'absolute', inset: 0,
-                                        background: 'linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 100%)',
+                                        background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.58) 46%, rgba(0,0,0,0.16) 100%)',
                                         zIndex: 2,
                                     }} className="accordion-overlay" />
 
@@ -399,7 +399,7 @@ const Home: React.FC = () => {
                                         fontWeight: '900',
                                         lineHeight: '0.8',
                                         fontFamily: 'var(--font-display), Georgia, serif',
-                                        letterSpacing: '-0.02em',
+                                        letterSpacing: '0',
                                         transition: 'color 0.4s ease'
                                     }}>
                                         {numStr}
@@ -422,7 +422,7 @@ const Home: React.FC = () => {
             {/* 7. Strategic Partners Section (Các đối tác chiến lược) */}
             <section style={{
                 padding: '6rem 0',
-                backgroundColor: 'var(--color-bg)',
+                background: 'linear-gradient(180deg, #090806 0%, #070706 100%)',
                 borderTop: '1px solid rgba(255,255,255,0.08)',
                 borderBottom: '1px solid rgba(255,255,255,0.08)',
                 position: 'relative',
