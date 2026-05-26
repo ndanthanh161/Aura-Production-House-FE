@@ -6,35 +6,35 @@ const tunnelData = [
         id: 1,
         title: "KHỞI NGUỒN",
         desc: "Mọi hành trình vĩ đại đều bắt đầu từ những bước chân đầu tiên đầy đam mê.",
-        image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=1200",
         stats: "10+ DỰ ÁN ĐẦU TAY"
     },
     {
         id: 2,
         title: "ĐỒNG HÀNH",
         desc: "Sự tin tưởng của những đối tác tiên phong là động lực để Aura vươn xa.",
-        image: "https://images.unsplash.com/photo-1551818255-e6e10975bc17?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=1200",
         stats: "05+ ĐỐI TÁC TIN CẬY"
     },
     {
         id: 3,
         title: "TỈ MỈ",
         desc: "Chất lượng không nằm ở số lượng, mà ở sự tử tế trong từng khung hình.",
-        image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1495707902641-75cac588d2e9?auto=format&fit=crop&q=80&w=1200",
         stats: "100+ GIỜ HẬU KỲ"
     },
     {
         id: 4,
         title: "SÁNG TẠO",
         desc: "Phá bỏ các giới hạn cũ để tìm kiếm những ngôn ngữ hình ảnh mới mẻ.",
-        image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=1200",
         stats: "24/7 TƯ DUY MỚI"
     },
     {
         id: 5,
         title: "TÂM HUYẾT",
         desc: "Aura cam kết mang lại giá trị thực chất và sự hài lòng tuyệt đối cho bạn.",
-        image: "https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=1200",
         stats: "5.0 ĐÁNH GIÁ CHUẨN"
     }
 ];
