@@ -3,7 +3,9 @@ import { Hero } from './Hero';
 import { FeaturedProjects } from './FeaturedProjects';
 import { StudioStats } from './StudioStats';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { SpecialtiesAccordion } from '../../../components/home/SpecialtiesAccordion';
+
 
 const Home: React.FC = () => {
     return (
