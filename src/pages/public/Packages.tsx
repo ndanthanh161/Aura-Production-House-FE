@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
     ArrowRight,
@@ -24,6 +24,7 @@ import type { Package } from '../../types/package.types';
 
 const tierIcons = [Zap, Star, Crown];
 
+// ─── PURE HELPER FUNCTIONS (EXTRACTED ABOVE COMPONENT) ───
 const getCinematicSpecs = (pkgName: string, price: number) => {
     const nameLower = pkgName.toLowerCase();
 
@@ -115,11 +116,11 @@ const getTelemetryData = (index: number) => {
     return telemetry[index % telemetry.length];
 };
 
-const getAmbientGlowColor = (index: number, x: number, y: number) => {
+const getAmbientGlowColor = (index: number) => {
     const glows = [
-        `radial-gradient(circle at ${x}% ${y}%, rgba(100, 149, 237, 0.08) 0%, transparent 60%)`, // Basic: blue tint
-        `radial-gradient(circle at ${x}% ${y}%, rgba(192, 154, 90, 0.12) 0%, transparent 60%)`, // Popular: gold glow
-        `radial-gradient(circle at ${x}% ${y}%, rgba(229, 62, 62, 0.1) 0%, transparent 60%)`    // VIP: warm ruby red
+        `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(100, 149, 237, 0.08) 0%, transparent 60%)`, // Basic: blue tint
+        `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(192, 154, 90, 0.12) 0%, transparent 60%)`, // Popular: gold glow
+        `radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(229, 62, 62, 0.1) 0%, transparent 60%)`    // VIP: warm ruby red
     ];
     return glows[index % glows.length];
 };
@@ -162,6 +163,453 @@ const getStoryboardData = (pkgName: string) => {
     }
 };
 
+// ─── MEMOIZED SUB-COMPONENTS (PREVENTS WASTED RENDERING CYCLES) ───
+
+interface LensControlDialProps {
+    packages: Package[];
+    activeIdx: number;
+    setActiveIdx: (idx: number) => void;
+}
+
+const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ packages, activeIdx, setActiveIdx }) => {
+    return (
+        <div style={{
+            margin: '0 auto 4rem',
+            width: '100%',
+            maxWidth: '900px',
+            backgroundColor: 'rgba(10,10,10,0.85)',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
+            padding: '1.5rem 0',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            boxShadow: '0 15px 40px rgba(0,0,0,0.6)',
+            overflow: 'hidden'
+        }}>
+            {/* Perforations border to look like cinema reels */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', opacity: 0.15, marginBottom: '1rem', pointerEvents: 'none', padding: '0 2rem' }}>
+                {Array.from({ length: 24 }).map((_, i) => (
+                    <div key={i} style={{ width: '8px', height: '5px', backgroundColor: '#FFFFFF', borderRadius: '1px' }} />
+                ))}
+            </div>
+
+            <span style={{
+                fontSize: '0.6rem',
+                color: 'rgba(255,255,255,0.3)',
+                letterSpacing: '0.25em',
+                textTransform: 'uppercase',
+                fontWeight: 800,
+                marginBottom: '0.5rem',
+                padding: '0 2rem'
+            }}>
+                LENS FOCUS BARREL DIAL (CLICK OR DRAG SELECT)
+            </span>
+
+            {/* The Sliding Track Viewport */}
+            <div style={{
+                position: 'relative',
+                width: '100%',
+                height: '140px',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center'
+            }}>
+                {/* Cylinder barrel fade effect overlays */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    width: '180px',
+                    background: 'linear-gradient(to right, rgba(10,10,10,0.95), transparent)',
+                    zIndex: 3,
+                    pointerEvents: 'none'
+                }} />
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    right: 0,
+                    width: '180px',
+                    background: 'linear-gradient(to left, rgba(10,10,10,0.95), transparent)',
+                    zIndex: 3,
+                    pointerEvents: 'none'
+                }} />
+
+                {/* Static horizontal guide scale line across the sliding track viewport */}
+                <div style={{ position: 'absolute', bottom: '23px', left: 0, right: 0, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)', zIndex: 1, pointerEvents: 'none' }} />
+
+                {/* The Fixed Center Indicator Needle pointing upwards */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        bottom: '6px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 10,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        pointerEvents: 'none'
+                    }}
+                >
+                    {/* Gold vertical needle line */}
+                    <div
+                        style={{
+                            width: '2px',
+                            height: '24px',
+                            backgroundColor: '#C09A5A',
+                            boxShadow: '0 0 8px #C09A5A',
+                            marginBottom: '1px'
+                        }}
+                    />
+                    {/* Small gold upward arrow */}
+                    <div
+                        style={{
+                            width: 0,
+                            height: 0,
+                            borderLeft: '4px solid transparent',
+                            borderRight: '4px solid transparent',
+                            borderBottom: '6px solid #C09A5A',
+                            filter: 'drop-shadow(0 0 3px #C09A5A)'
+                        }}
+                    />
+                </div>
+
+                {/* The Sliding Track containing the packages */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        left: '50%',
+                        display: 'flex',
+                        transform: `translateX(-${(activeIdx * 240) + 120}px)`,
+                        transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                        width: 'fit-content',
+                        height: '100%',
+                        alignItems: 'center'
+                    }}
+                >
+                    {packages.map((pkg, idx) => {
+                        const isSelected = idx === activeIdx;
+                        return (
+                            <div
+                                key={pkg.id}
+                                onClick={() => setActiveIdx(idx)}
+                                style={{
+                                    width: '240px',
+                                    flexShrink: 0,
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    position: 'relative',
+                                    height: '100%',
+                                    opacity: isSelected ? 1 : 0.3,
+                                    transform: isSelected ? 'scale(1.06)' : 'scale(0.9)',
+                                    transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
+                                }}
+                            >
+                                {/* Viewfinder focus locked frame surrounding selected item */}
+                                {isSelected && (
+                                    <div style={{ position: 'absolute', inset: '10px 15px', pointerEvents: 'none' }}>
+                                        <div style={{ position: 'absolute', top: 0, left: 0, width: '6px', height: '6px', borderTop: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
+                                        <div style={{ position: 'absolute', top: 0, right: 0, width: '6px', height: '6px', borderTop: '2px solid #C09A5A', borderRight: '2px solid #C09A5A' }} />
+                                        <div style={{ position: 'absolute', bottom: 0, left: 0, width: '6px', height: '6px', borderBottom: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
+                                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '6px', height: '6px', borderBottom: '2px solid #C09A5A', borderRight: '2px solid #C09A5A' }} />
+                                    </div>
+                                )}
+
+                                <span style={{
+                                    fontSize: '0.6rem',
+                                    fontFamily: 'monospace',
+                                    color: isSelected ? '#C09A5A' : 'rgba(255,255,255,0.3)',
+                                    letterSpacing: '0.15em',
+                                    marginBottom: '0.2rem',
+                                    fontWeight: 700
+                                }}>
+                                    {getFocalLength(idx).toUpperCase()}
+                                </span>
+
+                                <span style={{
+                                    fontSize: '1rem',
+                                    fontFamily: 'var(--font-display)',
+                                    fontWeight: 800,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em',
+                                    color: isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
+                                    transition: 'color 0.4s ease',
+                                    textAlign: 'center'
+                                }}>
+                                    {pkg.name}
+                                </span>
+
+                                {pkg.isPopular && (
+                                    <span style={{
+                                        marginTop: '0.3rem',
+                                        fontSize: '0.5rem',
+                                        color: '#C09A5A',
+                                        letterSpacing: '0.08em',
+                                        border: '1px solid rgba(192, 154, 90, 0.3)',
+                                        backgroundColor: 'rgba(192, 154, 90, 0.08)',
+                                        padding: '1px 5px',
+                                        fontWeight: 800
+                                    }}>
+                                        POPULAR
+                                    </span>
+                                )}
+
+                                {/* The Scale Ticks inside item */}
+                                <div style={{ display: 'flex', gap: '6px', marginTop: '0.8rem', alignItems: 'flex-end', height: '12px' }}>
+                                    <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
+                                    <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
+                                    <div style={{ width: '1px', height: '12px', backgroundColor: isSelected ? '#C09A5A' : 'rgba(255,255,255,0.4)', transition: 'background-color 0.4s' }} />
+                                    <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
+                                    <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Bottom cinematic filmstrip border */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', opacity: 0.15, marginTop: '1rem', pointerEvents: 'none', padding: '0 2rem' }}>
+                {Array.from({ length: 24 }).map((_, i) => (
+                    <div key={i} style={{ width: '8px', height: '5px', backgroundColor: '#FFFFFF', borderRadius: '1px' }} />
+                ))}
+            </div>
+        </div>
+    );
+});
+LensControlDial.displayName = 'LensControlDial';
+
+interface SpecsMatrixTableProps {
+    packages: Package[];
+    activeIdx: number;
+    handleCheckout: (pkg: Package) => void;
+    formatPrice: (price: number) => string;
+}
+
+const SpecsMatrixTable: React.FC<SpecsMatrixTableProps> = React.memo(({ packages, activeIdx, handleCheckout, formatPrice }) => {
+    return (
+        <div className="container" style={{
+            marginTop: '7rem',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            paddingTop: '6rem',
+            maxWidth: '1100px'
+        }}>
+            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                <span style={{
+                    color: '#C09A5A',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.3em',
+                    fontSize: '0.7rem',
+                    fontWeight: 800,
+                    display: 'block',
+                    marginBottom: '1rem'
+                }}>
+                    Director's Matrix
+                </span>
+                <h3 style={{
+                    fontSize: '1.8rem',
+                    fontFamily: 'var(--font-display)',
+                    fontWeight: 900,
+                    color: '#FFFFFF',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                }}>
+                    BẢNG SO SÁNH THÔNG SỐ SẢN XUẤT
+                </h3>
+                <p style={{
+                    color: 'rgba(255,255,255,0.4)',
+                    fontSize: '0.85rem',
+                    maxWidth: '500px',
+                    margin: '0.5rem auto 0',
+                    lineHeight: 1.6
+                }}>
+                    Xem chi tiết thông số kỹ thuật, cấu hình thiết bị và đội ngũ chuyên gia đi kèm cho từng hợp đồng sản xuất hình ảnh.
+                </p>
+            </div>
+
+            <div style={{
+                overflowX: 'auto',
+                backgroundColor: 'rgba(10,10,10,0.5)',
+                border: '1px solid rgba(255,255,255,0.05)',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
+            }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '850px', tableLayout: 'fixed' }}>
+                    <thead>
+                        <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.08)', backgroundColor: '#000000' }}>
+                            <th style={{ padding: '1.8rem 1.5rem', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', width: '24%' }}>ĐẶC ĐIỂM SẢN XUẤT</th>
+                            {packages.map((pkg, i) => (
+                                <th key={pkg.id} style={{
+                                    padding: '1.8rem 1.5rem',
+                                    color: i === activeIdx ? '#C09A5A' : '#FFFFFF',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 800,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.08em',
+                                    textAlign: 'center',
+                                    backgroundColor: i === activeIdx ? 'rgba(192, 154, 90, 0.025)' : 'transparent',
+                                    borderLeft: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.15)' : 'none',
+                                    borderRight: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.15)' : 'none',
+                                    position: 'relative',
+                                    width: `${76 / packages.length}%`
+                                }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                                        <span>{pkg.name}</span>
+                                        {pkg.isPopular && (
+                                            <span style={{ fontSize: '0.55rem', color: '#C09A5A', backgroundColor: 'rgba(192, 154, 90, 0.15)', padding: '2px 8px', letterSpacing: '0.05em', fontWeight: 800 }}>POPULAR</span>
+                                        )}
+                                    </div>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {[
+                            { label: 'Thiết Bị Quay Phim', key: 'camera' },
+                            { label: 'Chất Lượng Hình Ảnh', key: 'resolution' },
+                            { label: 'Hệ Thống Chiếu Sáng', key: 'lighting' },
+                            { label: 'Đội Ngũ Thực Hiện', key: 'crew' },
+                            { label: 'Bàn Giao Sản Phẩm', key: 'rawFootage' },
+                        ].map((row, rowIdx) => (
+                            <tr key={row.key} style={{
+                                borderBottom: '1px solid rgba(255,255,255,0.04)',
+                                backgroundColor: rowIdx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent',
+                                transition: 'all 0.3s ease'
+                            }} className="matrix-row-hover">
+                                <td style={{ padding: '1.4rem 1.5rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.02em' }}>{row.label}</td>
+                                {packages.map((pkg, i) => {
+                                    const specs = getCinematicSpecs(pkg.name, pkg.price);
+                                    const val = specs[row.key as keyof typeof specs];
+                                    return (
+                                        <td key={pkg.id} style={{
+                                            padding: '1.4rem 1.5rem',
+                                            fontSize: '0.8rem',
+                                            color: i === activeIdx ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
+                                            textAlign: 'center',
+                                            fontWeight: i === activeIdx ? 700 : 400,
+                                            backgroundColor: i === activeIdx ? 'rgba(192, 154, 90, 0.025)' : 'transparent',
+                                            borderLeft: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.08)' : 'none',
+                                            borderRight: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.08)' : 'none',
+                                        }}>
+                                            {val}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                        {/* Final Row: Contract Price & Checkout */}
+                        <tr style={{ borderTop: '2px solid rgba(255,255,255,0.08)', backgroundColor: '#000000' }}>
+                            <td style={{ padding: '2rem 1.5rem', fontSize: '0.85rem', color: '#FFFFFF', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>CHI PHÍ HỢP ĐỒNG</td>
+                            {packages.map((pkg, i) => (
+                                <td key={pkg.id} style={{
+                                    padding: '2rem 1.5rem',
+                                    textAlign: 'center',
+                                    backgroundColor: i === activeIdx ? 'rgba(192, 154, 90, 0.04)' : 'transparent',
+                                    borderLeft: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.15)' : 'none',
+                                    borderRight: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.15)' : 'none',
+                                }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                                        <span style={{ fontSize: '1.25rem', fontWeight: 900, color: i === activeIdx ? '#C09A5A' : '#FFFFFF', fontFamily: 'monospace' }}>
+                                            {formatPrice(pkg.price)}
+                                        </span>
+                                        <Button
+                                            onClick={() => handleCheckout(pkg)}
+                                            size="sm"
+                                            style={{
+                                                fontSize: '0.65rem',
+                                                padding: '0.6rem 1.2rem',
+                                                borderRadius: 0,
+                                                backgroundColor: i === activeIdx ? '#C09A5A' : 'transparent',
+                                                color: i === activeIdx ? '#000000' : '#FFFFFF',
+                                                border: i === activeIdx ? 'none' : '1px solid rgba(255,255,255,0.15)',
+                                                fontWeight: 900,
+                                                letterSpacing: '0.12em',
+                                                textTransform: 'uppercase',
+                                                width: '100%',
+                                                maxWidth: '120px',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                        >
+                                            ĐĂNG KÝ
+                                        </Button>
+                                    </div>
+                                </td>
+                            ))}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+});
+SpecsMatrixTable.displayName = 'SpecsMatrixTable';
+
+const TrustSection: React.FC = React.memo(() => {
+    return (
+        <section style={{
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            padding: '6rem 0',
+            textAlign: 'center',
+            backgroundColor: '#030303',
+            position: 'relative',
+            zIndex: 2
+        }}>
+            <div className="container">
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 'clamp(2rem, 6vw, 6rem)',
+                    flexWrap: 'wrap'
+                }}>
+                    {[
+                        { value: '150+', label: 'DỰ ÁN CINE HOÀN THÀNH' },
+                        { value: '99%', label: 'KHÁCH HÀNG THƯƠNG HIỆU HÀI LÒNG' },
+                        { value: '4K+', label: 'TIÊU CHUẨN ĐỘ PHÂN GIẢI GỐC' },
+                    ].map((stat, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: i * 0.15 }}
+                            style={{ textAlign: 'center' }}
+                        >
+                            <div style={{
+                                fontSize: 'clamp(2.2rem, 4vw, 3.2rem)',
+                                fontFamily: 'var(--font-display)',
+                                fontWeight: 900,
+                                color: '#C09A5A',
+                                lineHeight: 1,
+                                letterSpacing: '0.02em'
+                            }}>
+                                {stat.value}
+                            </div>
+                            <div style={{
+                                fontSize: '0.65rem',
+                                color: 'rgba(255,255,255,0.4)',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.2em',
+                                fontWeight: 800,
+                                marginTop: '0.8rem'
+                            }}>
+                                {stat.label}
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+});
+TrustSection.displayName = 'TrustSection';
+
+// ─── MAIN PACKAGES PAGE COMPONENT ───
+
 const Packages: React.FC = () => {
     const navigate = useNavigate();
     const [packages, setPackages] = useState<Package[]>([]);
@@ -172,8 +620,10 @@ const Packages: React.FC = () => {
     // Ultimate Interactive states
     const [isFocusLocking, setIsFocusLocking] = useState(false);
     const [isFlipped, setIsFlipped] = useState(false);
-    const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+    
+    // DOM Viewport refs for high-performance direct GPU spotlight updates
     const viewportRef = useRef<HTMLDivElement>(null);
+    const glowRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         packageApi.getAll(true)
@@ -200,9 +650,9 @@ const Packages: React.FC = () => {
         }
     }, [activeIdx, packages]);
 
-    const formatPrice = (price: number) => {
+    const formatPrice = useCallback((price: number) => {
         return price.toLocaleString('vi-VN');
-    };
+    }, []);
 
     const activePkg = packages[activeIdx] || packages[0];
     const activeSpecs = activePkg ? getCinematicSpecs(activePkg.name, activePkg.price) : null;
@@ -210,21 +660,31 @@ const Packages: React.FC = () => {
     const activeStoryboard = activePkg ? getStoryboardData(activePkg.name) : null;
     const ActiveTierIcon = activePkg ? tierIcons[activeIdx % tierIcons.length] : Zap;
 
+    // ─── Direct DOM Mutation for High Performance 120 FPS Spotlight ───
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!viewportRef.current) return;
+        if (!viewportRef.current || !glowRef.current) return;
         const rect = viewportRef.current.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
         const y = ((e.clientY - rect.top) / rect.height) * 100;
-        setMousePos({ x, y });
+        
+        // Mutate CSS variables directly to avoid triggering React re-renders!
+        viewportRef.current.style.setProperty('--mouse-x', `${x}%`);
+        viewportRef.current.style.setProperty('--mouse-y', `${y}%`);
+        glowRef.current.style.setProperty('--mouse-x', `${x}%`);
+        glowRef.current.style.setProperty('--mouse-y', `${y}%`);
     };
 
     const handleMouseLeave = () => {
-        setMousePos({ x: 50, y: 50 }); // Reset spotlight to center
+        if (!viewportRef.current || !glowRef.current) return;
+        viewportRef.current.style.setProperty('--mouse-x', '50%');
+        viewportRef.current.style.setProperty('--mouse-y', '50%');
+        glowRef.current.style.setProperty('--mouse-x', '50%');
+        glowRef.current.style.setProperty('--mouse-y', '50%');
     };
 
-    const handleCheckout = (pkg: Package) => {
+    const handleCheckout = useCallback((pkg: Package) => {
         navigate(`/purchase/${pkg.id}`);
-    };
+    }, [navigate]);
 
     return (
         <div style={{ paddingTop: '80px', backgroundColor: '#050505', minHeight: '100vh', color: '#FFFFFF', position: 'relative', overflowX: 'hidden' }}>
@@ -239,18 +699,21 @@ const Packages: React.FC = () => {
             }} />
 
             {/* Neon Bleed / Ambient Glow behind theater viewport */}
-            <div style={{
-                position: 'absolute',
-                top: '38%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '1200px',
-                height: '900px',
-                background: getAmbientGlowColor(activeIdx, mousePos.x, mousePos.y),
-                transition: 'background 0.5s ease',
-                pointerEvents: 'none',
-                zIndex: 0
-            }} />
+            <div 
+                ref={glowRef}
+                style={{
+                    position: 'absolute',
+                    top: '38%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '1200px',
+                    height: '900px',
+                    background: getAmbientGlowColor(activeIdx),
+                    transition: 'background 0.5s ease',
+                    pointerEvents: 'none',
+                    zIndex: 0
+                }} 
+            />
 
             {/* Hero Header */}
             <section style={{
@@ -321,214 +784,11 @@ const Packages: React.FC = () => {
                     {!loading && !error && packages.length > 0 && (
                         <>
                             {/* --- THE LENS CONTROL CENTER / FOCUS SCALE CONTROLLER --- */}
-                            <div style={{
-                                margin: '0 auto 4rem',
-                                width: '100%',
-                                maxWidth: '900px',
-                                backgroundColor: 'rgba(10,10,10,0.85)',
-                                border: '1px solid rgba(255, 255, 255, 0.06)',
-                                padding: '1.5rem 0',
-                                position: 'relative',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                boxShadow: '0 15px 40px rgba(0,0,0,0.6)',
-                                overflow: 'hidden'
-                            }}>
-                                {/* Perforations border to look like cinema reels */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', opacity: 0.15, marginBottom: '1rem', pointerEvents: 'none', padding: '0 2rem' }}>
-                                    {Array.from({ length: 24 }).map((_, i) => (
-                                        <div key={i} style={{ width: '8px', height: '5px', backgroundColor: '#FFFFFF', borderRadius: '1px' }} />
-                                    ))}
-                                </div>
-
-                                <span style={{
-                                    fontSize: '0.6rem',
-                                    color: 'rgba(255,255,255,0.3)',
-                                    letterSpacing: '0.25em',
-                                    textTransform: 'uppercase',
-                                    fontWeight: 800,
-                                    marginBottom: '0.5rem',
-                                    padding: '0 2rem'
-                                }}>
-                                    LENS FOCUS BARREL DIAL (CLICK OR DRAG SELECT)
-                                </span>
-
-                                {/* The Sliding Track Viewport */}
-                                <div style={{
-                                    position: 'relative',
-                                    width: '100%',
-                                    height: '140px',
-                                    overflow: 'hidden',
-                                    display: 'flex',
-                                    alignItems: 'center'
-                                }}>
-                                    {/* Cylinder barrel fade effect overlays */}
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        bottom: 0,
-                                        left: 0,
-                                        width: '180px',
-                                        background: 'linear-gradient(to right, rgba(10,10,10,0.95), transparent)',
-                                        zIndex: 3,
-                                        pointerEvents: 'none'
-                                    }} />
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        bottom: 0,
-                                        right: 0,
-                                        width: '180px',
-                                        background: 'linear-gradient(to left, rgba(10,10,10,0.95), transparent)',
-                                        zIndex: 3,
-                                        pointerEvents: 'none'
-                                    }} />
-
-                                    {/* Static horizontal guide scale line across the sliding track viewport */}
-                                    <div style={{ position: 'absolute', bottom: '23px', left: 0, right: 0, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)', zIndex: 1, pointerEvents: 'none' }} />
-
-                                    {/* The Fixed Center Indicator Needle pointing upwards */}
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            bottom: '6px',
-                                            left: '50%',
-                                            transform: 'translateX(-50%)',
-                                            zIndex: 10,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            pointerEvents: 'none'
-                                        }}
-                                    >
-                                        {/* Gold vertical needle line */}
-                                        <div
-                                            style={{
-                                                width: '2px',
-                                                height: '24px',
-                                                backgroundColor: '#C09A5A',
-                                                boxShadow: '0 0 8px #C09A5A',
-                                                marginBottom: '1px'
-                                            }}
-                                        />
-                                        {/* Small gold upward arrow */}
-                                        <div
-                                            style={{
-                                                width: 0,
-                                                height: 0,
-                                                borderLeft: '4px solid transparent',
-                                                borderRight: '4px solid transparent',
-                                                borderBottom: '6px solid #C09A5A',
-                                                filter: 'drop-shadow(0 0 3px #C09A5A)'
-                                            }}
-                                        />
-                                    </div>
-
-                                    {/* The Sliding Track containing the packages */}
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            left: '50%',
-                                            display: 'flex',
-                                            transform: `translateX(-${(activeIdx * 240) + 120}px)`,
-                                            transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                                            width: 'fit-content',
-                                            height: '100%',
-                                            alignItems: 'center'
-                                        }}
-                                    >
-                                        {packages.map((pkg, idx) => {
-                                            const isSelected = idx === activeIdx;
-                                            return (
-                                                <div
-                                                    key={pkg.id}
-                                                    onClick={() => setActiveIdx(idx)}
-                                                    style={{
-                                                        width: '240px',
-                                                        flexShrink: 0,
-                                                        cursor: 'pointer',
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        position: 'relative',
-                                                        height: '100%',
-                                                        opacity: isSelected ? 1 : 0.3,
-                                                        transform: isSelected ? 'scale(1.06)' : 'scale(0.9)',
-                                                        transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
-                                                    }}
-                                                >
-                                                    {/* Viewfinder focus locked frame surrounding selected item */}
-                                                    {isSelected && (
-                                                        <div style={{ position: 'absolute', inset: '10px 15px', pointerEvents: 'none' }}>
-                                                            <div style={{ position: 'absolute', top: 0, left: 0, width: '6px', height: '6px', borderTop: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
-                                                            <div style={{ position: 'absolute', top: 0, right: 0, width: '6px', height: '6px', borderTop: '2px solid #C09A5A', borderRight: '2px solid #C09A5A' }} />
-                                                            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '6px', height: '6px', borderBottom: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
-                                                            <div style={{ position: 'absolute', bottom: 0, right: 0, width: '6px', height: '6px', borderBottom: '2px solid #C09A5A', borderRight: '2px solid #C09A5A' }} />
-                                                        </div>
-                                                    )}
-
-                                                    <span style={{
-                                                        fontSize: '0.6rem',
-                                                        fontFamily: 'monospace',
-                                                        color: isSelected ? '#C09A5A' : 'rgba(255,255,255,0.3)',
-                                                        letterSpacing: '0.15em',
-                                                        marginBottom: '0.2rem',
-                                                        fontWeight: 700
-                                                    }}>
-                                                        {getFocalLength(idx).toUpperCase()}
-                                                    </span>
-
-                                                    <span style={{
-                                                        fontSize: '1rem',
-                                                        fontFamily: 'var(--font-display)',
-                                                        fontWeight: 800,
-                                                        textTransform: 'uppercase',
-                                                        letterSpacing: '0.05em',
-                                                        color: isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
-                                                        transition: 'color 0.4s ease',
-                                                        textAlign: 'center'
-                                                    }}>
-                                                        {pkg.name}
-                                                    </span>
-
-                                                    {pkg.isPopular && (
-                                                        <span style={{
-                                                            marginTop: '0.3rem',
-                                                            fontSize: '0.5rem',
-                                                            color: '#C09A5A',
-                                                            letterSpacing: '0.08em',
-                                                            border: '1px solid rgba(192, 154, 90, 0.3)',
-                                                            backgroundColor: 'rgba(192, 154, 90, 0.08)',
-                                                            padding: '1px 5px',
-                                                            fontWeight: 800
-                                                        }}>
-                                                            POPULAR
-                                                        </span>
-                                                    )}
-
-                                                    {/* The Scale Ticks inside item */}
-                                                    <div style={{ display: 'flex', gap: '6px', marginTop: '0.8rem', alignItems: 'flex-end', height: '12px' }}>
-                                                        <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
-                                                        <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
-                                                        <div style={{ width: '1px', height: '12px', backgroundColor: isSelected ? '#C09A5A' : 'rgba(255,255,255,0.4)', transition: 'background-color 0.4s' }} />
-                                                        <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
-                                                        <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-
-                                {/* Bottom cinematic filmstrip border */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', opacity: 0.15, marginTop: '1rem', pointerEvents: 'none', padding: '0 2rem' }}>
-                                    {Array.from({ length: 24 }).map((_, i) => (
-                                        <div key={i} style={{ width: '8px', height: '5px', backgroundColor: '#FFFFFF', borderRadius: '1px' }} />
-                                    ))}
-                                </div>
-                            </div>
+                            <LensControlDial
+                                packages={packages}
+                                activeIdx={activeIdx}
+                                setActiveIdx={setActiveIdx}
+                            />
 
                             {/* --- CLAPPERBOARD 3D FLIP SWITCH TRIGGER --- */}
                             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem', zIndex: 10, position: 'relative' }}>
@@ -1216,216 +1476,19 @@ const Packages: React.FC = () => {
                             </div>
 
                             {/* --- INTERACTIVE COMPARISON SPEC MATRIX --- */}
-                            <div className="container" style={{
-                                marginTop: '7rem',
-                                borderTop: '1px solid rgba(255,255,255,0.06)',
-                                paddingTop: '6rem',
-                                maxWidth: '1100px'
-                            }}>
-                                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                                    <span style={{
-                                        color: '#C09A5A',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.3em',
-                                        fontSize: '0.7rem',
-                                        fontWeight: 800,
-                                        display: 'block',
-                                        marginBottom: '1rem'
-                                    }}>
-                                        Director's Matrix
-                                    </span>
-                                    <h3 style={{
-                                        fontSize: '1.8rem',
-                                        fontFamily: 'var(--font-display)',
-                                        fontWeight: 900,
-                                        color: '#FFFFFF',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.05em'
-                                    }}>
-                                        BẢNG SO SÁNH THÔNG SỐ SẢN XUẤT
-                                    </h3>
-                                    <p style={{
-                                        color: 'rgba(255,255,255,0.4)',
-                                        fontSize: '0.85rem',
-                                        maxWidth: '500px',
-                                        margin: '0.5rem auto 0',
-                                        lineHeight: 1.6
-                                    }}>
-                                        Xem chi tiết thông số kỹ thuật, cấu hình thiết bị và đội ngũ chuyên gia đi kèm cho từng hợp đồng sản xuất hình ảnh.
-                                    </p>
-                                </div>
-
-                                <div style={{
-                                    overflowX: 'auto',
-                                    backgroundColor: 'rgba(10,10,10,0.5)',
-                                    border: '1px solid rgba(255,255,255,0.05)',
-                                    boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
-                                }}>
-                                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '850px', tableLayout: 'fixed' }}>
-                                        <thead>
-                                            <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.08)', backgroundColor: '#000000' }}>
-                                                <th style={{ padding: '1.8rem 1.5rem', color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', width: '24%' }}>ĐẶC ĐIỂM SẢN XUẤT</th>
-                                                {packages.map((pkg, i) => (
-                                                    <th key={pkg.id} style={{
-                                                        padding: '1.8rem 1.5rem',
-                                                        color: i === activeIdx ? '#C09A5A' : '#FFFFFF',
-                                                        fontSize: '0.85rem',
-                                                        fontWeight: 800,
-                                                        textTransform: 'uppercase',
-                                                        letterSpacing: '0.08em',
-                                                        textAlign: 'center',
-                                                        backgroundColor: i === activeIdx ? 'rgba(192, 154, 90, 0.025)' : 'transparent',
-                                                        borderLeft: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.15)' : 'none',
-                                                        borderRight: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.15)' : 'none',
-                                                        position: 'relative',
-                                                        width: `${76 / packages.length}%`
-                                                    }}>
-                                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                                                            <span>{pkg.name}</span>
-                                                            {pkg.isPopular && (
-                                                                <span style={{ fontSize: '0.55rem', color: '#C09A5A', backgroundColor: 'rgba(192, 154, 90, 0.15)', padding: '2px 8px', letterSpacing: '0.05em', fontWeight: 800 }}>POPULAR</span>
-                                                            )}
-                                                        </div>
-                                                    </th>
-                                                ))}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {[
-                                                { label: 'Thiết Bị Quay Phim', key: 'camera' },
-                                                { label: 'Chất Lượng Hình Ảnh', key: 'resolution' },
-                                                { label: 'Hệ Thống Chiếu Sáng', key: 'lighting' },
-                                                { label: 'Đội Ngũ Thực Hiện', key: 'crew' },
-                                                { label: 'Bàn Giao Sản Phẩm', key: 'rawFootage' },
-                                            ].map((row, rowIdx) => (
-                                                <tr key={row.key} style={{
-                                                    borderBottom: '1px solid rgba(255,255,255,0.04)',
-                                                    backgroundColor: rowIdx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent',
-                                                    transition: 'all 0.3s ease'
-                                                }} className="matrix-row-hover">
-                                                    <td style={{ padding: '1.4rem 1.5rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', fontWeight: 700, letterSpacing: '0.02em' }}>{row.label}</td>
-                                                    {packages.map((pkg, i) => {
-                                                        const specs = getCinematicSpecs(pkg.name, pkg.price);
-                                                        const val = specs[row.key as keyof typeof specs];
-                                                        return (
-                                                            <td key={pkg.id} style={{
-                                                                padding: '1.4rem 1.5rem',
-                                                                fontSize: '0.8rem',
-                                                                color: i === activeIdx ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
-                                                                textAlign: 'center',
-                                                                fontWeight: i === activeIdx ? 700 : 400,
-                                                                backgroundColor: i === activeIdx ? 'rgba(192, 154, 90, 0.025)' : 'transparent',
-                                                                borderLeft: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.08)' : 'none',
-                                                                borderRight: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.08)' : 'none',
-                                                            }}>
-                                                                {val}
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            ))}
-                                            {/* Final Row: Contract Price & Checkout */}
-                                            <tr style={{ borderTop: '2px solid rgba(255,255,255,0.08)', backgroundColor: '#000000' }}>
-                                                <td style={{ padding: '2rem 1.5rem', fontSize: '0.85rem', color: '#FFFFFF', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>CHI PHÍ HỢP ĐỒNG</td>
-                                                {packages.map((pkg, i) => (
-                                                    <td key={pkg.id} style={{
-                                                        padding: '2rem 1.5rem',
-                                                        textAlign: 'center',
-                                                        backgroundColor: i === activeIdx ? 'rgba(192, 154, 90, 0.04)' : 'transparent',
-                                                        borderLeft: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.15)' : 'none',
-                                                        borderRight: i === activeIdx ? '1px solid rgba(192, 154, 90, 0.15)' : 'none',
-                                                    }}>
-                                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                                                            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: i === activeIdx ? '#C09A5A' : '#FFFFFF', fontFamily: 'monospace' }}>
-                                                                {formatPrice(pkg.price)}
-                                                            </span>
-                                                            <Button
-                                                                onClick={() => handleCheckout(pkg)}
-                                                                size="sm"
-                                                                style={{
-                                                                    fontSize: '0.65rem',
-                                                                    padding: '0.6rem 1.2rem',
-                                                                    borderRadius: 0,
-                                                                    backgroundColor: i === activeIdx ? '#C09A5A' : 'transparent',
-                                                                    color: i === activeIdx ? '#000000' : '#FFFFFF',
-                                                                    border: i === activeIdx ? 'none' : '1px solid rgba(255,255,255,0.15)',
-                                                                    fontWeight: 900,
-                                                                    letterSpacing: '0.12em',
-                                                                    textTransform: 'uppercase',
-                                                                    width: '100%',
-                                                                    maxWidth: '120px',
-                                                                    whiteSpace: 'nowrap'
-                                                                }}
-                                                            >
-                                                                ĐĂNG KÝ
-                                                            </Button>
-                                                        </div>
-                                                    </td>
-                                                ))}
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                            <SpecsMatrixTable
+                                packages={packages}
+                                activeIdx={activeIdx}
+                                handleCheckout={handleCheckout}
+                                formatPrice={formatPrice}
+                            />
                         </>
                     )}
                 </div>
             </section>
 
             {/* Bottom Trust Section */}
-            <section style={{
-                borderTop: '1px solid rgba(255,255,255,0.06)',
-                padding: '6rem 0',
-                textAlign: 'center',
-                backgroundColor: '#030303',
-                position: 'relative',
-                zIndex: 2
-            }}>
-                <div className="container">
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: 'clamp(2rem, 6vw, 6rem)',
-                        flexWrap: 'wrap'
-                    }}>
-                        {[
-                            { value: '150+', label: 'DỰ ÁN CINE HOÀN THÀNH' },
-                            { value: '99%', label: 'KHÁCH HÀNG THƯƠNG HIỆU HÀI LÒNG' },
-                            { value: '4K+', label: 'TIÊU CHUẨN ĐỘ PHÂN GIẢI GỐC' },
-                        ].map((stat, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.6, delay: i * 0.15 }}
-                                style={{ textAlign: 'center' }}
-                            >
-                                <div style={{
-                                    fontSize: 'clamp(2.2rem, 4vw, 3.2rem)',
-                                    fontFamily: 'var(--font-display)',
-                                    fontWeight: 900,
-                                    color: '#C09A5A',
-                                    lineHeight: 1,
-                                    letterSpacing: '0.02em'
-                                }}>
-                                    {stat.value}
-                                </div>
-                                <div style={{
-                                    fontSize: '0.65rem',
-                                    color: 'rgba(255,255,255,0.4)',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.2em',
-                                    fontWeight: 800,
-                                    marginTop: '0.8rem'
-                                }}>
-                                    {stat.label}
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            <TrustSection />
 
             <style>{`
                 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
