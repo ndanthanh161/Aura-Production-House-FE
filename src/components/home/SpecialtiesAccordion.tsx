@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 
 interface ServiceCategory {
     id: number;
@@ -190,7 +188,7 @@ export const SpecialtiesAccordion: React.FC = React.memo(() => {
                             <div style={{
                                 zIndex: 3,
                                 position: 'absolute',
-                                bottom: '6.5rem',
+                                bottom: '9rem',
                                 left: '2.5rem',
                                 right: '2.5rem',
                                 pointerEvents: isHovered ? 'auto' : 'none',
@@ -225,37 +223,7 @@ export const SpecialtiesAccordion: React.FC = React.memo(() => {
                                             }}>
                                                 {cat.description}
                                             </p>
-                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
-                                                {cat.subItems.map((sub, sIdx) => (
-                                                    <span key={sIdx} style={{
-                                                        fontSize: '0.65rem',
-                                                        color: '#C09A5A',
-                                                        border: '1px solid rgba(192, 154, 90, 0.3)',
-                                                        padding: '2px 8px',
-                                                        borderRadius: '2px',
-                                                        textTransform: 'uppercase',
-                                                        letterSpacing: '0.05em',
-                                                        fontWeight: 600,
-                                                        backgroundColor: 'rgba(10, 10, 10, 0.4)'
-                                                    }}>
-                                                        {sub}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                            <Link to={cat.link} style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: '8px',
-                                                color: '#C09A5A',
-                                                fontSize: '0.75rem',
-                                                fontWeight: 800,
-                                                letterSpacing: '0.15em',
-                                                textTransform: 'uppercase',
-                                                marginTop: '0.5rem',
-                                                width: 'fit-content'
-                                            }} className="accordion-link">
-                                                Khám phá <ArrowRight size={14} className="accordion-link-arrow" />
-                                            </Link>
+                                            {/* Removed tags and Khám phá button */}
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
