@@ -315,7 +315,7 @@ const Home: React.FC = () => {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
                                 <div>
                                     <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Địa Chỉ Trụ Sở</span>
-                                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0, lineHeight: 1.6 }}>Toà nhà Aura Production, 128 Nguyễn Thị Minh Khai, Quận 1, TP. Hồ Chí Minh</p>
+                                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0, lineHeight: 1.6 }}>Lô E2a-7, Đường D1, Đ. Võ Chí Công, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh</p>
                                 </div>
                                 
                                 <div>
@@ -325,7 +325,7 @@ const Home: React.FC = () => {
 
                                 <div>
                                     <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Hòm Thư Điện Tử</span>
-                                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0 }}>contact@auraproduction.com</p>
+                                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0 }}>auraproduction2512@gmail.com</p>
                                 </div>
 
                                 <div>

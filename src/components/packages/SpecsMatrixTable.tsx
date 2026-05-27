@@ -88,11 +88,11 @@ export const SpecsMatrixTable: React.FC<SpecsMatrixTableProps> = React.memo(({ p
                     </thead>
                     <tbody>
                         {[
+                            { label: 'Sử Dụng Template Của AURA', key: 'useTemplates' },
                             { label: 'Thiết Bị Quay Phim', key: 'camera' },
                             { label: 'Chất Lượng Hình Ảnh', key: 'resolution' },
                             { label: 'Hệ Thống Chiếu Sáng', key: 'lighting' },
                             { label: 'Đội Ngũ Thực Hiện', key: 'crew' },
-                            { label: 'Bàn Giao Sản Phẩm', key: 'rawFootage' },
                         ].map((row, rowIdx) => (
                             <tr key={row.key} style={{
                                 borderBottom: '1px solid rgba(255,255,255,0.04)',

@@ -14,7 +14,6 @@ import { getAmbientGlowColor } from '../../components/packages/helpers';
 import { LensControlDial } from '../../components/packages/LensControlDial';
 import { CineProjectorStage } from '../../components/packages/CineProjectorStage';
 import { SpecsMatrixTable } from '../../components/packages/SpecsMatrixTable';
-import { TrustSection } from '../../components/packages/TrustSection';
 
 const Packages: React.FC = () => {
     const navigate = useNavigate();
@@ -28,9 +27,9 @@ const Packages: React.FC = () => {
     const [isFlipped, setIsFlipped] = useState(false);
 
     useEffect(() => {
-        packageApi.getAll(true)
+        packageApi.getAll(false)
             .then(res => {
-                const pkgs = res.data || [];
+                const pkgs = (res.data || []).filter(p => p.isActive);
                 setPackages(pkgs);
                 const popIdx = pkgs.findIndex(p => p.isPopular);
                 if (popIdx !== -1) {
@@ -92,7 +91,7 @@ const Packages: React.FC = () => {
             {/* Hero Header */}
             <section style={{
                 position: 'relative',
-                padding: 'clamp(4rem, 8vw, 6rem) 0 1rem',
+                padding: 'clamp(2rem, 5vw, 3.5rem) 0 0.5rem',
                 textAlign: 'center',
                 overflow: 'hidden',
                 zIndex: 1
@@ -215,8 +214,7 @@ const Packages: React.FC = () => {
                 </div>
             </section>
 
-            {/* Bottom Trust Section */}
-            <TrustSection />
+
 
             <style>{`
                 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

@@ -164,7 +164,7 @@ const Contact: React.FC = () => {
                             {/* Contact channels grid */}
                             <div className="contact-channels-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
                                 {[
-                                    { icon: <Mail size={18} />, title: 'EMAIL CHANNEL', detail: 'auraproduction21@gmail.com', sub: 'Hỗ trợ dự án 24/7' },
+                                    { icon: <Mail size={18} />, title: 'EMAIL CHANNEL', detail: 'auraproduction2512@gmail.com', sub: 'Hỗ trợ dự án 24/7' },
                                     { icon: <Phone size={18} />, title: 'DIRECT HOTLINE', detail: '0941676736', sub: 'Thứ 2 - Thứ 6, 9h - 18h' },
                                 ].map((item, i) => (
                                     <div

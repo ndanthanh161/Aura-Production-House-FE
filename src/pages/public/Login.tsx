@@ -144,10 +144,10 @@ const Login: React.FC = () => {
                                 onSuccess={handleGoogleSuccess}
                                 onError={() => setError('Đăng nhập Google thất bại.')}
                                 size="large"
-                                width="420"
+                                width="360"
                                 text="signin_with"
                                 shape="rectangular"
-                                theme="filled_black"
+                                theme="outline"
                                 logo_alignment="center"
                             />
                         </div>
@@ -177,8 +177,12 @@ const Login: React.FC = () => {
 
             <style>{`
                 .login-page {
-                    min-height: calc(100vh - 80px);
-                    padding: 8rem 0 5rem;
+                    height: 100vh;
+                    padding-top: 80px;
+                    box-sizing: border-box;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     background:
                         linear-gradient(180deg, rgba(7,7,6,0.12), #070706 94%),
                         radial-gradient(circle at 20% 10%, rgba(208,169,104,0.12), transparent 28rem),
@@ -190,16 +194,19 @@ const Login: React.FC = () => {
                     display: grid;
                     grid-template-columns: minmax(360px, 0.72fr) minmax(0, 1fr);
                     gap: clamp(2rem, 5vw, 5rem);
-                    align-items: stretch;
+                    align-items: center;
+                    width: 100%;
                 }
                 .login-panel {
-                    padding: clamp(1.5rem, 3vw, 2.35rem);
+                    width: 100%;
+                    max-width: 460px;
+                    margin: 0 auto;
+                    padding: clamp(1.2rem, 2.5vw, 2rem);
                     border: 1px solid rgba(255,255,255,0.13);
                     background: rgba(13, 12, 10, 0.78);
                     box-shadow: 0 28px 80px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.06) inset;
                     backdrop-filter: blur(22px);
                     border-radius: 8px;
-                    align-self: center;
                 }
                 .login-eyebrow {
                     display: inline-flex;
@@ -213,8 +220,8 @@ const Login: React.FC = () => {
                     margin-bottom: 1rem;
                 }
                 .login-panel h1 {
-                    font-size: clamp(2.25rem, 5vw, 4rem);
-                    line-height: 0.98;
+                    font-size: clamp(1.75rem, 3vw, 2.5rem);
+                    line-height: 1.2;
                     margin: 0;
                 }
                 .login-intro {
@@ -254,6 +261,14 @@ const Login: React.FC = () => {
                     border-color: rgba(208, 169, 104, 0.72) !important;
                     background: rgba(255,255,255,0.07) !important;
                     box-shadow: 0 0 0 3px rgba(208,169,104,0.1);
+                }
+                .login-input:-webkit-autofill,
+                .login-input:-webkit-autofill:hover, 
+                .login-input:-webkit-autofill:focus, 
+                .login-input:-webkit-autofill:active {
+                    -webkit-box-shadow: 0 0 0 30px #13120a inset !important;
+                    -webkit-text-fill-color: #FFFFFF !important;
+                    transition: background-color 5000s ease-in-out 0s;
                 }
                 .login-submit-btn {
                     width: 100%;
@@ -315,7 +330,9 @@ const Login: React.FC = () => {
                     font-weight: 800;
                 }
                 .login-visual {
-                    min-height: 620px;
+                    height: 100%;
+                    min-height: 480px;
+                    max-height: calc(100vh - 160px);
                     position: relative;
                     border-radius: 8px;
                     overflow: hidden;

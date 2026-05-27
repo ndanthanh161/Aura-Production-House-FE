@@ -327,13 +327,7 @@ export const CineProjectorStage: React.FC<CineProjectorStageProps> = React.memo(
                                                 <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>{activeSpecs.lighting}</span>
                                             </div>
                                         </div>
-                                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                                            <Award size={16} style={{ color: '#C09A5A', marginTop: '3px', flexShrink: 0 }} />
-                                            <div>
-                                                <span style={{ display: 'block', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.1em' }}>THỜI GIAN BÀN GIAO</span>
-                                                <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>{activeSpecs.deliveryTime}</span>
-                                            </div>
-                                        </div>
+
                                     </div>
                                 )}
                             </div>

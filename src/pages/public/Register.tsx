@@ -210,10 +210,10 @@ const Register: React.FC = () => {
                                 onSuccess={handleGoogleSuccess}
                                 onError={() => setError('Đăng ký qua Google thất bại.')}
                                 size="large"
-                                width="420"
+                                width="360"
                                 text="signup_with"
                                 shape="rectangular"
-                                theme="filled_black"
+                                theme="outline"
                                 logo_alignment="center"
                             />
                         </div>
@@ -227,8 +227,12 @@ const Register: React.FC = () => {
 
             <style>{`
                 .register-page {
-                    min-height: calc(100vh - 80px);
-                    padding: 8rem 0 5rem;
+                    height: 100vh;
+                    padding-top: 80px;
+                    box-sizing: border-box;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     background:
                         linear-gradient(90deg, rgba(0,0,0,0.74) 0%, rgba(0,0,0,0.48) 48%, rgba(0,0,0,0.82) 100%),
                         url("https://images.unsplash.com/photo-1601506521937-0121a7fc2a6b?auto=format&fit=crop&q=80&w=2200") center/cover fixed,
@@ -251,6 +255,7 @@ const Register: React.FC = () => {
                     grid-template-columns: minmax(0, 0.95fr) minmax(420px, 0.75fr);
                     gap: clamp(2rem, 5vw, 5rem);
                     align-items: center;
+                    width: 100%;
                 }
                 .register-copy {
                     max-width: 680px;
@@ -267,8 +272,8 @@ const Register: React.FC = () => {
                     margin-bottom: 1.5rem;
                 }
                 .register-copy h1 {
-                    font-size: clamp(3rem, 7vw, 6.5rem);
-                    line-height: 0.95;
+                    font-size: clamp(2rem, 4.5vw, 3.5rem);
+                    line-height: 1.2;
                     margin: 0;
                     max-width: 760px;
                     text-shadow: 0 24px 60px rgba(0,0,0,0.5);
@@ -302,7 +307,10 @@ const Register: React.FC = () => {
                     flex-shrink: 0;
                 }
                 .register-panel {
-                    padding: clamp(1.5rem, 3vw, 2.25rem);
+                    width: 100%;
+                    max-width: 480px;
+                    margin: 0 auto;
+                    padding: clamp(1.1rem, 2.2vw, 1.7rem);
                     border: 1px solid rgba(255,255,255,0.13);
                     background: rgba(13, 12, 10, 0.76);
                     box-shadow: 0 28px 80px rgba(0,0,0,0.46), 0 1px 0 rgba(255,255,255,0.06) inset;
@@ -341,6 +349,14 @@ const Register: React.FC = () => {
                     border-color: rgba(208, 169, 104, 0.72) !important;
                     background: rgba(255,255,255,0.07) !important;
                     box-shadow: 0 0 0 3px rgba(208,169,104,0.1);
+                }
+                .register-input:-webkit-autofill,
+                .register-input:-webkit-autofill:hover, 
+                .register-input:-webkit-autofill:focus, 
+                .register-input:-webkit-autofill:active {
+                    -webkit-box-shadow: 0 0 0 30px #13120a inset !important;
+                    -webkit-text-fill-color: #FFFFFF !important;
+                    transition: background-color 5000s ease-in-out 0s;
                 }
                 .register-alert {
                     padding: 0.9rem 1rem;

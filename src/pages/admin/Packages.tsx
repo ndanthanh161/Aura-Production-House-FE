@@ -9,12 +9,13 @@ import { documentTemplateApi } from '../../services/documentTemplateApi';
 import type { Package as PkgType, CreatePackageRequest, UpdatePackageRequest } from '../../types/package.types';
 import type { DocumentTemplate } from '../../types/documentTemplate.types';
 
-const emptyForm: CreatePackageRequest = {
+const emptyForm: CreatePackageRequest & { isActive?: boolean } = {
     name: '',
     price: 0,
     description: '',
     benefits: [],
     isPopular: false,
+    isActive: true,
 };
 
 const AdminPackages: React.FC = () => {
@@ -28,7 +29,7 @@ const AdminPackages: React.FC = () => {
     const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editItem, setEditItem] = useState<PkgType | null>(null);
-    const [form, setForm] = useState<CreatePackageRequest>(emptyForm);
+    const [form, setForm] = useState<CreatePackageRequest & { isActive?: boolean }>(emptyForm);
     const [benefitInput, setBenefitInput] = useState('');
 
     // ─── Templates State ──────────────────────────────────────────
@@ -93,6 +94,7 @@ const AdminPackages: React.FC = () => {
             description: pkg.description || '',
             benefits: [...pkg.benefits],
             isPopular: pkg.isPopular,
+            isActive: pkg.isActive,
         });
         setBenefitInput('');
         setShowModal(true);
@@ -123,7 +125,11 @@ const AdminPackages: React.FC = () => {
         setError('');
         try {
             if (editItem) {
-                const updateReq: UpdatePackageRequest = { ...form, id: editItem.id, isActive: editItem.isActive };
+                const updateReq: UpdatePackageRequest = { 
+                    ...form, 
+                    id: editItem.id, 
+                    isActive: form.isActive ?? true 
+                };
                 await packageApi.update(updateReq);
             } else {
                 await packageApi.create(form);
@@ -575,7 +581,7 @@ const AdminPackages: React.FC = () => {
                                         <label key={toggle.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
                                             <input
                                                 type="checkbox"
-                                                checked={(form as unknown as Record<string, unknown>)[toggle.key] as boolean ?? (editItem?.isActive ?? true)}
+                                                checked={!!(form as any)[toggle.key]}
                                                 onChange={e => setForm(prev => ({ ...prev, [toggle.key]: e.target.checked }))}
                                             />
                                             {toggle.label}

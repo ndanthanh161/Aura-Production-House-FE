@@ -11,12 +11,12 @@ interface LensControlDialProps {
 export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ packages, activeIdx, setActiveIdx }) => {
     return (
         <div style={{
-            margin: '0 auto 4rem',
+            margin: '0 auto 2.25rem',
             width: '100%',
             maxWidth: '900px',
             backgroundColor: 'rgba(10,10,10,0.85)',
             border: '1px solid rgba(255, 255, 255, 0.06)',
-            padding: '1.5rem 0',
+            padding: '0.75rem 0',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -25,7 +25,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
             overflow: 'hidden'
         }}>
             {/* Perforations border to look like cinema reels */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', opacity: 0.15, marginBottom: '1rem', pointerEvents: 'none', padding: '0 2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', opacity: 0.15, marginBottom: '0.5rem', pointerEvents: 'none', padding: '0 2rem' }}>
                 {Array.from({ length: 24 }).map((_, i) => (
                     <div key={i} style={{ width: '8px', height: '5px', backgroundColor: '#FFFFFF', borderRadius: '1px' }} />
                 ))}
@@ -37,7 +37,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                 letterSpacing: '0.25em',
                 textTransform: 'uppercase',
                 fontWeight: 800,
-                marginBottom: '0.5rem',
+                marginBottom: '0.25rem',
                 padding: '0 2rem'
             }}>
                 LENS FOCUS BARREL DIAL (CLICK OR DRAG SELECT)
@@ -47,7 +47,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
             <div style={{
                 position: 'relative',
                 width: '100%',
-                height: '140px',
+                height: '100px',
                 overflow: 'hidden',
                 display: 'flex',
                 alignItems: 'center'
@@ -75,13 +75,13 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                 }} />
 
                 {/* Static horizontal guide scale line across the sliding track viewport */}
-                <div style={{ position: 'absolute', bottom: '23px', left: 0, right: 0, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)', zIndex: 1, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', bottom: '16px', left: 0, right: 0, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)', zIndex: 1, pointerEvents: 'none' }} />
 
                 {/* The Fixed Center Indicator Needle pointing upwards */}
                 <div
                     style={{
                         position: 'absolute',
-                        bottom: '6px',
+                        bottom: '2px',
                         left: '50%',
                         transform: 'translateX(-50%)',
                         zIndex: 10,
@@ -95,7 +95,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                     <div
                         style={{
                             width: '2px',
-                            height: '24px',
+                            height: '18px',
                             backgroundColor: '#C09A5A',
                             boxShadow: '0 0 8px #C09A5A',
                             marginBottom: '1px'
@@ -130,7 +130,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                     {packages.map((pkg, idx) => {
                         const isSelected = idx === activeIdx;
                         return (
-                            <div
+                             <div
                                 key={pkg.id}
                                 onClick={() => setActiveIdx(idx)}
                                 style={{
@@ -143,14 +143,14 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                                     justifyContent: 'center',
                                     position: 'relative',
                                     height: '100%',
-                                    opacity: isSelected ? 1 : 0.3,
+                                    opacity: isSelected ? 1 : 0.65,
                                     transform: isSelected ? 'scale(1.06)' : 'scale(0.9)',
                                     transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
                                 }}
                             >
                                 {/* Viewfinder focus locked frame surrounding selected item */}
                                 {isSelected && (
-                                    <div style={{ position: 'absolute', inset: '10px 15px', pointerEvents: 'none' }}>
+                                    <div style={{ position: 'absolute', inset: '4px 15px', pointerEvents: 'none' }}>
                                         <div style={{ position: 'absolute', top: 0, left: 0, width: '6px', height: '6px', borderTop: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
                                         <div style={{ position: 'absolute', top: 0, right: 0, width: '6px', height: '6px', borderTop: '2px solid #C09A5A', borderRight: '2px solid #C09A5A' }} />
                                         <div style={{ position: 'absolute', bottom: 0, left: 0, width: '6px', height: '6px', borderBottom: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
@@ -161,7 +161,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                                 <span style={{
                                     fontSize: '0.6rem',
                                     fontFamily: 'monospace',
-                                    color: isSelected ? '#C09A5A' : 'rgba(255,255,255,0.3)',
+                                    color: isSelected ? '#C09A5A' : 'rgba(255,255,255,0.5)',
                                     letterSpacing: '0.15em',
                                     marginBottom: '0.2rem',
                                     fontWeight: 700
@@ -175,7 +175,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                                     fontWeight: 800,
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.05em',
-                                    color: isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
+                                    color: isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.75)',
                                     transition: 'color 0.4s ease',
                                     textAlign: 'center'
                                 }}>
@@ -198,7 +198,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                                 )}
 
                                 {/* The Scale Ticks inside item */}
-                                <div style={{ display: 'flex', gap: '6px', marginTop: '0.8rem', alignItems: 'flex-end', height: '12px' }}>
+                                <div style={{ display: 'flex', gap: '6px', marginTop: '0.3rem', alignItems: 'flex-end', height: '12px' }}>
                                     <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
                                     <div style={{ width: '1px', height: '6px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
                                     <div style={{ width: '1px', height: '12px', backgroundColor: isSelected ? '#C09A5A' : 'rgba(255,255,255,0.4)', transition: 'background-color 0.4s' }} />

@@ -1,9 +1,24 @@
 export const getCinematicSpecs = (pkgName: string, price: number) => {
     const nameLower = pkgName.toLowerCase();
 
+    if (nameLower.includes('membership') || nameLower.includes('hội viên')) {
+        return {
+            useTemplates: 'Có',
+            camera: '—',
+            lenses: '—',
+            resolution: '—',
+            crew: '—',
+            revisions: '—',
+            rawFootage: '—',
+            deliveryTime: '—',
+            lighting: '—'
+        };
+    }
+
     // Tier 5 - Cao nhất (>= 20M)
     if (nameLower.includes('vip') || nameLower.includes('luxury') || nameLower.includes('cao cấp') || nameLower.includes('gold') || price >= 20_000_000) {
         return {
+            useTemplates: 'Có',
             camera: 'Sony A7C + DJI RS3 Gimbal + Flycam',
             lenses: 'Sigma Art 35mm, 50mm, 85mm',
             resolution: '4K 10-bit + Color Grading chuyên sâu',
@@ -17,6 +32,7 @@ export const getCinematicSpecs = (pkgName: string, price: number) => {
     // Tier 4 (>= 10M)
     if (price >= 10_000_000) {
         return {
+            useTemplates: 'Có',
             camera: 'Sony A7C + DJI Gimbal ổn định',
             lenses: 'Sony 50mm f/1.8 + 18-105mm f/4',
             resolution: '4K 10-bit + Color Grading cơ bản',
@@ -30,6 +46,7 @@ export const getCinematicSpecs = (pkgName: string, price: number) => {
     // Tier 3 (>= 8M)
     if (price >= 8_000_000) {
         return {
+            useTemplates: 'Có',
             camera: 'Sony A6400 + Gimbal cơ bản',
             lenses: 'Sony 18-105mm f/4',
             resolution: '4K 8-bit + Chỉnh màu cơ bản',
@@ -43,6 +60,7 @@ export const getCinematicSpecs = (pkgName: string, price: number) => {
     // Tier 2 (>= 5M)
     if (price >= 5_000_000) {
         return {
+            useTemplates: 'Có',
             camera: 'Sony A6400',
             lenses: 'Kit lens 28-60mm',
             resolution: '4K 8-bit cơ bản',
@@ -55,6 +73,7 @@ export const getCinematicSpecs = (pkgName: string, price: number) => {
     }
     // Tier 1 - Cơ bản nhất
     return {
+        useTemplates: 'Có',
         camera: 'Sony A6400',
         lenses: 'Kit lens cơ bản',
         resolution: '1080p - 4K cơ bản',

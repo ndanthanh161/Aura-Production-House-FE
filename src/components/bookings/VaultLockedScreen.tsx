@@ -122,8 +122,8 @@ export const VaultLockedScreen: React.FC = React.memo(() => {
                     }}>
                         <Lock size={16} style={{ color: 'var(--color-accent)', marginTop: '3px' }} />
                         <div>
-                            <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)', margin: '0 0 4px 0' }}>CONCEPT SCRIPTS</h4>
-                            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: 0 }}>Kịch bản phân cảnh độc quyền thiết kế riêng.</p>
+                            <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)', margin: '0 0 4px 0' }}>MULTIPLATFORM TEMPLATES</h4>
+                            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: 0 }}>Kho thư viện mẫu (Templates) thiết kế cho đa nền tảng (Facebook, Instagram, TikTok).</p>
                         </div>
                     </div>
                     <div style={{
@@ -137,8 +137,8 @@ export const VaultLockedScreen: React.FC = React.memo(() => {
                     }}>
                         <Lock size={16} style={{ color: 'var(--color-accent)', marginTop: '3px' }} />
                         <div>
-                            <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)', margin: '0 0 4px 0' }}>STUDIO CONTRACTS</h4>
-                            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: 0 }}>Hợp đồng pháp lý mẫu chuẩn sản xuất sáng tạo.</p>
+                            <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)', margin: '0 0 4px 0' }}>CONTENT PLAN TEMPLATES</h4>
+                            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: 0 }}>Mẫu kế hoạch nội dung (Content Plan) theo ngách (Bất động sản, Mỹ phẩm, F&B...).</p>
                         </div>
                     </div>
                     <div style={{
@@ -152,8 +152,8 @@ export const VaultLockedScreen: React.FC = React.memo(() => {
                     }}>
                         <Lock size={16} style={{ color: 'var(--color-accent)', marginTop: '3px' }} />
                         <div>
-                            <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)', margin: '0 0 4px 0' }}>VIP PRODUCTION TOOLS</h4>
-                            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: 0 }}>Moodboard, storyboard sơ đồ chiếu sáng cao cấp.</p>
+                            <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)', margin: '0 0 4px 0' }}>SCRIPTING TEMPLATES</h4>
+                            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: 0 }}>Kịch bản quay dựng (Scripting templates) có sẵn khung sườn.</p>
                         </div>
                     </div>
                 </div>
