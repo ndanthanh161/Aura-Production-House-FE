@@ -72,7 +72,7 @@ const AdminContactMessages: React.FC = () => {
         <div style={{ padding: '1rem' }}>
             <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Tin nhắn liên hệ</h1>
-                <div style={{ backgroundColor: '#071FD9', color: '#fff', padding: '4px 12px', borderRadius: '20px', fontSize: '12px' }}>
+                <div style={{ backgroundColor: '#C09A5A', color: '#fff', padding: '4px 12px', borderRadius: '20px', fontSize: '12px' }}>
                     {messages.filter(m => !m.isRead).length} MỚI
                 </div>
             </div>
@@ -95,8 +95,8 @@ const AdminContactMessages: React.FC = () => {
                                         padding: '15px 20px',
                                         borderBottom: '1px solid #eee',
                                         cursor: 'pointer',
-                                        backgroundColor: selectedMessage?.id === msg.id ? '#f0f4ff' : '#fff',
-                                        borderLeft: !msg.isRead ? '4px solid #071FD9' : '4px solid transparent'
+                                        backgroundColor: selectedMessage?.id === msg.id ? 'rgba(192, 154, 90, 0.1)' : '#fff',
+                                        borderLeft: !msg.isRead ? '4px solid #C09A5A' : '4px solid transparent'
                                     }}
                                 >
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>

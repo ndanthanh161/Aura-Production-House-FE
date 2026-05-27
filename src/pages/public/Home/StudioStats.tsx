@@ -6,56 +6,65 @@ const tunnelData = [
         id: 1,
         title: "KHỞI NGUỒN",
         desc: "Mọi hành trình vĩ đại đều bắt đầu từ những bước chân đầu tiên đầy đam mê.",
-        image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=1200",
         stats: "10+ DỰ ÁN ĐẦU TAY"
     },
     {
         id: 2,
         title: "ĐỒNG HÀNH",
         desc: "Sự tin tưởng của những đối tác tiên phong là động lực để Aura vươn xa.",
-        image: "https://images.unsplash.com/photo-1551818255-e6e10975bc17?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=1200",
         stats: "05+ ĐỐI TÁC TIN CẬY"
     },
     {
         id: 3,
         title: "TỈ MỈ",
         desc: "Chất lượng không nằm ở số lượng, mà ở sự tử tế trong từng khung hình.",
-        image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1495707902641-75cac588d2e9?auto=format&fit=crop&q=80&w=1200",
         stats: "100+ GIỜ HẬU KỲ"
     },
     {
         id: 4,
         title: "SÁNG TẠO",
         desc: "Phá bỏ các giới hạn cũ để tìm kiếm những ngôn ngữ hình ảnh mới mẻ.",
-        image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=1200",
         stats: "24/7 TƯ DUY MỚI"
     },
     {
         id: 5,
         title: "TÂM HUYẾT",
         desc: "Aura cam kết mang lại giá trị thực chất và sự hài lòng tuyệt đối cho bạn.",
-        image: "https://images.unsplash.com/photo-1493612276216-ee3925520721?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=1200",
         stats: "5.0 ĐÁNH GIÁ CHUẨN"
     }
 ];
 
 const TunnelItem = ({ item, index, total, scrollYProgress }: { item: any, index: number, total: number, scrollYProgress: any }) => {
-    // Each item has a specific range of the total scroll
-    const start = index / total;
-    const end = (index + 1) / total;
+    // Allocate space for the intro (0 to 0.22) and distribute the rest among the items
+    const introEnd = 0.22;
+    const segment = (1.0 - introEnd) / total;
+    const start = introEnd + index * segment;
+    const end = introEnd + (index + 1) * segment;
 
     // Z-axis movement (Scale and Opacity) - cinematic zoom effect
     // Cross-fade logic: The item stays 100% visible until the next one is ready
-    // For the first item, we delay the fade-in to let the intro clear out completely
-    const actualStart = index === 0 ? start + 0.1 : start;
+    const fadeStart = start - 0.05;
+    const fadeStartFull = start;
+    const fadeEndFull = index === total - 1 ? end : end - 0.03;
+    const fadeEnd = index === total - 1 ? end + 0.05 : end;
     const opacity = useTransform(
         scrollYProgress,
-        [actualStart - 0.05, actualStart, end, end + 0.05],
+        [fadeStart, fadeStartFull, fadeEndFull, fadeEnd],
         [0, 1, 1, 0]
     );
+
+    const scaleStart = start;
+    const scaleStartFull = start + 0.04;
+    const scaleEndFull = end - 0.04;
+    const scaleEnd = end;
     const scale = useTransform(
         scrollYProgress,
-        [start, start + 0.1, end - 0.1, end],
+        [scaleStart, scaleStartFull, scaleEndFull, scaleEnd],
         [1.05, 1, 1, 0.95]
     );
 
@@ -166,7 +175,7 @@ export const StudioStats: React.FC = () => {
     });
 
     return (
-        <div ref={containerRef} style={{ height: '400vh', position: 'relative', backgroundColor: 'var(--color-bg)' }}>
+        <div ref={containerRef} style={{ height: '550vh', position: 'relative', backgroundColor: 'var(--color-bg)' }}>
             {/* The Sticky Canvas */}
             <div style={{
                 position: 'sticky',
@@ -194,8 +203,8 @@ export const StudioStats: React.FC = () => {
                         position: 'absolute',
                         zIndex: 20,
                         textAlign: 'center',
-                        opacity: useTransform(smoothProgress, [0, 0.07], [1, 0]),
-                        scale: useTransform(smoothProgress, [0, 0.07], [1, 0.8])
+                        opacity: useTransform(smoothProgress, [0, 0.14, 0.22], [1, 1, 0]),
+                        scale: useTransform(smoothProgress, [0, 0.14, 0.22], [1, 1, 0.85])
                     }}
                 >
                     <motion.span
@@ -221,12 +230,13 @@ export const StudioStats: React.FC = () => {
                 ))}
 
                 {/* Scroll Indicator */}
-                <div style={{
+                <motion.div style={{
                     position: 'absolute',
                     bottom: '40px',
                     left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 30
+                    x: '-50%',
+                    zIndex: 30,
+                    opacity: useTransform(smoothProgress, [0, 0.05], [1, 0])
                 }}>
                     <motion.div
                         animate={{ y: [0, 10, 0] }}
@@ -235,7 +245,7 @@ export const StudioStats: React.FC = () => {
                     >
                         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '40%', backgroundColor: 'var(--color-accent)' }} />
                     </motion.div>
-                </div>
+                </motion.div>
             </div>
         </div>
     );

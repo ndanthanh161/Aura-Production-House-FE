@@ -55,10 +55,10 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="purchase/:packageId" element={<PurchasePackage />} />
           <Route path="projects" element={<MyBookings />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
         </Route>
 
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="reset-password" element={<ResetPassword />} />
 

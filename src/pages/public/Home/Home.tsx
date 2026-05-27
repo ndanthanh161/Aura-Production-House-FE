@@ -1,11 +1,11 @@
 import React from 'react';
-import { Camera, Video, PenTool, Monitor, ArrowRight } from 'lucide-react';
 import { Hero } from './Hero';
 import { FeaturedProjects } from './FeaturedProjects';
 import { StudioStats } from './StudioStats';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Button } from '../../../components/ui/Button';
+import { SpecialtiesAccordion } from '../../../components/home/SpecialtiesAccordion';
+
 
 const Home: React.FC = () => {
     return (
@@ -14,465 +14,418 @@ const Home: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
+            style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
         >
+            {/* 1. Hero Section */}
             <Hero />
 
-            {/* Brand Marquee Ticker */}
+            {/* 2. Brand Marquee Ticker */}
             <div style={{
-                overflow: 'hidden', backgroundColor: 'var(--color-neon)',
-                padding: '2.5rem 0',
+                overflow: 'hidden',
+                background: 'linear-gradient(90deg, #080807, #12100d, #080807)',
+                padding: '2rem 0',
+                borderBottom: '1px solid rgba(255,255,255,0.05)'
             }}>
                 <motion.div
                     animate={{ x: [0, -1600] }}
-                    transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                    style={{ display: 'flex', gap: '4rem', whiteSpace: 'nowrap', width: 'fit-content' }}
+                    transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+                    style={{ display: 'flex', gap: '5rem', whiteSpace: 'nowrap', width: 'fit-content' }}
                 >
                     {[...Array(3)].map((_, setIndex) => (
-                        <div key={setIndex} style={{ display: 'flex', gap: '4rem', alignItems: 'center' }}>
+                        <div key={setIndex} style={{ display: 'flex', gap: '5rem', alignItems: 'center' }}>
                             {['NHIẾP ẢNH', 'QUAY PHIM', 'THƯƠNG HIỆU', 'ĐẠO DIỄN SÁNG TẠO', 'SẢN XUẤT NỘI DUNG', 'HẬU KỲ', 'LÀM PHIM', 'ĐẠO DIỄN NGHỆ THUẬT'].map((text, i) => (
                                 <span key={i} style={{
                                     fontFamily: 'var(--font-display)',
-                                    fontSize: '2.5rem', color: '#0F0F0F', /* Hardcoded to always be black */
+                                    fontSize: '2rem', color: '#FFFFFF',
                                     textTransform: 'uppercase', fontWeight: 900,
-                                    display: 'flex', alignItems: 'center', gap: '4rem',
+                                    display: 'flex', alignItems: 'center', gap: '5rem',
+                                    letterSpacing: '0.1em'
                                 }}>
                                     {text}
-                                    <span style={{ width: '8px', height: '8px', borderRadius: '0', backgroundColor: 'var(--color-text)', display: 'inline-block' }} />
+                                    <span style={{ width: '6px', height: '6px', backgroundColor: '#FFFFFF', display: 'inline-block' }} />
                                 </span>
                             ))}
                         </div>
                     ))}
                 </motion.div>
             </div>
-            <FeaturedProjects />
-            {/* Cinematic Quote / Vision Statement */}
-            <section style={{
-                backgroundColor: 'var(--color-bg)', padding: 'var(--spacing-xl) 0',
-                position: 'relative', overflow: 'hidden', color: '#F8FFFF'
-            }}>
-                {/* Decorative: Film Grain Overlay */}
-                <div style={{
-                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1,
-                    opacity: 0.04, pointerEvents: 'none',
-                    backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")',
-                }} />
 
-                {/* Floating Visual Element (Director's Viewfinder / Clapperboard abstract) */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-                    whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 1.2, type: "spring", bounce: 0.4 }}
-                    style={{
-                        position: 'relative',
-                        width: 'min(90vw, 600px)',
-                        height: 'min(50vw, 350px)',
-                        margin: '0 auto 6rem auto',
-                        zIndex: 2,
-                        borderRadius: '2px',
-                        overflow: 'hidden',
-                        boxShadow: '0 30px 60px -15px rgba(0,0,0,0.8)',
-                    }}
-                >
-                    <img
-                        src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?auto=format&fit=crop&q=80&w=1200"
-                        alt="Cinematic Behind the Scenes"
-                        style={{
-                            width: '100%', height: '100%', objectFit: 'cover',
-                            filter: 'grayscale(30%) contrast(1.2)',
-                        }}
-                    />
-
-                    {/* Viewfinder Overlay Frame */}
-                    <div style={{
-                        position: 'absolute', top: '10%', left: '5%', right: '5%', bottom: '10%',
-                        border: '2px solid rgba(255,255,255,0.3)', pointerEvents: 'none',
-                        display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
-                    }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-                            <span style={{ color: 'var(--color-neon)', fontFamily: 'monospace', fontSize: '12px' }}>REC</span>
-                            <span style={{ color: '#fff', fontFamily: 'monospace', fontSize: '12px' }}>00:00:24:12</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                            <div style={{ width: '40px', height: '40px', border: '1px solid rgba(255,255,255,0.5)', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <div style={{ width: '2px', height: '20px', backgroundColor: 'rgba(255,255,255,0.5)' }}></div>
-                                <div style={{ width: '20px', height: '2px', backgroundColor: 'rgba(255,255,255,0.5)', position: 'absolute' }}></div>
-                            </div>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-                            <span style={{ color: '#fff', fontFamily: 'monospace', fontSize: '12px' }}>ISO 800</span>
-                            <span style={{ color: '#fff', fontFamily: 'monospace', fontSize: '12px' }}>5600K</span>
-                        </div>
-                    </div>
-                </motion.div>
-
-                <div className="container" style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.2 }}
-                    >
-                        <h2 className="text-gradient" style={{
-                            fontSize: 'clamp(2rem, 4vw, 3.5rem)', maxWidth: '900px', margin: '0 auto',
-                            fontWeight: 700, fontFamily: 'var(--font-display)', textTransform: 'uppercase',
-                            lineHeight: 1.4, padding: '0.2em 0', display: 'block'
-                        }}>
-                            "MỖI KHUNG HÌNH CHÚNG TÔI TẠO RA TRỞ THÀNH MỘT PHẦN CỦA DI SẢN THỊ GIÁC VƯỢT THỜI GIAN."
-                        </h2>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Services Section - Home Page Redesign */}
-            <section style={{ backgroundColor: '#FFFFFF', padding: 'var(--spacing-xl) 0' }}>
-                <div className="container">
-                    <header style={{ textAlign: 'center', marginBottom: '6rem' }}>
-                        <motion.span
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
+            {/* 3. Giới thiệu Section (Editorial 2 columns) */}
+            <section style={{ padding: '8rem 0', background: 'radial-gradient(circle at 10% 20%, rgba(208, 169, 104, 0.05) 0%, transparent 60%), linear-gradient(180deg, #070706 0%, #0F0E0C 100%)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+                    <div className="giothieu-grid" style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '4rem', alignItems: 'center' }}>
+                        
+                        {/* Left Column: Interactive Cinematic Viewfinder Viewport */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.96 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1 }}
                             style={{
-                                color: '#071FD9',
+                                width: '100%',
+                                aspectRatio: '16/10',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7)',
+                                backgroundColor: '#000000'
+                            }}
+                            className="intro-viewport"
+                        >
+                            {/* Cinematic Image of director at work */}
+                            <img 
+                                src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?auto=format&fit=crop&q=80&w=800" 
+                                alt="Director at work" 
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    filter: 'contrast(1.05) brightness(0.7) grayscale(20%)',
+                                    transition: 'transform 1s cubic-bezier(0.16, 1, 0.3, 1)'
+                                }}
+                                className="intro-viewport-image"
+                            />
+
+                            {/* Vignette & overlays */}
+                            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%)', pointerEvents: 'none' }} />
+
+                            {/* Corner viewfinders */}
+                            <div style={{ position: 'absolute', inset: '1rem', pointerEvents: 'none' }}>
+                                <div style={{ position: 'absolute', top: 0, left: 0, width: '12px', height: '12px', borderTop: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
+                                <div style={{ position: 'absolute', top: 0, right: 0, width: '12px', height: '12px', borderTop: '2px solid #C09A5A', borderRight: '2px solid #C09A5A' }} />
+                                <div style={{ position: 'absolute', bottom: 0, left: 0, width: '12px', height: '12px', borderBottom: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
+                                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '12px', height: '12px', borderBottom: '2px solid #C09A5A', borderRight: '2px solid #C09A5A' }} />
+                            </div>
+
+                            {/* HUD telemetry text */}
+                            <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', display: 'flex', alignItems: 'center', gap: '6px', pointerEvents: 'none' }}>
+                                <div style={{ width: '6px', height: '6px', backgroundColor: '#FF3B30', borderRadius: '50%', animation: 'blinking 1.5s infinite' }} />
+                                <span style={{ fontSize: '0.55rem', color: '#FF3B30', letterSpacing: '0.15em', fontWeight: 900 }}>REC</span>
+                            </div>
+                            <span style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace', pointerEvents: 'none' }}>
+                                FOCAL: 50MM | T2.2
+                            </span>
+                            <span style={{ position: 'absolute', bottom: '1.5rem', left: '1.5rem', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace', pointerEvents: 'none' }}>
+                                ISO: 800 | 24 FPS
+                            </span>
+                            <span style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem', fontSize: '0.6rem', color: '#C09A5A', fontWeight: 800, fontFamily: 'monospace', pointerEvents: 'none' }}>
+                                AURA OPTICS
+                            </span>
+                        </motion.div>
+
+                        {/* Right Column: Dynamic storytelling content */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, delay: 0.2 }}
+                            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+                        >
+                            <span style={{
+                                color: '#C09A5A',
                                 textTransform: 'uppercase',
-                                letterSpacing: '0.2rem',
+                                letterSpacing: '0.3em',
                                 fontSize: '0.75rem',
                                 fontWeight: 800,
                                 display: 'block',
                                 marginBottom: '1rem'
-                            }}
-                        >
-                            AURA CÓ THỂ LÀM GÌ?
-                        </motion.span>
-                        <motion.h2
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            style={{
-                                fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-                                color: '#0F0F0F',
-                                fontFamily: 'var(--font-display)',
+                            }}>
+                                01 / STORYTELLING STUDIO
+                            </span>
+                            <h2 style={{
+                                fontSize: 'clamp(2rem, 4.5vw, 3rem)',
                                 fontWeight: 900,
+                                fontFamily: 'var(--font-display)',
                                 textTransform: 'uppercase',
-                                marginBottom: '1.5rem'
-                            }}
-                        >
-                            DỊCH VỤ
-                        </motion.h2>
-                        <p style={{ color: '#444444', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
-                            Hãy cùng chúng tôi biến ý tưởng của bạn trở thành hiện thực
-                        </p>
-                    </header>
+                                color: 'var(--color-text)',
+                                margin: '0 0 1.5rem 0',
+                                lineHeight: 1.15,
+                                letterSpacing: '0.02em',
+                            }}>
+                                AURA PRODUCTION HOUSE
+                            </h2>
+                            <p style={{
+                                fontSize: '0.98rem',
+                                lineHeight: 1.8,
+                                color: 'rgba(255,255,255,0.7)',
+                                fontWeight: 400,
+                                margin: '0 0 2.5rem 0',
+                                textAlign: 'justify'
+                            }}>
+                                Mỗi sản phẩm từ Aura không chỉ là một bộ ảnh hay video, mà là thành quả của quá trình thấu hiểu thương hiệu, sáng tạo không ngừng và sự cam kết mang lại chất lượng vượt trội. Chúng tôi mong muốn hình ảnh của mình sẽ là “vũ khí” lợi hại, giúp doanh nghiệp của bạn chinh phục những đỉnh cao mới trong kinh doanh.
+                            </p>
 
-                    <div className="home-services-grid">
-                        {[
-                            {
-                                icon: <Camera size={40} />,
-                                title: 'Nhiếp Ảnh',
-                                desc: 'Aura giúp bạn ghi lại hình ảnh chuyên nghiệp, nâng tầm thương hiệu cá nhân.',
-                                features: ['Thương Hiệu Cá Nhân', 'Thời Trang Biên Tập', 'Sản Phẩm Thương Mại', 'Hồ Sơ Kiến Trúc'],
-                                image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=1000'
-                            },
-                            {
-                                icon: <Video size={40} />,
-                                title: 'Quay Phim',
-                                desc: 'Aura giúp bạn sản xuất video sáng tạo, giúp bạn nổi bật trên nền tảng số.',
-                                features: ['Phim Thương Hiệu', 'Phong Cách Tài Liệu', 'Quảng Cáo Thương Mại', 'Điểm Nhấn Sự Kiện'],
-                                image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&q=80&w=1000'
-                            },
-                            {
-                                icon: <PenTool size={40} />,
-                                title: 'Hậu Kì',
-                                desc: 'Aura đảm bảo mỗi sản phẩm được chỉnh sửa chỉn chu. Từ màu sắc đến âm thanh.',
-                                features: ['Hậu Kì Hình Ảnh', 'Hậu Kì Video', 'Thiết Kế Poster', 'Định Hướng Phong Cách'],
-                                image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=1000'
-                            },
-                            {
-                                icon: <Monitor size={40} />,
-                                title: 'Nội Dung Mạng Xã Hội',
-                                desc: 'Aura hỗ trợ xây dựng nội dung thu hút, định hình phong cách cá nhân.',
-                                features: ['Reels Mạng Xã Hội', 'Chiến Lược YouTube', 'Tài Sản Số', 'Đồ Họa Chuyợn Động'],
-                                image: 'https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&q=80&w=1000'
-                            }
-                        ].map((service, index) => (
-                            <motion.div
-                                key={index}
-                                className="svc-home-card"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.8, delay: index * 0.15 }}
-                                style={{
-                                    position: 'relative',
-                                    padding: '3.5rem 2rem',
-                                    backgroundColor: '#FFFFFF',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    minHeight: '480px',
-                                    overflow: 'hidden',
-                                    border: '1px solid rgba(0,0,0,0.05)',
-                                } as React.CSSProperties}
-                            >
-                                {/* Hover Background Image Reveal */}
-                                <div className="svc-home-bg" style={{
-                                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                                    backgroundImage: `url(${service.image})`, backgroundSize: 'cover', backgroundPosition: 'center',
-                                    opacity: 0, transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)', zIndex: 0, transform: 'scale(1.05)',
-                                    filter: 'grayscale(100%) brightness(0.7)'
-                                }} />
+                            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                                <Link to="/about" style={{
+                                    border: '1px solid #C09A5A',
+                                    color: '#050505',
+                                    backgroundColor: '#C09A5A',
+                                    padding: '1rem 2.2rem',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 900,
+                                    letterSpacing: '0.15em',
+                                    textTransform: 'uppercase',
+                                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                                }} className="intro-btn-luxury">
+                                    Về chúng tôi
+                                </Link>
 
-                                {/* Theme Glow Overlay */}
-                                <div className="svc-home-glow" style={{
-                                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                                    background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)',
-                                    opacity: 0, transition: 'opacity 0.6s ease', zIndex: 1
-                                }} />
-
-                                {/* Content */}
-                                <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                    <div className="svc-home-icon" style={{
-                                        color: '#071FD9', marginBottom: 'auto', transition: 'all 0.4s ease',
-                                        padding: '0.5rem', width: 'fit-content',
-                                    }}>
-                                        {service.icon}
-                                    </div>
-                                    <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                                        <h3 className="svc-home-title" style={{
-                                            fontSize: '1.6rem', color: '#0F0F0F', textTransform: 'uppercase',
-                                            fontFamily: 'var(--font-display)', fontWeight: 800, marginBottom: '1.2rem',
-                                            transition: 'color 0.4s ease'
-                                        }}>
-                                            {service.title}
-                                        </h3>
-                                        <p className="svc-home-desc" style={{
-                                            color: '#444444', fontSize: '0.9rem', lineHeight: 1.6,
-                                            marginBottom: '2.5rem', transition: 'color 0.4s ease'
-                                        }}>
-                                            {service.desc}
-                                        </p>
-                                        <ul style={{
-                                            listStyle: 'none', display: 'flex', flexDirection: 'column',
-                                            gap: '0.9rem', borderTop: '1px solid rgba(0,0,0,0.05)',
-                                            paddingTop: '1.8rem', transition: 'border-color 0.4s ease', marginTop: 'auto'
-                                        }} className="svc-home-list-border">
-                                            {service.features.map(f => (
-                                                <li key={f} className="svc-home-feature" style={{
-                                                    display: 'flex', alignItems: 'center', gap: '12px',
-                                                    fontSize: '0.7rem', color: '#666666', textTransform: 'uppercase',
-                                                    letterSpacing: '0.1em', transition: 'color 0.4s ease'
-                                                }}>
-                                                    <div className="svc-home-bullet" style={{
-                                                        width: '4px', height: '4px', backgroundColor: '#071FD9',
-                                                        flexShrink: 0, transition: 'background-color 0.4s ease'
-                                                    }} /> {f}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    <style>{`
-                        .home-services-grid {
-                            display: grid;
-                            grid-template-columns: repeat(4, 1fr);
-                            gap: 1.5rem;
-                            margin-bottom: 6rem;
-                        }
-                        @media (max-width: 1024px) {
-                            .home-services-grid {
-                                grid-template-columns: repeat(2, 1fr);
-                            }
-                        }
-                        @media (max-width: 640px) {
-                            .home-services-grid {
-                                grid-template-columns: 1fr;
-                                gap: 1rem;
-                                margin-bottom: 4rem;
-                            }
-                            .svc-home-card {
-                                min-height: 400px !important;
-                                padding: 2.5rem 1.5rem !important;
-                            }
-                        }
-                        .svc-home-card:hover .svc-home-bg {
-                            opacity: 1 !important;
-                            transform: scale(1) translateZ(0) !important;
-                            filter: grayscale(20%) brightness(0.6) !important;
-                        }
-                        .svc-home-card:hover .svc-home-glow {
-                            opacity: 0.8 !important;
-                        }
-                        .svc-home-card:hover .svc-home-icon {
-                            color: #ADFF00 !important;
-                            transform: translateY(-5px);
-                        }
-                        .svc-home-card:hover .svc-home-title,
-                        .svc-home-card:hover .svc-home-desc,
-                        .svc-home-card:hover .svc-home-feature {
-                            color: #FFFFFF !important;
-                        }
-                        .svc-home-card:hover .svc-home-bullet {
-                            background-color: #ADFF00 !important;
-                            box-shadow: 0 0 10px #ADFF00;
-                        }
-                        .svc-home-card:hover .svc-home-list-border {
-                            border-color: rgba(255,255,255,0.2) !important;
-                        }
-                    `}</style>
-
-                    <div style={{ textAlign: 'center' }}>
-                        <Link to="/services" style={{
-                            color: '#071FD9',
-                            textTransform: 'uppercase',
-                            fontSize: '0.8rem',
-                            fontWeight: 800,
-                            letterSpacing: '0.2rem',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            borderBottom: '1px solid #071FD9',
-                            paddingBottom: '0.2rem'
-                        }}>
-                            TÌM HIỂU THÊM DỊCH VỤ <ArrowRight size={16} />
-                        </Link>
+                                <Link to="/services" style={{
+                                    border: '1px solid rgba(255,255,255,0.15)',
+                                    color: '#FFFFFF',
+                                    backgroundColor: 'transparent',
+                                    padding: '1rem 2.2rem',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 900,
+                                    letterSpacing: '0.15em',
+                                    textTransform: 'uppercase',
+                                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                                }} className="intro-btn-outline">
+                                    Dịch vụ
+                                </Link>
+                            </div>
+                        </motion.div>
                     </div>
                 </div>
             </section>
 
+            {/* 4. Dịch vụ & Thể loại Section (Interactive Category Showcase) - Specialties Vertical Accordion */}
+            <SpecialtiesAccordion />
 
 
+            {/* 5. Featured Projects Section */}
+            <div id="featured-projects">
+                <FeaturedProjects />
+            </div>
+
+            {/* 6. Studio Stats */}
             <StudioStats />
 
-            {/* Clients / Trust Bar */}
-            {/* <section style={{
-                backgroundColor: 'var(--color-bg-secondary)', padding: '6rem 0',
-                borderTop: '1px solid var(--color-border)', position: 'relative', overflow: 'hidden'
-            }}>
-                <div style={{
-                    position: 'absolute', top: 0, left: 0, width: '150px', height: '100%',
-                    background: 'linear-gradient(90deg, var(--color-bg-secondary) 0%, transparent 100%)', zIndex: 2, pointerEvents: 'none'
-                }} />
-                <div style={{
-                    position: 'absolute', top: 0, right: 0, width: '150px', height: '100%',
-                    background: 'linear-gradient(-90deg, var(--color-bg-secondary) 0%, transparent 100%)', zIndex: 2, pointerEvents: 'none'
-                }} />
-
-                <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1 }}
-                    >
-                        <span style={{
-                            color: 'var(--color-text-muted)', fontSize: '0.75rem', fontWeight: 600,
-                            textTransform: 'uppercase', letterSpacing: '0.25em', display: 'block', marginBottom: '3rem'
-                        }}>
-                            Được tin tưởng bởi các nhà lãnh đạo ngành
-                        </span>
-
-                        <div style={{ overflow: 'hidden' }}>
-                            <motion.div style={{
-                                display: 'flex', gap: '5rem', width: 'fit-content'
-                            }}
-                                animate={{ x: [0, -1000] }}
-                                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                            >
-                                {[...Array(3)].map((_, setIndex) => (
-                                    <div key={setIndex} style={{ display: 'flex', gap: '5rem' }}>
-                                        {['NIKE', 'ADIDAS', 'NETFLIX', 'SONY', 'APPLE', 'VOGUE', 'BMW'].map((brand) => (
-                                            <span
-                                                key={`${setIndex}-${brand}`}
-                                                className="trust-brand"
-                                                style={{
-                                                    fontSize: '1.5rem', fontWeight: 800, letterSpacing: '0.2em',
-                                                    color: 'var(--color-text)', opacity: 0.2, transition: 'all 0.3s', cursor: 'pointer'
-                                                }}
-                                            >
-                                                {brand}
-                                            </span>
-                                        ))}
-                                    </div>
-                                ))}
-                            </motion.div>
-                        </div>
-                    </motion.div>
-                </div>
-                <style>{`
-                    .trust-brand:hover {
-                        color: var(--color-text) !important;
-                        text-shadow: 0 0 15px rgba(255,255,255,0.4);
-                        transform: scale(1.05);
-                    }
-                `}</style>
-            </section> */}
-
-            {/* CTA Section - Home Page Redesign */}
+            {/* 7. Call To Action & Contact Info Section */}
             <section style={{
-                backgroundColor: '#ADFF00',
-                padding: 'var(--spacing-xl) 0',
+                padding: '8rem 0',
+                background: 'radial-gradient(circle at 50% 50%, rgba(208, 169, 104, 0.08) 0%, transparent 70%), linear-gradient(180deg, #090806 0%, #060605 100%)',
+                borderTop: '1px solid rgba(255,255,255,0.08)',
+                borderBottom: '1px solid rgba(255,255,255,0.08)',
                 position: 'relative',
-                overflow: 'hidden',
             }}>
-                <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 2 }}>
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1 }}
-                    >
-                        <span style={{
-                            color: '#071FD9',
-                            letterSpacing: '0.2em',
-                            fontSize: '0.8rem',
-                            textTransform: 'uppercase',
-                            fontWeight: 800,
-                            display: 'block',
-                            marginBottom: '2rem',
-                        }}>
-                            BẮT ĐẦU DỰ ÁN
-                        </span>
-                        <h2 style={{
-                            fontSize: 'clamp(3.5rem, 8vw, 6.5rem)',
-                            lineHeight: 1.1,
-                            margin: '0 0 2rem',
-                            color: '#0F0F0F',
-                            textTransform: 'uppercase',
-                            fontFamily: 'var(--font-display)',
-                            fontWeight: 900
-                        }}>
-                            SẴN SÀNG TẠO RA <br />
-                            ĐIỀU KHÁC BIỆT?
-                        </h2>
-                        <p style={{
-                            color: '#0F0F0F',
-                            maxWidth: '600px',
-                            margin: '0 auto 3.5rem',
-                            fontSize: '1.2rem',
-                            lineHeight: 1.6,
-                            fontWeight: 500
-                        }}>
-                            Hãy cùng biến ý tưởng của bạn trở thành dấu ấn hình ảnh
-                        </p>
-                        <Link to="/contact">
-                            <Button size="lg" style={{
-                                padding: '1.4rem 4rem',
-                                borderRadius: 0,
-                                backgroundColor: '#071FD9',
-                                color: '#FFFFFF',
-                                fontSize: '0.9rem',
-                                letterSpacing: '0.1em',
+                <div className="container">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '6rem' }} className="cta-grid">
+                        
+                        {/* Call to Action */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+                        >
+                            <span style={{
+                                color: '#C09A5A',
+                                fontSize: '0.75rem',
                                 fontWeight: 800,
                                 textTransform: 'uppercase',
-                                border: 'none'
+                                letterSpacing: '0.25em',
+                                display: 'block',
+                                marginBottom: '1.5rem'
                             }}>
-                                LIÊN HỆ NGAY
-                            </Button>
-                        </Link>
-                    </motion.div>
+                                HỢP TÁC CÙNG AURA
+                            </span>
+                            <h2 style={{
+                                fontSize: 'clamp(2.2rem, 4vw, 3.5rem)',
+                                fontWeight: 900,
+                                fontFamily: 'var(--font-display)',
+                                textTransform: 'uppercase',
+                                color: '#FFFFFF',
+                                margin: '0 0 2rem 0',
+                                lineHeight: 1.15,
+                            }}>
+                                Hãy để chúng tôi nâng tầm <br />
+                                câu chuyện thương hiệu của bạn
+                            </h2>
+                            <p style={{
+                                fontSize: '1rem',
+                                lineHeight: 1.75,
+                                color: 'rgba(255,255,255,0.7)',
+                                marginBottom: '3rem',
+                                maxWidth: '520px'
+                            }}>
+                                Bạn đã sẵn sàng tạo ra những thước phim, bộ ảnh mang đậm dấu ấn duy mỹ của doanh nghiệp mình? Hãy kết nối với Aura để được tư vấn miễn phí giải pháp tối ưu nhất.
+                            </p>
+                            <div style={{ display: 'flex', gap: '1.5rem' }}>
+                                <Link to="/contact" style={{
+                                    backgroundColor: '#C09A5A',
+                                    color: '#FFFFFF',
+                                    padding: '1.1rem 2.8rem',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.15em',
+                                    textTransform: 'uppercase',
+                                    transition: 'all 0.3s ease',
+                                    border: 'none'
+                                }} className="btn-join-home">
+                                    LIÊN HỆ NGAY
+                                </Link>
+                                <Link to="/packages" style={{
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    color: '#FFFFFF',
+                                    backgroundColor: 'transparent',
+                                    padding: '1.1rem 2.8rem',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.15em',
+                                    textTransform: 'uppercase',
+                                    transition: 'all 0.3s ease',
+                                }} className="intro-btn">
+                                    XEM BẢNG GIÁ
+                                </Link>
+                            </div>
+                        </motion.div>
+
+                        {/* Contact Info */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            style={{ 
+                                display: 'flex', 
+                                flexDirection: 'column', 
+                                gap: '2.5rem',
+                                padding: '3.5rem 3rem',
+                                backgroundColor: '#11100E',
+                                border: '1px solid rgba(255,255,255,0.06)'
+                            }}
+                            className="cta-contact-box"
+                        >
+                            <h3 style={{
+                                fontSize: '1.4rem',
+                                fontWeight: 800,
+                                fontFamily: 'var(--font-display)',
+                                textTransform: 'uppercase',
+                                color: '#FFFFFF',
+                                margin: 0,
+                                letterSpacing: '0.05em',
+                                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                                paddingBottom: '1.2rem'
+                            }}>
+                                THÔNG TIN LIÊN HỆ
+                            </h3>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
+                                <div>
+                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Địa Chỉ Trụ Sở</span>
+                                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0, lineHeight: 1.6 }}>Lô E2a-7, Đường D1, Đ. Võ Chí Công, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh</p>
+                                </div>
+                                
+                                <div>
+                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Đường Dây Nóng</span>
+                                    <p style={{ color: '#FFFFFF', fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>0909 123 456</p>
+                                </div>
+
+                                <div>
+                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Hòm Thư Điện Tử</span>
+                                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0 }}>auraproduction2512@gmail.com</p>
+                                </div>
+
+                                <div>
+                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Giờ Làm Việc</span>
+                                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0 }}>Thứ 2 - Thứ 7: 09:00 - 18:00</p>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                    </div>
                 </div>
             </section>
+
+
+
+            <style>{`
+                .intro-btn:hover {
+                    background-color: var(--color-text) !important;
+                    color: var(--color-bg) !important;
+                }
+                .intro-btn-luxury:hover {
+                    background-color: #FFFFFF !important;
+                    color: #050505 !important;
+                    border-color: #FFFFFF !important;
+                    box-shadow: 0 10px 25px rgba(192, 154, 90, 0.2) !important;
+                }
+                .intro-btn-outline:hover {
+                    border-color: #C09A5A !important;
+                    color: #C09A5A !important;
+                }
+                .intro-viewport:hover .intro-viewport-image {
+                    transform: scale(1.05) !important;
+                }
+                @keyframes blinking {
+                    0% { opacity: 0.3; }
+                    50% { opacity: 1; }
+                    100% { opacity: 0.3; }
+                }
+                .accordion-link {
+                    transition: color 0.3s ease;
+                }
+                .accordion-link:hover {
+                    color: #FFFFFF !important;
+                }
+                .accordion-link:hover .accordion-link-arrow {
+                    transform: translateX(4px);
+                }
+                .accordion-link-arrow {
+                    transition: transform 0.3s ease;
+                }
+                .partner-brand:hover {
+                    opacity: 0.8 !important;
+                }
+                .contact-link {
+                    transition: color 0.3s;
+                }
+                .contact-link:hover {
+                    color: rgba(255,255,255,0.7) !important;
+                }
+                .social-link {
+                    transition: color 0.3s;
+                }
+                .social-link:hover {
+                    color: #FFFFFF !important;
+                }
+                
+                /* Accordion Hover overlays */
+                .specialties-accordion-wrapper .accordion-strip:hover .accordion-overlay {
+                    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.15) 100%) !important;
+                }
+                
+                @media (max-width: 1024px) {
+                    .giothieu-grid, .cta-grid {
+                        grid-template-columns: 1fr !important;
+                        gap: 3rem !important;
+                    }
+                    .specialties-accordion-wrapper {
+                        flex-direction: column !important;
+                        height: auto !important;
+                    }
+                    .accordion-strip {
+                        flex: none !important;
+                        width: 100% !important;
+                        height: 200px !important;
+                        border-right: none !important;
+                        border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+                        padding: 2rem 1.5rem !important;
+                    }
+                    .accordion-vertical-title {
+                        transform: none !important;
+                        position: relative !important;
+                        left: 0 !important;
+                        top: 0 !important;
+                        margin-bottom: 1.5rem !important;
+                    }
+                    .accordion-bottom-info {
+                        margin-top: auto !important;
+                    }
+                }
+            `}</style>
         </motion.div>
     );
 };

@@ -66,7 +66,7 @@ const PhotographerOverview: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <h1 style={{ fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Tổng Quan</h1>
+                    <h1 style={{ fontSize: '2.25rem', fontWeight: 800, letterSpacing: '0' }}>Tổng Quan</h1>
                     <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
                         Chào mừng trở lại, <strong style={{ color: 'var(--color-accent)' }}>{user?.fullName || 'Photographer'}</strong> 👋
                     </p>

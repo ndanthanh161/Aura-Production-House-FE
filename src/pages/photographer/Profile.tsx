@@ -75,7 +75,7 @@ const PhotographerProfile: React.FC = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', maxWidth: '800px' }}>
             <header>
-                <h1 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>HỒ SƠ CÁ NHÂN</h1>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '0' }}>HỒ SƠ CÁ NHÂN</h1>
                 <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>Quản lý thông tin định danh và chuyên môn của bạn tại Aura.</p>
             </header>
 

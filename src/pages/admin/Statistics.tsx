@@ -78,7 +78,7 @@ const AdminStatistics: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
             <header>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>BÁO CÁO CHIẾN LƯỢC</h1>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '0' }}>BÁO CÁO CHIẾN LƯỢC</h1>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-muted)', backgroundColor: 'rgba(255,255,255,0.03)', padding: '4px 12px', borderRadius: '20px', border: '1px solid var(--color-border)' }}>Dữ liệu sạch</div>
                         <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-muted)', backgroundColor: 'rgba(255,255,255,0.03)', padding: '4px 12px', borderRadius: '20px', border: '1px solid var(--color-border)' }}>Thời gian thực</div>
