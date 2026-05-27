@@ -1,9 +1,8 @@
 import React from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { motion } from 'framer-motion';
-import logoColor from '../assets/LOGO COLOR.png';
 
 export const PublicLayout: React.FC = () => {
     const location = useLocation();
