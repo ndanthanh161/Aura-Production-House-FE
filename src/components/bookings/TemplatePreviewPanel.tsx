@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Download, X } from 'lucide-react';
+import { FileText, Download, X, Lock, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import type { DocumentTemplate } from '../../types/documentTemplate.types';
 
 interface TemplatePreviewPanelProps {
@@ -12,6 +14,61 @@ export const TemplatePreviewPanel: React.FC<TemplatePreviewPanelProps> = React.m
     selectedTemplate,
     onClose
 }) => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const [isDownloading, setIsDownloading] = useState(false);
+
+    // Check VIP Access: users with active VIP status or Admins/Photographers
+    const isVipOrStaff = user?.isVip === true || user?.role?.toLowerCase() === 'admin' || user?.role?.toLowerCase() === 'photographer';
+
+    const handleDownload = async () => {
+        if (!isVipOrStaff || !selectedTemplate.fileUrl || isDownloading) return;
+
+        setIsDownloading(true);
+        const fileUrl = selectedTemplate.fileUrl;
+        
+        // Auto-detect and sanitize extension
+        let extension = selectedTemplate.fileType || '';
+        if (!extension) {
+            const lowerUrl = fileUrl.toLowerCase();
+            if (lowerUrl.includes('.pdf')) {
+                extension = '.pdf';
+            } else if (lowerUrl.includes('.docx')) {
+                extension = '.docx';
+            } else if (lowerUrl.includes('.doc')) {
+                extension = '.doc';
+            } else {
+                extension = '.docx';
+            }
+        }
+        if (!extension.startsWith('.')) {
+            extension = `.${extension}`;
+        }
+
+        const cleanTitle = selectedTemplate.title.trim().replace(/[^a-zA-Z0-9À-ỹ\s\-_]/g, '').replace(/\s+/g, '_');
+        const filename = `${cleanTitle}${extension}`;
+
+        try {
+            const response = await fetch(fileUrl);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+        } catch (err) {
+            console.error('Download via fetch failed, falling back to window.open:', err);
+            window.open(fileUrl, '_blank');
+        } finally {
+            setIsDownloading(false);
+        }
+    };
+
     return (
         <motion.div
             key={selectedTemplate.id}
@@ -91,17 +148,118 @@ export const TemplatePreviewPanel: React.FC<TemplatePreviewPanelProps> = React.m
                 </button>
             </div>
 
-            {/* Secure IFrame Embed */}
-            <div style={{ flex: 1, backgroundColor: '#141414', position: 'relative' }}>
+            {/* Secure IFrame Embed with Blur Check */}
+            <div style={{ flex: 1, backgroundColor: '#141414', position: 'relative', overflow: 'hidden' }}>
                 <iframe
-                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(selectedTemplate.fileUrl || '')}&embedded=true`}
+                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(
+                        isVipOrStaff 
+                            ? (selectedTemplate.fileUrl || '') 
+                            : 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+                    )}&embedded=true`}
                     style={{
                         width: '100%',
                         height: '100%',
                         border: 'none',
+                        filter: !isVipOrStaff ? 'blur(12px) brightness(0.4)' : 'none',
+                        pointerEvents: !isVipOrStaff ? 'none' : 'auto'
                     }}
                     title={selectedTemplate.title || 'Preview'}
                 />
+
+                {/* Overlaid Lock and Banner message if not VIP */}
+                {!isVipOrStaff && (
+                    <div style={{
+                        position: 'absolute',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(7, 7, 6, 0.55)',
+                        backdropFilter: 'blur(4px)',
+                        padding: '2rem',
+                        textAlign: 'center',
+                        zIndex: 20
+                    }}>
+                        <div style={{
+                            width: '64px', height: '64px', borderRadius: '50%',
+                            backgroundColor: 'rgba(15, 14, 12, 0.9)',
+                            border: '1px solid rgba(192, 154, 90, 0.3)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: 'var(--color-accent)',
+                            marginBottom: '1.5rem',
+                            boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
+                        }}>
+                            <Lock size={24} />
+                        </div>
+
+                        <h4 style={{
+                            fontSize: '1.35rem',
+                            fontWeight: 700,
+                            fontFamily: 'var(--font-sans)',
+                            color: '#FFFFFF',
+                            marginBottom: '0.75rem'
+                        }}>
+                            {!user ? 'Yêu Cầu Đăng Nhập' : 'Tài Liệu Dành Cho Hội Viên'}
+                        </h4>
+
+                        <p style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.85rem',
+                            maxWidth: '320px',
+                            lineHeight: 1.5,
+                            marginBottom: '2rem'
+                        }}>
+                            {!user 
+                                ? 'Vui lòng đăng nhập tài khoản Aura để mở khóa và xem nội dung tài liệu bảo mật này.' 
+                                : 'Nội dung tài liệu này chỉ dành riêng cho Hội Viên của Aura.'}
+                        </p>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '240px', gap: '10px' }}>
+                            {!user ? (
+                                <button
+                                    onClick={() => navigate('/login')}
+                                    style={{
+                                        backgroundColor: 'var(--color-accent)',
+                                        color: '#0F0F0F',
+                                        padding: '0.65rem 1.5rem',
+                                        fontSize: '0.82rem',
+                                        fontWeight: 800,
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        border: 'none',
+                                        textTransform: 'uppercase',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+                                >
+                                    Đăng Nhập Ngay
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => navigate('/packages')}
+                                    style={{
+                                        backgroundColor: 'var(--color-accent)',
+                                        color: '#0F0F0F',
+                                        padding: '0.65rem 1.5rem',
+                                        fontSize: '0.82rem',
+                                        fontWeight: 800,
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        border: 'none',
+                                        textTransform: 'uppercase',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+                                >
+                                    Nâng Cấp Hội Viên 🌟
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Preview Footer */}
@@ -116,27 +274,49 @@ export const TemplatePreviewPanel: React.FC<TemplatePreviewPanelProps> = React.m
                 zIndex: 10
             }}>
                 <button
-                    onClick={() => { if (selectedTemplate.fileUrl) window.open(selectedTemplate.fileUrl, '_blank'); }}
+                    disabled={!isVipOrStaff || isDownloading}
+                    onClick={handleDownload}
                     style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        background: 'linear-gradient(135deg, #CF9F2E 0%, #D4AF37 50%, #F3E5AB 100%)',
-                        color: 'black',
+                        background: isVipOrStaff 
+                            ? 'linear-gradient(135deg, #CF9F2E 0%, #D4AF37 50%, #F3E5AB 100%)'
+                            : 'rgba(255, 255, 255, 0.05)',
+                        color: isVipOrStaff ? 'black' : 'rgba(255, 255, 255, 0.3)',
                         padding: '0.65rem 1.5rem', fontSize: '0.82rem', fontWeight: 800,
-                        borderRadius: '8px', cursor: 'pointer', border: 'none',
+                        borderRadius: '8px', 
+                        cursor: (isVipOrStaff && !isDownloading) ? 'pointer' : 'not-allowed', 
+                        border: isVipOrStaff ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
                         textTransform: 'uppercase',
-                        boxShadow: '0 6px 15px rgba(212,175,55,0.2)',
-                        transition: 'all 0.3s ease'
+                        boxShadow: isVipOrStaff ? '0 6px 15px rgba(212,175,55,0.2)' : 'none',
+                        transition: 'all 0.3s ease',
+                        opacity: isDownloading ? 0.8 : 1
                     }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 10px 20px rgba(212,175,55,0.3)';
+                        if (isVipOrStaff && !isDownloading) {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 10px 20px rgba(212,175,55,0.3)';
+                        }
                     }}
                     onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 6px 15px rgba(212,175,55,0.2)';
+                        if (isVipOrStaff && !isDownloading) {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 6px 15px rgba(212,175,55,0.2)';
+                        }
                     }}
                 >
-                    <Download size={14} /> Tải tệp xuống
+                    {isDownloading ? (
+                        <>
+                            <Loader2 size={14} className="animate-spin" /> Đang tải xuống...
+                        </>
+                    ) : isVipOrStaff ? (
+                        <>
+                            <Download size={14} /> Tải tệp xuống
+                        </>
+                    ) : (
+                        <>
+                            <Lock size={14} /> Tải tệp xuống
+                        </>
+                    )}
                 </button>
             </div>
         </motion.div>

@@ -239,13 +239,22 @@ export const UserMenu: React.FC = () => {
                                 </button>
                             )}
                             {role === 'user' && (
-                                <button
-                                    onClick={() => { setIsOpen(false); navigate('/projects'); }}
-                                    style={dropdownItemStyle}
-                                >
-                                    <Calendar size={14} />
-                                    <span>Dự án của tôi</span>
-                                </button>
+                                <>
+                                    <button
+                                        onClick={() => { setIsOpen(false); navigate('/projects'); }}
+                                        style={dropdownItemStyle}
+                                    >
+                                        <Calendar size={14} />
+                                        <span>Dự án của tôi</span>
+                                    </button>
+                                    <button
+                                        onClick={() => { setIsOpen(false); navigate('/vault'); }}
+                                        style={dropdownItemStyle}
+                                    >
+                                        <Sparkles size={14} />
+                                        <span>Kho tài liệu</span>
+                                    </button>
+                                </>
                             )}
                         </div>
 

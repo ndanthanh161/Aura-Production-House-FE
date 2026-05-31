@@ -11,6 +11,7 @@ const pageTitleMap: Record<string, string> = {
     '/portfolio': 'DỰ ÁN',
     '/services': 'QUY TRÌNH',
     '/packages': 'GÓI DỊCH VỤ',
+    '/vault': 'KHO TÀI LIỆU',
     '/about': 'GIỚI THIỆU',
     '/contact': 'LIÊN HỆ',
     '/projects': 'DỰ ÁN CỦA TÔI',
@@ -93,6 +94,7 @@ export const Navbar: React.FC = () => {
 
     const rightLinks = [
         { name: 'Gói Dịch Vụ', path: '/packages' },
+        { name: 'Kho Tài Liệu', path: '/vault' },
         { name: 'Liên Hệ', path: '/contact' },
     ];
 
@@ -101,6 +103,7 @@ export const Navbar: React.FC = () => {
         { name: 'Dự Án', path: '/portfolio' },
         { name: 'Quy Trình', path: '/services' },
         { name: 'Gói Dịch Vụ', path: '/packages' },
+        { name: 'Kho Tài Liệu', path: '/vault' },
         { name: 'Liên Hệ', path: '/contact' },
     ];
 
@@ -109,26 +112,12 @@ export const Navbar: React.FC = () => {
     const authSection = (
         <>
             {!role ? (
-                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Link to="/login" style={{
                         color: '#FFFFFF', fontSize: '0.72rem', letterSpacing: '0.15em',
                         textTransform: 'uppercase', fontWeight: 600, opacity: 0.6,
                     }} className="hover-link">
                         Đăng Nhập
-                    </Link>
-                    <Link to="/register" style={{
-                        border: '1px solid rgba(255,255,255,0.42)',
-                        backgroundColor: 'transparent',
-                        color: '#FFFFFF',
-                        padding: '0.55rem 1.5rem',
-                        fontSize: '0.7rem',
-                        letterSpacing: '0.15em',
-                        textTransform: 'uppercase',
-                        fontWeight: 700,
-                        borderRadius: '999px',
-                        transition: 'all 0.3s ease',
-                    }} className="btn-join">
-                        Tham Gia
                     </Link>
                 </div>
             ) : (
@@ -290,29 +279,28 @@ export const Navbar: React.FC = () => {
                                 </Link>
                             )}
                             {role === 'user' && (
-                                <Link to="/projects" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                    Dự Án Của Tôi
-                                </Link>
-                            )}
+                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                     <Link to="/projects" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                         Dự Án Của Tôi
+                                     </Link>
+                                     <Link to="/vault" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                         Kho Tài Liệu
+                                     </Link>
+                                 </div>
+                             )}
                             {role === 'admin' && (
                                 <Link to="/admin" onClick={() => setIsOpen(false)} style={{ fontSize: '0.9rem', fontWeight: 700, color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                     Quản trị
                                 </Link>
                             )}
-                            {!role ? (
-                                <>
+                            {!role && (
                                 <Link to="/login" onClick={() => setIsOpen(false)} style={{
                                         fontSize: '0.9rem', fontWeight: 600, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8
                                     }}>
                                         Đăng Nhập
                                     </Link>
-                                    <Link to="/register" onClick={() => setIsOpen(false)} style={{
-                                        backgroundColor: '#D0A968', color: '#0F0F0F', padding: '0.9rem', textAlign: 'center', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', borderRadius: '999px'
-                                    }}>
-                                        Tham Gia
-                                    </Link>
-                                </>
-                            ) : (
+                            )}
+                            {role && (
                                 <button onClick={() => { logout(); setIsOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 700, color: '#FF3B30', textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}>
                                     <LogOut size={16} /> Đăng Xuất
                                 </button>
@@ -404,28 +392,12 @@ export const Navbar: React.FC = () => {
                 {/* Auth links */}
                 <div className="nav-group right-auth" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
                     {!role ? (
-                        <>
-                            <Link to="/login" style={{
-                                color: '#FFFFFF', fontSize: '0.72rem', letterSpacing: '0.15em',
-                                textTransform: 'uppercase', fontWeight: 600, opacity: 0.6,
-                            }} className="hover-link-dark">
-                                Đăng Nhập
-                            </Link>
-                            <Link to="/register" style={{
-                                border: '1px solid rgba(255,255,255,0.42)',
-                                backgroundColor: 'transparent',
-                                color: '#FFFFFF',
-                                padding: '0.55rem 1.5rem',
-                                fontSize: '0.7rem',
-                                letterSpacing: '0.15em',
-                                textTransform: 'uppercase',
-                                fontWeight: 700,
-                                borderRadius: '999px',
-                                transition: 'all 0.3s ease',
-                            }} className="btn-join-home">
-                                Tham Gia
-                            </Link>
-                        </>
+                        <Link to="/login" style={{
+                            color: '#FFFFFF', fontSize: '0.72rem', letterSpacing: '0.15em',
+                            textTransform: 'uppercase', fontWeight: 600, opacity: 0.6,
+                        }} className="hover-link-dark">
+                            Đăng Nhập
+                        </Link>
                     ) : (
                         <UserMenu />
                     )}

@@ -115,7 +115,6 @@ const Login: React.FC = () => {
                         <div>
                             <div className="login-label-row">
                                 <label>Mật khẩu</label>
-                                <Link to="/forgot-password">Quên mật khẩu?</Link>
                             </div>
                             <input
                                 type="password"
@@ -127,6 +126,9 @@ const Login: React.FC = () => {
                                 style={inputStyle}
                                 className="login-input"
                             />
+                            <div className="login-forgot-row">
+                                <Link to="/forgot-password">Quên mật khẩu?</Link>
+                            </div>
                         </div>
 
                         <Button type="submit" disabled={loading} className="login-submit-btn">
@@ -185,7 +187,7 @@ const Login: React.FC = () => {
                     justify-content: center;
                     background:
                         linear-gradient(180deg, rgba(7,7,6,0.12), #070706 94%),
-                        radial-gradient(circle at 20% 10%, rgba(208,169,104,0.12), transparent 28rem),
+                        radial-gradient(circle at 20% 10%, rgba(173, 255, 0,0.12), transparent 28rem),
                         #070706;
                     color: #FFFFFF;
                     overflow: hidden;
@@ -257,10 +259,21 @@ const Login: React.FC = () => {
                     margin-bottom: 0.55rem;
                     white-space: nowrap;
                 }
+                .login-forgot-row {
+                    display: flex;
+                    justify-content: flex-end;
+                    margin-top: 0.5rem;
+                }
+                .login-forgot-row a {
+                    color: var(--color-accent);
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    white-space: nowrap;
+                }
                 .login-input:focus {
-                    border-color: rgba(208, 169, 104, 0.72) !important;
+                    border-color: rgba(173, 255, 0, 0.72) !important;
                     background: rgba(255,255,255,0.07) !important;
-                    box-shadow: 0 0 0 3px rgba(208,169,104,0.1);
+                    box-shadow: 0 0 0 3px rgba(173, 255, 0,0.1);
                 }
                 .login-input:-webkit-autofill,
                 .login-input:-webkit-autofill:hover, 

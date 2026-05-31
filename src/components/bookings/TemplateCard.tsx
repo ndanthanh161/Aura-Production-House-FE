@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Eye, FileDown } from 'lucide-react';
+import { FileText, Eye, FileDown, Lock, Loader2 } from 'lucide-react';
 import type { DocumentTemplate } from '../../types/documentTemplate.types';
 
 interface TemplateCardProps {
@@ -11,8 +11,57 @@ interface TemplateCardProps {
 }
 
 export const TemplateCard: React.FC<TemplateCardProps> = React.memo(({ tmpl, index, isSelected, onSelect }) => {
+    const [isDownloading, setIsDownloading] = useState(false);
     const isPdf = tmpl.fileType?.toLowerCase() === '.pdf';
-    const simulatedSize = `${(tmpl.title.length * 0.3 + 8.5).toFixed(1)} KB`;
+
+    const handleDownload = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!tmpl.fileUrl || isDownloading) return;
+
+        setIsDownloading(true);
+        const fileUrl = tmpl.fileUrl;
+        
+        // Auto-detect and sanitize extension
+        let extension = tmpl.fileType || '';
+        if (!extension) {
+            const lowerUrl = fileUrl.toLowerCase();
+            if (lowerUrl.includes('.pdf')) {
+                extension = '.pdf';
+            } else if (lowerUrl.includes('.docx')) {
+                extension = '.docx';
+            } else if (lowerUrl.includes('.doc')) {
+                extension = '.doc';
+            } else {
+                extension = '.docx';
+            }
+        }
+        if (!extension.startsWith('.')) {
+            extension = `.${extension}`;
+        }
+
+        const cleanTitle = tmpl.title.trim().replace(/[^a-zA-Z0-9À-ỹ\s\-_]/g, '').replace(/\s+/g, '_');
+        const filename = `${cleanTitle}${extension}`;
+
+        try {
+            const response = await fetch(fileUrl);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+        } catch (err) {
+            console.error('Download via fetch failed, falling back to window.open:', err);
+            window.open(fileUrl, '_blank');
+        } finally {
+            setIsDownloading(false);
+        }
+    };
 
     return (
         <motion.div
@@ -79,9 +128,8 @@ export const TemplateCard: React.FC<TemplateCardProps> = React.memo(({ tmpl, ind
 
             {/* Technical Telemetry Grid */}
             <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '0.75rem',
+                display: 'flex',
+                justifyContent: 'center',
                 fontSize: '0.65rem',
                 fontFamily: 'monospace',
                 color: 'rgba(255, 255, 255, 0.35)',
@@ -92,10 +140,6 @@ export const TemplateCard: React.FC<TemplateCardProps> = React.memo(({ tmpl, ind
                 letterSpacing: '0.05em'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>SIZE:</span>
-                    <span style={{ color: 'var(--color-accent)', fontWeight: 800 }}>{simulatedSize}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
                     <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>INTEGRITY:</span>
                     <span style={{ color: '#10b981', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block', boxShadow: '0 0 6px #10b981' }} />
@@ -140,13 +184,40 @@ export const TemplateCard: React.FC<TemplateCardProps> = React.memo(({ tmpl, ind
                     <Eye size={15} /> {isSelected ? 'Đang Xem' : 'Xem Trực Tuyến'}
                 </button>
                 
-                <button
-                    onClick={() => { if (tmpl.fileUrl) window.open(tmpl.fileUrl, '_blank'); }}
-                    className="template-download-btn"
-                    title="Tải xuống tệp tin"
-                >
-                    <FileDown size={16} />
-                </button>
+                {tmpl.fileUrl ? (
+                    <button
+                        onClick={handleDownload}
+                        disabled={isDownloading}
+                        className="template-download-btn"
+                        title="Tải xuống tệp tin"
+                        style={{
+                            cursor: isDownloading ? 'not-allowed' : 'pointer'
+                        }}
+                    >
+                        {isDownloading ? (
+                            <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                            <FileDown size={16} />
+                        )}
+                    </button>
+                ) : (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onSelect(tmpl);
+                        }}
+                        className="template-download-btn locked-btn"
+                        title="Nâng cấp hội viên để tải xuống"
+                        style={{
+                            borderColor: 'rgba(255, 255, 255, 0.05)',
+                            background: 'rgba(255, 255, 255, 0.01)',
+                            color: 'rgba(255, 255, 255, 0.15)',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        <Lock size={15} />
+                    </button>
+                )}
             </div>
         </motion.div>
     );

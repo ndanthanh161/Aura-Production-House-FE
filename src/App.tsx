@@ -10,6 +10,7 @@ import About from './pages/public/About';
 import Contact from './pages/public/Contact';
 import PurchasePackage from './pages/public/PurchasePackage';
 import MyBookings from './pages/public/MyBookings';
+import Vault from './pages/public/Vault';
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
 import ForgotPassword from './pages/public/ForgotPassword';
@@ -53,8 +54,9 @@ function App() {
           <Route path="packages" element={<Packages />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="purchase/:packageId" element={<PurchasePackage />} />
+           <Route path="purchase/:packageId" element={<PurchasePackage />} />
           <Route path="projects" element={<MyBookings />} />
+          <Route path="vault" element={<Vault />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
         </Route>
