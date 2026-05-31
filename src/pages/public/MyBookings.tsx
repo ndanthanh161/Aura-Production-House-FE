@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    ChevronLeft, CalendarDays, Loader2,
+    CalendarDays, Loader2,
     AlertCircle, ShieldAlert
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
