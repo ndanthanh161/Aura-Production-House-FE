@@ -59,14 +59,14 @@ export const Footer: React.FC = () => {
                         <h4 style={{ marginBottom: '2rem', color: '#FFFFFF', letterSpacing: '0.15em', fontSize: '0.85rem', fontWeight: 800 }}>LIÊN HỆ</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
-                                <Mail size={18} strokeWidth={1.5} style={{ color: '#C09A5A' }} /> auraproduction2512@gmail.com
+                                <Mail size={18} strokeWidth={1.5} style={{ color: '#C09A5A' }} /> Email: auraproduction2512@gmail.com
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
-                                <Phone size={18} strokeWidth={1.5} style={{ color: '#C09A5A' }} /> Mr. Hằng – 090 5655 944
+                                <Phone size={18} strokeWidth={1.5} style={{ color: '#C09A5A' }} /> Thông tin liên hệ: 090 5655 944
                             </div>
                             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
                                 <MapPin size={18} strokeWidth={1.5} style={{ color: '#C09A5A', marginTop: '3px' }} />
-                                <span>Lô E2a-7, Đường D1, Đ. Võ Chí Công,<br />Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh</span>
+                                <span>Địa chỉ: Lô E2a-7, Đường D1, Đ. Võ Chí Công,<br />Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh</span>
                             </div>
                         </div>
                     </div>
