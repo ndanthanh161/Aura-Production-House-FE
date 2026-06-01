@@ -135,7 +135,7 @@ const About: React.FC = () => {
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
                             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.98rem', lineHeight: '1.75', textAlign: 'justify' }}>
-                                Thành lập từ năm 2020 tại Thành Phố Hồ Chí Minh, **Aura Production House** ra đời với khát vọng phá vỡ các giới hạn hình ảnh thông thường để kiến tạo nên những tác phẩm đạt chuẩn điện ảnh thực thụ. Chúng tôi tin rằng mỗi doanh nghiệp và thương hiệu cá nhân đều có một câu chuyện mang tần số nghệ thuật riêng biệt — nhiệm vụ của Aura là lắng nghe, thiết kế concept và phát sóng câu chuyện đó một cách duy mỹ nhất.
+                                Thành lập từ năm 2026 tại Thành Phố Hồ Chí Minh, Aura Production House ra đời với khát vọng phá vỡ các giới hạn hình ảnh thông thường để kiến tạo nên những tác phẩm đạt chuẩn điện ảnh thực thụ. Chúng tôi tin rằng mỗi doanh nghiệp và thương hiệu cá nhân đều có một câu chuyện mang tần số nghệ thuật riêng biệt — nhiệm vụ của Aura là lắng nghe, thiết kế concept và phát sóng câu chuyện đó một cách duy mỹ nhất.
                             </p>
                             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.98rem', lineHeight: '1.75', textAlign: 'justify', borderLeft: '2px solid #C09A5A', paddingLeft: '1.5rem', fontStyle: 'italic', margin: '0.5rem 0' }}>
                                 "Chúng tôi không chỉ chụp những bức ảnh tĩnh hay quay những đoạn phim ngắn; chúng tôi tạo ra di sản thương hiệu vượt thời gian."
