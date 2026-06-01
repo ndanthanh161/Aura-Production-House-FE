@@ -23,7 +23,7 @@ export const SpecsMatrixTable: React.FC<SpecsMatrixTableProps> = React.memo(({ p
                     color: '#C09A5A',
                     textTransform: 'uppercase',
                     letterSpacing: '0.3em',
-                    fontSize: '0.7rem',
+                    fontSize: '1.1rem',
                     fontWeight: 800,
                     display: 'block',
                     marginBottom: '1rem'
@@ -79,7 +79,7 @@ export const SpecsMatrixTable: React.FC<SpecsMatrixTableProps> = React.memo(({ p
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
                                         <span>{pkg.name}</span>
                                         {pkg.isPopular && (
-                                            <span style={{ fontSize: '0.55rem', color: '#C09A5A', backgroundColor: 'rgba(192, 154, 90, 0.15)', padding: '2px 8px', letterSpacing: '0.05em', fontWeight: 800 }}>POPULAR</span>
+                                            <span style={{ fontSize: '0.85rem', color: '#C09A5A', backgroundColor: 'rgba(192, 154, 90, 0.15)', padding: '2px 8px', letterSpacing: '0.05em', fontWeight: 800 }}>POPULAR</span>
                                         )}
                                     </div>
                                 </th>

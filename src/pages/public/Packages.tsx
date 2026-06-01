@@ -106,7 +106,7 @@ const Packages: React.FC = () => {
                             color: '#C09A5A',
                             textTransform: 'uppercase',
                             letterSpacing: '0.4em',
-                            fontSize: '0.75rem',
+                            fontSize: '1.2rem',
                             fontWeight: 800,
                             display: 'block',
                             marginBottom: '1.5rem'

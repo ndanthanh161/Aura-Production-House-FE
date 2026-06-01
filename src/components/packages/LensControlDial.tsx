@@ -159,7 +159,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                                 )}
 
                                 <span style={{
-                                    fontSize: '0.6rem',
+                                    fontSize: '0.9rem',
                                     fontFamily: 'monospace',
                                     color: isSelected ? '#C09A5A' : 'rgba(255,255,255,0.5)',
                                     letterSpacing: '0.15em',
@@ -185,7 +185,7 @@ export const LensControlDial: React.FC<LensControlDialProps> = React.memo(({ pac
                                 {pkg.isPopular && (
                                     <span style={{
                                         marginTop: '0.3rem',
-                                        fontSize: '0.5rem',
+                                        fontSize: '0.8rem',
                                         color: '#C09A5A',
                                         letterSpacing: '0.08em',
                                         border: '1px solid rgba(192, 154, 90, 0.3)',

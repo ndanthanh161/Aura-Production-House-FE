@@ -254,7 +254,7 @@ export const CineProjectorStage: React.FC<CineProjectorStageProps> = React.memo(
                                     }}>
                                         <ActiveTierIcon size={16} style={{ color: '#C09A5A' }} />
                                     </div>
-                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
+                                    <span style={{ fontSize: '1.1rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
                                         TECHNICAL HARDWARE SPECS
                                     </span>
                                 </div>
@@ -480,7 +480,7 @@ export const CineProjectorStage: React.FC<CineProjectorStageProps> = React.memo(
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                             <Award size={10} style={{ color: '#C09A5A' }} />
-                            <span style={{ fontSize: '0.55rem', color: '#C09A5A', fontWeight: 800, fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                            <span style={{ fontSize: '0.85rem', color: '#C09A5A', fontWeight: 800, fontFamily: 'monospace', letterSpacing: '0.05em' }}>
                                 AURA OPTICS
                             </span>
                         </div>
@@ -534,7 +534,7 @@ export const CineProjectorStage: React.FC<CineProjectorStageProps> = React.memo(
                                 TC 00:0{activeIdx + 1}:45:00
                             </span>
                         </div>
-                        <span style={{ fontSize: '0.6rem', color: '#C09A5A', letterSpacing: '0.25em', fontWeight: 800 }}>
+                        <span style={{ fontSize: '0.95rem', color: '#C09A5A', letterSpacing: '0.25em', fontWeight: 800 }}>
                             CREATIVE STORYBOARD MOOD
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -562,7 +562,7 @@ export const CineProjectorStage: React.FC<CineProjectorStageProps> = React.memo(
                             justifyContent: 'space-between'
                         }}>
                             <div>
-                                <span style={{ display: 'block', fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
+                                <span style={{ display: 'block', fontSize: '1.1rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
                                     🎬 PHÂN CẢNH KỊCH BẢN / STORYBOARD
                                 </span>
 
@@ -611,7 +611,7 @@ export const CineProjectorStage: React.FC<CineProjectorStageProps> = React.memo(
                                                 {sIdx + 1}
                                             </div>
                                             <div>
-                                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#C09A5A', display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{scene.label}</span>
+                                                <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#C09A5A', display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{scene.label}</span>
                                                 <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.4, display: 'block', marginTop: '2px' }}>{scene.detail}</span>
                                             </div>
                                         </div>

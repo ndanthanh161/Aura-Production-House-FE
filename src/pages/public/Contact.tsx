@@ -44,7 +44,7 @@ const Contact: React.FC = () => {
             {/* Header Section */}
             <header style={{ padding: 'clamp(3rem, 6vw, 5rem) 0 2rem', textAlign: 'center', position: 'relative', zIndex: 1 }}>
                 <div className="container">
-                    <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1.2rem' }}>
+                    <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '1.2rem', fontWeight: 800, display: 'block', marginBottom: '1.2rem' }}>
                         HỆ THỐNG TIẾP NHẬN YÊU CẦU SẢN XUẤT
                     </span>
                     <motion.h1
@@ -106,7 +106,7 @@ const Contact: React.FC = () => {
 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1rem' }}>
                                     <Activity size={16} style={{ color: '#C09A5A' }} />
-                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
+                                    <span style={{ fontSize: '1.1rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
                                         TỌA ĐỘ STUDIO & TRẠNG THÁI HUD
                                     </span>
                                 </div>
@@ -123,7 +123,7 @@ const Contact: React.FC = () => {
                                     </div>
                                     <div>
                                         <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ĐỘ TRỄ HỆ THỐNG</span>
-                                        <span style={{ fontSize: '0.75rem', color: '#C09A5A', fontWeight: 700 }}>PHẢN HỒI &lt; 24H</span>
+                                        <span style={{ fontSize: '1.1rem', color: '#C09A5A', fontWeight: 700 }}>PHẢN HỒI &lt; 24H</span>
                                     </div>
                                     <div>
                                         <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>GIỜ ĐỊA PHƯƠNG</span>
@@ -182,7 +182,7 @@ const Contact: React.FC = () => {
                                     >
                                         <div style={{ color: '#C09A5A' }}>{item.icon}</div>
                                         <div>
-                                            <span style={{ display: 'block', fontSize: '0.6rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                                            <span style={{ display: 'block', fontSize: '0.9rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
                                                 {item.title}
                                             </span>
                                             <span style={{ display: 'block', fontSize: '0.85rem', color: '#FFFFFF', fontWeight: 600, fontFamily: 'monospace' }}>
@@ -207,7 +207,7 @@ const Contact: React.FC = () => {
                             }}>
                                 <MapPin size={20} style={{ color: '#C09A5A', marginTop: '2px', flexShrink: 0 }} />
                                 <div>
-                                    <span style={{ display: 'block', fontSize: '0.6rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                                    <span style={{ display: 'block', fontSize: '0.9rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
                                         TRỤ SỞ CHÍNH STUDIO
                                     </span>
                                     <span style={{ display: 'block', fontSize: '0.8rem', color: '#FFFFFF', fontWeight: 500, lineHeight: 1.5 }}>
@@ -242,7 +242,7 @@ const Contact: React.FC = () => {
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1.2rem' }}>
                                 <Compass size={16} style={{ color: '#C09A5A' }} />
-                                <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
+                                <span style={{ fontSize: '1.1rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
                                     KHỞI TẠO BẢN TÓM TẮT SẢN XUẤT DỰ ÁN
                                 </span>
                             </div>
@@ -286,7 +286,7 @@ const Contact: React.FC = () => {
                                     
                                     {/* Input 1: Name */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>01 / HỌ VÀ TÊN *</label>
+                                        <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>01 / HỌ VÀ TÊN *</label>
                                         <input 
                                             required 
                                             type="text" 
@@ -302,7 +302,7 @@ const Contact: React.FC = () => {
 
                                     {/* Input 2: Email */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>02 / ĐỊA CHỈ EMAIL *</label>
+                                        <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>02 / ĐỊA CHỈ EMAIL *</label>
                                         <input 
                                             required 
                                             type="email" 
@@ -318,7 +318,7 @@ const Contact: React.FC = () => {
 
                                     {/* Input 3: Phone */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>03 / SỐ ĐIỆN THOẠI *</label>
+                                        <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>03 / SỐ ĐIỆN THOẠI *</label>
                                         <input 
                                             required 
                                             type="tel" 
@@ -335,7 +335,7 @@ const Contact: React.FC = () => {
 
                                 {/* Input 4: Subject */}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>04 / CHỦ ĐỀ BRIEFING *</label>
+                                    <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>04 / CHỦ ĐỀ BRIEFING *</label>
                                     <input 
                                         required 
                                         type="text" 
@@ -351,7 +351,7 @@ const Contact: React.FC = () => {
 
                                 {/* Input 5: Message */}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>05 / CHI TIẾT Ý TƯỞNG & YÊU CẦU DỰ ÁN *</label>
+                                    <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>05 / CHI TIẾT Ý TƯỞNG & YÊU CẦU DỰ ÁN *</label>
                                     <textarea 
                                         required 
                                         placeholder="Hãy chia sẻ định hướng, câu chuyện thương hiệu, thời lượng phim dự kiến hoặc các thiết bị mong muốn của bạn..." 
