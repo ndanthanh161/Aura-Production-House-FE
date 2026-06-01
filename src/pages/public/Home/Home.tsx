@@ -320,7 +320,7 @@ const Home: React.FC = () => {
                                 
                                 <div>
                                     <span style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Đường Dây Nóng</span>
-                                    <p style={{ color: '#FFFFFF', fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>0909 123 456</p>
+                                    <p style={{ color: '#FFFFFF', fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>0333 908 576</p>
                                 </div>
 
                                 <div>

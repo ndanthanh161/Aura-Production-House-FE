@@ -5,7 +5,7 @@ import { contactApi } from '../../services/contactApi';
 
 const Contact: React.FC = () => {
     const [localTime, setLocalTime] = useState('');
-    
+
     useEffect(() => {
         const updateTime = () => {
             const now = new Date();
@@ -18,7 +18,7 @@ const Contact: React.FC = () => {
 
     return (
         <div style={{ paddingTop: '80px', backgroundColor: '#050505', minHeight: '100vh', color: '#FFFFFF', position: 'relative', overflowX: 'hidden' }}>
-            
+
             {/* Cinematic background film grain overlay */}
             <div style={{
                 position: 'fixed',
@@ -44,8 +44,8 @@ const Contact: React.FC = () => {
             {/* Header Section */}
             <header style={{ padding: 'clamp(3rem, 6vw, 5rem) 0 2rem', textAlign: 'center', position: 'relative', zIndex: 1 }}>
                 <div className="container">
-                    <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '1.2rem', fontWeight: 800, display: 'block', marginBottom: '1.2rem' }}>
-                        HỆ THỐNG TIẾP NHẬN YÊU CẦU SẢN XUẤT
+                    <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1.2rem' }}>
+                        THE CINE-COMMISSION SYSTEM
                     </span>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
@@ -80,12 +80,12 @@ const Contact: React.FC = () => {
             <section style={{ padding: '2rem 0 6rem', position: 'relative', zIndex: 2 }}>
                 <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
                     <div className="contact-split-grid" style={{ display: 'grid', gridTemplateColumns: '1.1fr 1.25fr', gap: '3rem' }}>
-                        
+
                         {/* ==============================================
                             LEFT COLUMN: COORDINATES & TELEMETRY
                             ============================================== */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                            
+
                             {/* main telemetry panel */}
                             <div style={{
                                 backgroundColor: 'rgba(10,10,10,0.85)',
@@ -106,34 +106,34 @@ const Contact: React.FC = () => {
 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1rem' }}>
                                     <Activity size={16} style={{ color: '#C09A5A' }} />
-                                    <span style={{ fontSize: '1.1rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
-                                        TỌA ĐỘ STUDIO & TRẠNG THÁI HUD
+                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
+                                        STUDIO COORDINATES & HUD STATUS
                                     </span>
                                 </div>
 
                                 {/* HUD System specifications */}
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.8rem', fontFamily: 'monospace' }}>
                                     <div>
-                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>TỌA ĐỘ</span>
+                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>COORDINATES</span>
                                         <span style={{ fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 600 }}>10.8411° N, 106.8073° E</span>
                                     </div>
                                     <div>
-                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ĐỘ CAO / MÚI GIỜ</span>
+                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ALTITUDE / TIMEZONE</span>
                                         <span style={{ fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 600 }}>12M / GMT+7</span>
                                     </div>
                                     <div>
-                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ĐỘ TRỄ HỆ THỐNG</span>
-                                        <span style={{ fontSize: '1.1rem', color: '#C09A5A', fontWeight: 700 }}>PHẢN HỒI &lt; 24H</span>
+                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>SYSTEM LATENCY</span>
+                                        <span style={{ fontSize: '0.75rem', color: '#C09A5A', fontWeight: 700 }}>REPLY &lt; 24H</span>
                                     </div>
                                     <div>
-                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>GIỜ ĐỊA PHƯƠNG</span>
+                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>LOCAL TIME</span>
                                         <span style={{ fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 600, letterSpacing: '0.1em' }}>[ {localTime || '14:49:00'} ]</span>
                                     </div>
                                 </div>
 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.6rem 1rem', backgroundColor: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)', width: 'fit-content', marginBottom: '2rem' }}>
                                     <span style={{ width: '6px', height: '6px', backgroundColor: '#22c55e', borderRadius: '50%', boxShadow: '0 0 8px #22c55e', animation: 'blinking 1.5s infinite' }} />
-                                    <span style={{ fontSize: '0.6rem', color: '#22c55e', fontWeight: 900, letterSpacing: '0.15em', textTransform: 'uppercase' }}>TRẠNG THÁI STUDIO: ĐANG HOẠT ĐỘNG</span>
+                                    <span style={{ fontSize: '0.6rem', color: '#22c55e', fontWeight: 900, letterSpacing: '0.15em', textTransform: 'uppercase' }}>STUDIO STATUS: OPERATIONAL</span>
                                 </div>
 
                                 {/* Custom dark monochrome styled Google Map Embed */}
@@ -145,17 +145,17 @@ const Contact: React.FC = () => {
                                     position: 'relative',
                                     boxShadow: '0 8px 25px rgba(0,0,0,0.5)'
                                 }}>
-                                    <iframe 
+                                    <iframe
                                         title="Studio Location"
                                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.6099415305103!2d106.80730811162446!3d10.841133257950098!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752731176b07b1%3A0xb752b94c37999914!2sFPT%20University%20HCMC!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
-                                        width="100%" 
-                                        height="100%" 
-                                        style={{ 
+                                        width="100%"
+                                        height="100%"
+                                        style={{
                                             border: 0,
                                             filter: 'invert(90%) hue-rotate(180deg) grayscale(100%) contrast(1.2) brightness(0.9)'
-                                        }} 
-                                        allowFullScreen={false} 
-                                        loading="lazy" 
+                                        }}
+                                        allowFullScreen={false}
+                                        loading="lazy"
                                         referrerPolicy="no-referrer-when-downgrade"
                                     />
                                 </div>
@@ -164,8 +164,8 @@ const Contact: React.FC = () => {
                             {/* Contact channels grid */}
                             <div className="contact-channels-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
                                 {[
-                                    { icon: <Mail size={18} />, title: 'KÊNH EMAIL', detail: 'auraproduction2512@gmail.com', sub: 'Hỗ trợ dự án 24/7' },
-                                    { icon: <Phone size={18} />, title: 'HOTLINE TRỰC TIẾP', detail: '0941676736', sub: 'Thứ 2 - Thứ 6, 9h - 18h' },
+                                    { icon: <Mail size={18} />, title: 'EMAIL CHANNEL', detail: 'auraproduction2512@gmail.com', sub: 'Hỗ trợ dự án 24/7' },
+                                    { icon: <Phone size={18} />, title: 'DIRECT HOTLINE', detail: '0333 908 576', sub: 'Thứ 2 - Thứ 6, 9h - 18h' },
                                 ].map((item, i) => (
                                     <div
                                         key={i}
@@ -182,7 +182,7 @@ const Contact: React.FC = () => {
                                     >
                                         <div style={{ color: '#C09A5A' }}>{item.icon}</div>
                                         <div>
-                                            <span style={{ display: 'block', fontSize: '0.9rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                                            <span style={{ display: 'block', fontSize: '0.6rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
                                                 {item.title}
                                             </span>
                                             <span style={{ display: 'block', fontSize: '0.85rem', color: '#FFFFFF', fontWeight: 600, fontFamily: 'monospace' }}>
@@ -207,8 +207,8 @@ const Contact: React.FC = () => {
                             }}>
                                 <MapPin size={20} style={{ color: '#C09A5A', marginTop: '2px', flexShrink: 0 }} />
                                 <div>
-                                    <span style={{ display: 'block', fontSize: '0.9rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-                                        TRỤ SỞ CHÍNH STUDIO
+                                    <span style={{ display: 'block', fontSize: '0.6rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                                        STUDIO HEADQUARTERS
                                     </span>
                                     <span style={{ display: 'block', fontSize: '0.8rem', color: '#FFFFFF', fontWeight: 500, lineHeight: 1.5 }}>
                                         Lô E2a-7, Đường D1, Đ. Võ Chí Công, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh
@@ -231,7 +231,7 @@ const Contact: React.FC = () => {
                             position: 'relative',
                             boxShadow: '0 15px 40px rgba(0,0,0,0.6)'
                         }} className="brief-console-viewport">
-                            
+
                             {/* Corner viewfinders */}
                             <div style={{ position: 'absolute', inset: '10px', pointerEvents: 'none', opacity: 0.3 }}>
                                 <div style={{ position: 'absolute', top: 0, left: 0, width: '12px', height: '12px', borderTop: '2px solid #C09A5A', borderLeft: '2px solid #C09A5A' }} />
@@ -242,12 +242,12 @@ const Contact: React.FC = () => {
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1.2rem' }}>
                                 <Compass size={16} style={{ color: '#C09A5A' }} />
-                                <span style={{ fontSize: '1.1rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
-                                    KHỞI TẠO BẢN TÓM TẮT SẢN XUẤT DỰ ÁN
+                                <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
+                                    INITIATE PROJECT PRODUCTION BRIEFING
                                 </span>
                             </div>
 
-                            <form 
+                            <form
                                 onSubmit={async (e) => {
                                     e.preventDefault();
                                     const target = e.target as any;
@@ -258,14 +258,14 @@ const Contact: React.FC = () => {
                                         subject: target[3].value,
                                         message: target[4].value
                                     };
-                                    
+
                                     try {
                                         const btn = document.getElementById('submit-btn');
                                         if (btn) {
-                                            btn.innerText = 'ĐANG GỬI BẢN THẢO...';
+                                            btn.innerText = 'TRANSMITTING BRIEFING...';
                                             btn.style.opacity = '0.7';
                                         }
-                                        
+
                                         await contactApi.sendMessage(data);
                                         alert('Cảm ơn bạn! Hợp đồng kịch bản sơ bộ đã được truyền thành công tới máy chủ Aura.');
                                         target.reset();
@@ -278,107 +278,107 @@ const Contact: React.FC = () => {
                                             btn.style.opacity = '1';
                                         }
                                     }
-                                }} 
+                                }}
                                 style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}
                             >
                                 {/* Direct grid for inputs, keeping the absolute sequential order of inputs intact */}
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.8rem' }}>
-                                    
+
                                     {/* Input 1: Name */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>01 / HỌ VÀ TÊN *</label>
-                                        <input 
-                                            required 
-                                            type="text" 
-                                            placeholder="Nhập họ và tên..." 
+                                        <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>01 / HỌ VÀ TÊN *</label>
+                                        <input
+                                            required
+                                            type="text"
+                                            placeholder="Nhập họ và tên..."
                                             style={{
                                                 width: '100%', border: '1px solid rgba(255,255,255,0.06)', padding: '1.1rem 1.3rem',
                                                 color: '#FFFFFF', fontSize: '0.85rem', outline: 'none', backgroundColor: '#0B0B0B',
                                                 borderRadius: 0, transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                                            }} 
-                                            className="console-input" 
+                                            }}
+                                            className="console-input"
                                         />
                                     </div>
 
                                     {/* Input 2: Email */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>02 / ĐỊA CHỈ EMAIL *</label>
-                                        <input 
-                                            required 
-                                            type="email" 
-                                            placeholder="example@domain.com" 
+                                        <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>02 / ĐỊA CHỈ EMAIL *</label>
+                                        <input
+                                            required
+                                            type="email"
+                                            placeholder="example@domain.com"
                                             style={{
                                                 width: '100%', border: '1px solid rgba(255,255,255,0.06)', padding: '1.1rem 1.3rem',
                                                 color: '#FFFFFF', fontSize: '0.85rem', outline: 'none', backgroundColor: '#0B0B0B',
                                                 borderRadius: 0, transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                                            }} 
-                                            className="console-input" 
+                                            }}
+                                            className="console-input"
                                         />
                                     </div>
 
                                     {/* Input 3: Phone */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>03 / SỐ ĐIỆN THOẠI *</label>
-                                        <input 
-                                            required 
-                                            type="tel" 
-                                            placeholder="Nhập số điện thoại..." 
+                                        <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>03 / SỐ ĐIỆN THOẠI *</label>
+                                        <input
+                                            required
+                                            type="tel"
+                                            placeholder="Nhập số điện thoại..."
                                             style={{
                                                 width: '100%', border: '1px solid rgba(255,255,255,0.06)', padding: '1.1rem 1.3rem',
                                                 color: '#FFFFFF', fontSize: '0.85rem', outline: 'none', backgroundColor: '#0B0B0B',
                                                 borderRadius: 0, transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                                            }} 
-                                            className="console-input" 
+                                            }}
+                                            className="console-input"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Input 4: Subject */}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>04 / CHỦ ĐỀ BRIEFING *</label>
-                                    <input 
-                                        required 
-                                        type="text" 
-                                        placeholder="Ví dụ: Sản xuất TVC Commercial, Phim Thương Hiệu..." 
+                                    <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>04 / CHỦ ĐỀ BRIEFING *</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        placeholder="Ví dụ: Sản xuất TVC Commercial, Phim Thương Hiệu..."
                                         style={{
                                             width: '100%', border: '1px solid rgba(255,255,255,0.06)', padding: '1.1rem 1.3rem',
                                             color: '#FFFFFF', fontSize: '0.85rem', outline: 'none', backgroundColor: '#0B0B0B',
                                             borderRadius: 0, transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                                        }} 
-                                        className="console-input" 
+                                        }}
+                                        className="console-input"
                                     />
                                 </div>
 
                                 {/* Input 5: Message */}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>05 / CHI TIẾT Ý TƯỞNG & YÊU CẦU DỰ ÁN *</label>
-                                    <textarea 
-                                        required 
-                                        placeholder="Hãy chia sẻ định hướng, câu chuyện thương hiệu, thời lượng phim dự kiến hoặc các thiết bị mong muốn của bạn..." 
-                                        rows={7} 
+                                    <label style={{ fontSize: '0.55rem', color: '#C09A5A', letterSpacing: '0.12em', fontWeight: 800, textTransform: 'uppercase' }}>05 / CHI TIẾT Ý TƯỞNG & YÊU CẦU DỰ ÁN *</label>
+                                    <textarea
+                                        required
+                                        placeholder="Hãy chia sẻ định hướng, câu chuyện thương hiệu, thời lượng phim dự kiến hoặc các thiết bị mong muốn của bạn..."
+                                        rows={7}
                                         style={{
                                             width: '100%', border: '1px solid rgba(255,255,255,0.06)', padding: '1.1rem 1.3rem',
                                             color: '#FFFFFF', fontSize: '0.85rem', outline: 'none', resize: 'vertical', backgroundColor: '#0B0B0B',
                                             borderRadius: 0, transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', lineHeight: 1.6
-                                        }} 
-                                        className="console-input" 
+                                        }}
+                                        className="console-input"
                                     />
                                 </div>
- 
+
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-                                    <button 
-                                        id="submit-btn" 
-                                        type="submit" 
+                                    <button
+                                        id="submit-btn"
+                                        type="submit"
                                         style={{
-                                            backgroundColor: '#C09A5A', 
-                                            color: '#050505', 
+                                            backgroundColor: '#C09A5A',
+                                            color: '#050505',
                                             padding: '1.3rem 3rem',
-                                            fontSize: '0.85rem', 
-                                            letterSpacing: '0.2em', 
-                                            textTransform: 'uppercase', 
+                                            fontSize: '0.85rem',
+                                            letterSpacing: '0.2em',
+                                            textTransform: 'uppercase',
                                             fontWeight: 900,
-                                            cursor: 'pointer', 
-                                            border: 'none', 
+                                            cursor: 'pointer',
+                                            border: 'none',
                                             width: '100%',
                                             transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                                             borderRadius: 0,
@@ -387,7 +387,7 @@ const Contact: React.FC = () => {
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             gap: '12px'
-                                        }} 
+                                        }}
                                         className="console-submit-btn"
                                     >
                                         GỬI KHỞI TẠO BẢN THẢO <ArrowRight size={16} className="submit-arrow" style={{ transition: 'transform 0.3s ease' }} />
