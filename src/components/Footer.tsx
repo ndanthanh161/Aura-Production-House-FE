@@ -62,7 +62,7 @@ export const Footer: React.FC = () => {
                                 <Mail size={18} strokeWidth={1.5} style={{ color: '#C09A5A' }} /> Email: auraproduction2512@gmail.com
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
-                                <Phone size={18} strokeWidth={1.5} style={{ color: '#C09A5A' }} /> Thông tin liên hệ: 090 5655 944
+                                <Phone size={18} strokeWidth={1.5} style={{ color: '#C09A5A' }} /> Thông tin liên hệ: 0333908576
                             </div>
                             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
                                 <MapPin size={18} strokeWidth={1.5} style={{ color: '#C09A5A', marginTop: '3px' }} />
