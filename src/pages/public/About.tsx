@@ -34,7 +34,7 @@ const About: React.FC = () => {
                     color: '#C09A5A',
                     textTransform: 'uppercase',
                     letterSpacing: '0.4em',
-                    fontSize: '0.75rem',
+                    fontSize: '1.2rem',
                     fontWeight: 800,
                     display: 'block',
                     marginBottom: '1.5rem'
@@ -116,7 +116,7 @@ const About: React.FC = () => {
                         transition={{ duration: 1, delay: 0.2 }}
                         style={{ display: 'flex', flexDirection: 'column' }}
                     >
-                        <span style={{ fontSize: '0.6rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '1rem' }}>
+                        <span style={{ fontSize: '0.9rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '1rem' }}>
                             02 / MISSION & VISION STATEMENT
                         </span>
                         
@@ -159,7 +159,7 @@ const About: React.FC = () => {
             }}>
                 <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
                     <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                        <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.3em', fontSize: '0.7rem', fontWeight: 800, display: 'block', marginBottom: '0.8rem' }}>
+                        <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.3em', fontSize: '1.1rem', fontWeight: 800, display: 'block', marginBottom: '0.8rem' }}>
                             AURA CORE PHILOSOPHY
                         </span>
                         <h3 style={{
@@ -233,7 +233,7 @@ const About: React.FC = () => {
                                     <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#FFFFFF', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                         {item.title}
                                     </h4>
-                                    <span style={{ display: 'block', fontSize: '0.6rem', color: '#C09A5A', fontWeight: 700, letterSpacing: '0.1em', marginTop: '0.2rem', textTransform: 'uppercase' }}>
+                                    <span style={{ display: 'block', fontSize: '0.9rem', color: '#C09A5A', fontWeight: 700, letterSpacing: '0.1em', marginTop: '0.2rem', textTransform: 'uppercase' }}>
                                         {item.subtitle}
                                     </span>
                                 </div>

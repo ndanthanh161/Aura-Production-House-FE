@@ -113,7 +113,7 @@ const Services: React.FC = () => {
 
             <section className="container" style={{ padding: '4rem 0 8rem', position: 'relative', zIndex: 2 }}>
                 <header style={{ maxWidth: '1000px', marginBottom: '5rem', textAlign: 'center', margin: '0 auto 5rem' }}>
-                    <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1.5rem' }}>
+                    <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '1.2rem', fontWeight: 800, display: 'block', marginBottom: '1.5rem' }}>
                         DỊCH VỤ CỦA CHÚNG TÔI
                     </span>
                     <motion.h1
@@ -376,7 +376,7 @@ const Services: React.FC = () => {
 
                         {/* Sticky Header Side */}
                         <div style={{ flex: '0.8', position: 'sticky', top: '150px' }}>
-                            <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1.5rem' }}>
+                             <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '1.2rem', fontWeight: 800, display: 'block', marginBottom: '1.5rem' }}>
                                 QUY TRÌNH LÀM VIỆC
                             </span>
                             <h2 style={{
@@ -427,7 +427,7 @@ const Services: React.FC = () => {
                                         <div style={{ flex: '1.2', minWidth: '280px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
                                                 <span style={{ 
-                                                    fontSize: '0.85rem', 
+                                                    fontSize: '1.1rem', 
                                                     color: '#C09A5A', 
                                                     letterSpacing: '0.2em', 
                                                     fontWeight: 800 
@@ -518,7 +518,7 @@ const Services: React.FC = () => {
 
                 <div className="container" style={{ position: 'relative', zIndex: 1 }}>
                     <header style={{ marginBottom: '6rem', textAlign: 'center' }}>
-                        <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1rem' }}>
+                        <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '1.2rem', fontWeight: 800, display: 'block', marginBottom: '1rem' }}>
                             CHẤT LƯỢNG ĐỘC BẢN CỦA AURA
                         </span>
                         <h2 style={{
@@ -606,7 +606,7 @@ const Services: React.FC = () => {
                                         <span style={{ fontSize: '0.6rem', color: 'rgba(255, 255, 255, 0.4)', letterSpacing: '0.25em', fontWeight: 800 }}>
                                             CAMERA {std.step} // AURA SYSTEM
                                         </span>
-                                        <span style={{ fontSize: '0.65rem', color: '#C09A5A', letterSpacing: '0.1em', fontWeight: 800 }}>
+                                        <span style={{ fontSize: '0.9rem', color: '#C09A5A', letterSpacing: '0.1em', fontWeight: 800 }}>
                                             LUT: {std.metadata.lut}
                                         </span>
                                     </div>
@@ -665,7 +665,7 @@ const Services: React.FC = () => {
                                     }}>
                                         {/* Subtitle Accent */}
                                         <div style={{
-                                            fontSize: '0.75rem',
+                                            fontSize: '1.1rem',
                                             color: '#C09A5A',
                                             fontWeight: 800,
                                             letterSpacing: '0.25em',

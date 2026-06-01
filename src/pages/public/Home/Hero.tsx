@@ -202,7 +202,7 @@ export const Hero: React.FC = () => {
                             <div style={{ width: '32px', height: '2px', backgroundColor: '#C09A5A' }} />
                             <span style={{
                                 color: '#C09A5A',
-                                fontSize: '0.85rem',
+                                fontSize: '1.1rem',
                                 letterSpacing: '0.15em',
                                 textTransform: 'uppercase',
                                 fontWeight: 800,
@@ -366,7 +366,7 @@ export const Hero: React.FC = () => {
                                             }}>
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '4px' }}>
                                                     <div style={{ width: '16px', height: '1.5px', backgroundColor: '#C09A5A' }} />
-                                                    <span style={{ color: '#C09A5A', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 800 }}>
+                                                    <span style={{ color: '#C09A5A', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 800 }}>
                                                         {project.category}
                                                     </span>
                                                 </div>

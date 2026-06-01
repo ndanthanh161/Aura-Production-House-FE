@@ -74,7 +74,7 @@ const Vault: React.FC = () => {
                     >
                         <span style={{
                             display: 'block',
-                            fontSize: '0.75rem',
+                            fontSize: '1.2rem',
                             fontWeight: 700,
                             letterSpacing: '0.35em',
                             textTransform: 'uppercase',

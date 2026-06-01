@@ -70,7 +70,7 @@ export const VaultLockedScreen: React.FC = React.memo(() => {
                 </motion.div>
 
                 <span style={{
-                    fontSize: '0.75rem',
+                    fontSize: '1.2rem',
                     fontWeight: 800,
                     letterSpacing: '0.3em',
                     color: 'var(--color-accent)',

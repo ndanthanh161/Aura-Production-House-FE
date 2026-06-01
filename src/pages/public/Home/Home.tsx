@@ -108,7 +108,7 @@ const Home: React.FC = () => {
                             <span style={{ position: 'absolute', bottom: '1.5rem', left: '1.5rem', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace', pointerEvents: 'none' }}>
                                 ISO: 800 | 24 FPS
                             </span>
-                            <span style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem', fontSize: '0.6rem', color: '#C09A5A', fontWeight: 800, fontFamily: 'monospace', pointerEvents: 'none' }}>
+                            <span style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem', fontSize: '0.85rem', color: '#C09A5A', fontWeight: 800, fontFamily: 'monospace', pointerEvents: 'none' }}>
                                 AURA OPTICS
                             </span>
                         </motion.div>
@@ -125,7 +125,7 @@ const Home: React.FC = () => {
                                 color: '#C09A5A',
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.3em',
-                                fontSize: '0.75rem',
+                                fontSize: '1.2rem',
                                 fontWeight: 800,
                                 display: 'block',
                                 marginBottom: '1rem'
@@ -222,7 +222,7 @@ const Home: React.FC = () => {
                         >
                             <span style={{
                                 color: '#C09A5A',
-                                fontSize: '0.75rem',
+                                fontSize: '1.2rem',
                                 fontWeight: 800,
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.25em',
@@ -314,22 +314,22 @@ const Home: React.FC = () => {
                             
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
                                 <div>
-                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Địa Chỉ Trụ Sở</span>
+                                    <span style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Địa Chỉ Trụ Sở</span>
                                     <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0, lineHeight: 1.6 }}>Lô E2a-7, Đường D1, Đ. Võ Chí Công, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh</p>
                                 </div>
                                 
                                 <div>
-                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Đường Dây Nóng</span>
+                                    <span style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Đường Dây Nóng</span>
                                     <p style={{ color: '#FFFFFF', fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>0909 123 456</p>
                                 </div>
 
                                 <div>
-                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Hòm Thư Điện Tử</span>
+                                    <span style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Hòm Thư Điện Tử</span>
                                     <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0 }}>auraproduction2512@gmail.com</p>
                                 </div>
 
                                 <div>
-                                    <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Giờ Làm Việc</span>
+                                    <span style={{ fontSize: '0.85rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 700, display: 'block', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Giờ Làm Việc</span>
                                     <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.95rem', margin: 0 }}>Thứ 2 - Thứ 7: 09:00 - 18:00</p>
                                 </div>
                             </div>
