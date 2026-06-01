@@ -45,7 +45,7 @@ const Contact: React.FC = () => {
             <header style={{ padding: 'clamp(3rem, 6vw, 5rem) 0 2rem', textAlign: 'center', position: 'relative', zIndex: 1 }}>
                 <div className="container">
                     <span style={{ color: '#C09A5A', textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '0.75rem', fontWeight: 800, display: 'block', marginBottom: '1.2rem' }}>
-                        THE CINE-COMMISSION SYSTEM
+                        HỆ THỐNG TIẾP NHẬN YÊU CẦU SẢN XUẤT
                     </span>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
@@ -107,33 +107,33 @@ const Contact: React.FC = () => {
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1rem' }}>
                                     <Activity size={16} style={{ color: '#C09A5A' }} />
                                     <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
-                                        STUDIO COORDINATES & HUD STATUS
+                                        TỌA ĐỘ STUDIO & TRẠNG THÁI HUD
                                     </span>
                                 </div>
 
                                 {/* HUD System specifications */}
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.8rem', fontFamily: 'monospace' }}>
                                     <div>
-                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>COORDINATES</span>
+                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>TỌA ĐỘ</span>
                                         <span style={{ fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 600 }}>10.8411° N, 106.8073° E</span>
                                     </div>
                                     <div>
-                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ALTITUDE / TIMEZONE</span>
+                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ĐỘ CAO / MÚI GIỜ</span>
                                         <span style={{ fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 600 }}>12M / GMT+7</span>
                                     </div>
                                     <div>
-                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>SYSTEM LATENCY</span>
-                                        <span style={{ fontSize: '0.75rem', color: '#C09A5A', fontWeight: 700 }}>REPLY &lt; 24H</span>
+                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ĐỘ TRỄ HỆ THỐNG</span>
+                                        <span style={{ fontSize: '0.75rem', color: '#C09A5A', fontWeight: 700 }}>PHẢN HỒI &lt; 24H</span>
                                     </div>
                                     <div>
-                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>LOCAL TIME</span>
+                                        <span style={{ display: 'block', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>GIỜ ĐỊA PHƯƠNG</span>
                                         <span style={{ fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 600, letterSpacing: '0.1em' }}>[ {localTime || '14:49:00'} ]</span>
                                     </div>
                                 </div>
 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.6rem 1rem', backgroundColor: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)', width: 'fit-content', marginBottom: '2rem' }}>
                                     <span style={{ width: '6px', height: '6px', backgroundColor: '#22c55e', borderRadius: '50%', boxShadow: '0 0 8px #22c55e', animation: 'blinking 1.5s infinite' }} />
-                                    <span style={{ fontSize: '0.6rem', color: '#22c55e', fontWeight: 900, letterSpacing: '0.15em', textTransform: 'uppercase' }}>STUDIO STATUS: OPERATIONAL</span>
+                                    <span style={{ fontSize: '0.6rem', color: '#22c55e', fontWeight: 900, letterSpacing: '0.15em', textTransform: 'uppercase' }}>TRẠNG THÁI STUDIO: ĐANG HOẠT ĐỘNG</span>
                                 </div>
 
                                 {/* Custom dark monochrome styled Google Map Embed */}
@@ -164,8 +164,8 @@ const Contact: React.FC = () => {
                             {/* Contact channels grid */}
                             <div className="contact-channels-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
                                 {[
-                                    { icon: <Mail size={18} />, title: 'EMAIL CHANNEL', detail: 'auraproduction2512@gmail.com', sub: 'Hỗ trợ dự án 24/7' },
-                                    { icon: <Phone size={18} />, title: 'DIRECT HOTLINE', detail: '0941676736', sub: 'Thứ 2 - Thứ 6, 9h - 18h' },
+                                    { icon: <Mail size={18} />, title: 'KÊNH EMAIL', detail: 'auraproduction2512@gmail.com', sub: 'Hỗ trợ dự án 24/7' },
+                                    { icon: <Phone size={18} />, title: 'HOTLINE TRỰC TIẾP', detail: '0941676736', sub: 'Thứ 2 - Thứ 6, 9h - 18h' },
                                 ].map((item, i) => (
                                     <div
                                         key={i}
@@ -208,7 +208,7 @@ const Contact: React.FC = () => {
                                 <MapPin size={20} style={{ color: '#C09A5A', marginTop: '2px', flexShrink: 0 }} />
                                 <div>
                                     <span style={{ display: 'block', fontSize: '0.6rem', color: '#C09A5A', letterSpacing: '0.15em', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-                                        STUDIO HEADQUARTERS
+                                        TRỤ SỞ CHÍNH STUDIO
                                     </span>
                                     <span style={{ display: 'block', fontSize: '0.8rem', color: '#FFFFFF', fontWeight: 500, lineHeight: 1.5 }}>
                                         Lô E2a-7, Đường D1, Đ. Võ Chí Công, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh
@@ -243,7 +243,7 @@ const Contact: React.FC = () => {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1.2rem' }}>
                                 <Compass size={16} style={{ color: '#C09A5A' }} />
                                 <span style={{ fontSize: '0.7rem', color: '#C09A5A', letterSpacing: '0.2em', fontWeight: 800, textTransform: 'uppercase' }}>
-                                    INITIATE PROJECT PRODUCTION BRIEFING
+                                    KHỞI TẠO BẢN TÓM TẮT SẢN XUẤT DỰ ÁN
                                 </span>
                             </div>
 
@@ -262,7 +262,7 @@ const Contact: React.FC = () => {
                                     try {
                                         const btn = document.getElementById('submit-btn');
                                         if (btn) {
-                                            btn.innerText = 'TRANSMITTING BRIEFING...';
+                                            btn.innerText = 'ĐANG GỬI BẢN THẢO...';
                                             btn.style.opacity = '0.7';
                                         }
                                         

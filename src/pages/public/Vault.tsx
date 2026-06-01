@@ -97,52 +97,12 @@ const Vault: React.FC = () => {
                                 Kho <span style={{ fontWeight: 900 }}>tài liệu</span>
                             </h1>
 
-                            <div style={{
-                                fontSize: '0.7rem',
-                                fontFamily: 'monospace',
-                                color: 'var(--color-text-muted)',
-                                padding: '6px 14px',
-                                border: '1px solid var(--color-border)',
-                                backgroundColor: 'rgba(255,255,255,0.01)',
-                                borderRadius: '8px',
-                                letterSpacing: '0.05em'
-                            }}>
-                                {`[ VAULT_SECURE // VIP_VAULT: ${templates.length} ]`}
-                            </div>
+
                         </div>
                     </motion.div>
                 </header>
 
-                {/* Telemetry Clock HUD */}
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '10px 20px',
-                    backgroundColor: 'rgba(10, 10, 10, 0.4)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: '12px',
-                    fontSize: '0.68rem',
-                    fontFamily: 'monospace',
-                    color: 'var(--color-text-muted)',
-                    marginBottom: '3rem',
-                    backdropFilter: 'blur(8px)',
-                    letterSpacing: '0.05em',
-                    position: 'relative'
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span className="telemetry-record-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#C09A5A', display: 'inline-block' }} />
-                            AURA [LIVE]
-                        </span>
-                        <span className="hidden-xs">STU_MODE: MONITOR</span>
-                        <span className="hidden-xs">FPS: 60.00</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <span>CODEC: PRORES 422 HQ</span>
-                        <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>SECURE_LOCK: ESTABLISHED</span>
-                    </div>
-                </div>
+
 
                 <AnimatePresence mode="wait">
                     {templatesLoading ? (
