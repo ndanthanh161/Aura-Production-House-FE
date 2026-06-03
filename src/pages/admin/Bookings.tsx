@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, RefreshCw, Ban, Search, Loader2, CheckCircle, UserPlus, Edit3, ExternalLink } from 'lucide-react';
+import { X, RefreshCw, Ban, Search, Loader2, CheckCircle, UserPlus, Edit3, ExternalLink, CreditCard } from 'lucide-react';
 import { projectApi } from '../../services/projectApi';
 import { photographerApi } from '../../services/userApi';
+import { paymentApi } from '../../services/paymentApi';
 import type { Project, ProjectStatus, UpdateProjectRequest } from '../../types/project.types';
 import type { UserDTO } from '../../types/user.types';
 
@@ -18,6 +19,7 @@ const AdminBookings: React.FC = () => {
     const [filtered, setFiltered] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [search, setSearch] = useState('');
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
@@ -34,6 +36,12 @@ const AdminBookings: React.FC = () => {
 
     const [saving, setSaving] = useState(false);
     const [viewProject, setViewProject] = useState<Project | null>(null);
+
+    // Payment confirmation state
+    const [paymentConfirmProject, setPaymentConfirmProject] = useState<Project | null>(null);
+    const [txId, setTxId] = useState('');
+    const [txAmount, setTxAmount] = useState<number>(0);
+    const [paymentError, setPaymentError] = useState('');
 
     const fetchBookings = async () => {
         try {
@@ -138,6 +146,40 @@ const AdminBookings: React.FC = () => {
         setResultLink(project.resultLink || '');
     };
 
+    const openPaymentConfirmModal = (project: Project) => {
+        setPaymentConfirmProject(project);
+        setTxId('');
+        setTxAmount(project.revenue);
+        setPaymentError('');
+        setSuccess('');
+    };
+
+    const handleConfirmPayment = async () => {
+        if (!paymentConfirmProject || !txId || txAmount <= 0) return;
+
+        if (txAmount < paymentConfirmProject.revenue) {
+            setPaymentError(`Số tiền nhập (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(txAmount)}) nhỏ hơn giá gói dịch vụ (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(paymentConfirmProject.revenue)}).`);
+            return;
+        }
+
+        setSaving(true);
+        setPaymentError('');
+        try {
+            await paymentApi.manualConfirm({
+                projectId: paymentConfirmProject.id,
+                transferAmount: txAmount,
+                transactionId: txId
+            });
+            setPaymentConfirmProject(null);
+            setSuccess(`Phê duyệt thanh toán cho dự án "${paymentConfirmProject.name}" thành công!`);
+            fetchBookings();
+        } catch (err: any) {
+            setPaymentError(err.message || 'Xác nhận thanh toán thất bại.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const fmtDate = (d: string) => new Date(d).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
     return (
@@ -162,6 +204,7 @@ const AdminBookings: React.FC = () => {
             </div>
 
             {error && <div style={alertStyle}>{error} <button onClick={() => setError('')}><X size={14} /></button></div>}
+            {success && <div style={successAlertStyle}>{success} <button onClick={() => setSuccess('')}><X size={14} /></button></div>}
 
             {loading ? (
                 <div style={centerStyle}><Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-accent)' }} /></div>
@@ -218,6 +261,11 @@ const AdminBookings: React.FC = () => {
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                 {b.status !== 'Cancelled' && b.status !== 'Completed' && (
                                                     <>
+                                                        {b.status === 'Scheduled' && (
+                                                            <button onClick={() => openPaymentConfirmModal(b)} style={btnIconSuccess} title="Xác nhận thanh toán thủ công">
+                                                                <CreditCard size={15} />
+                                                            </button>
+                                                        )}
                                                         <button onClick={() => { setRescheduleId(b.id); setNewDate(''); }} style={btnIcon} title="Đổi lịch">
                                                             <RefreshCw size={15} />
                                                         </button>
@@ -413,6 +461,77 @@ const AdminBookings: React.FC = () => {
                 </div>
             )}
 
+            {/* Payment Manual Confirmation Modal */}
+            {paymentConfirmProject && (
+                <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setPaymentConfirmProject(null)}>
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={modalStyle}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Xác Nhận Thanh Toán</h2>
+                            <button onClick={() => setPaymentConfirmProject(null)} style={{ color: 'var(--color-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} /></button>
+                        </div>
+
+                        {paymentError && (
+                            <div style={{ ...alertStyle, marginBottom: '1.25rem' }}>
+                                <span>{paymentError}</span>
+                                <button onClick={() => setPaymentError('')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}><X size={14} /></button>
+                            </div>
+                        )}
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                            <div>
+                                <label style={labelStyle}>Dự án</label>
+                                <p style={{ fontWeight: 600, color: 'var(--color-text)', fontSize: '0.95rem' }}>{paymentConfirmProject.name}</p>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Khách hàng: {paymentConfirmProject.clientName}</p>
+                            </div>
+
+                            <div>
+                                <label style={labelStyle}>Mã giao dịch (Transaction ID) *</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ví dụ: FT2615482390 hoặc ID SePay"
+                                    value={txId}
+                                    onChange={e => setTxId(e.target.value)}
+                                    style={inputStyle}
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label style={labelStyle}>Số tiền thanh toán (VND) *</label>
+                                <input
+                                    type="number"
+                                    placeholder="Nhập số tiền"
+                                    value={txAmount || ''}
+                                    onChange={e => setTxAmount(Number(e.target.value))}
+                                    style={inputStyle}
+                                    required
+                                />
+                                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.4rem' }}>
+                                    Số tiền yêu cầu của gói: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(paymentConfirmProject.revenue)}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button 
+                                onClick={handleConfirmPayment} 
+                                disabled={saving || !txId || txAmount <= 0} 
+                                style={{ 
+                                    ...btnPrimary, 
+                                    flex: 1, 
+                                    justifyContent: 'center', 
+                                    opacity: (saving || !txId || txAmount <= 0) ? 0.6 : 1,
+                                    cursor: (saving || !txId || txAmount <= 0) ? 'not-allowed' : 'pointer'
+                                }}
+                            >
+                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={16} />} Phê Duyệt
+                            </button>
+                            <button onClick={() => setPaymentConfirmProject(null)} style={btnSecondary}>Huỷ</button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+
             <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
         </div>
     );
@@ -422,7 +541,9 @@ const btnPrimary: React.CSSProperties = { display: 'flex', alignItems: 'center',
 const btnSecondary: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'transparent', color: 'var(--color-text-muted)', padding: '0.5rem 1rem', fontSize: '0.875rem', fontWeight: 500, borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--color-border)' };
 const btnIcon: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--color-border)', backgroundColor: 'transparent', color: 'var(--color-text-muted)' };
 const btnIconDanger: React.CSSProperties = { ...btnIcon, border: 'none', backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444' };
+const btnIconSuccess: React.CSSProperties = { ...btnIcon, border: 'none', backgroundColor: 'rgba(34,197,94,0.1)', color: '#22c55e' };
 const alertStyle: React.CSSProperties = { backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.75rem 1rem', borderRadius: '6px', fontSize: '0.875rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
+const successAlertStyle: React.CSSProperties = { backgroundColor: 'rgba(34,197,94,0.1)', color: '#22c55e', padding: '0.75rem 1rem', borderRadius: '6px', fontSize: '0.875rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
 const centerStyle: React.CSSProperties = { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4rem' };
 const overlayStyle: React.CSSProperties = { position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 };
 const modalStyle: React.CSSProperties = { backgroundColor: 'var(--color-bg-secondary)', borderRadius: '12px', padding: '2rem', width: '100%', maxWidth: '440px', border: '1px solid var(--color-border)' };
