@@ -28,7 +28,7 @@ export interface AuthResponse {
     vipExpireAt?: string | null;
     avatar?: string | null;
     accessToken: string;
-    refreshToken: string;
+    refreshToken?: string;
     accessTokenExpiresAt: string;
 }
 

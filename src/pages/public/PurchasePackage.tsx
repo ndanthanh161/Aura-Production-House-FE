@@ -31,7 +31,7 @@ const PurchasePackage: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const existingProjectId = searchParams.get('projectId');
-    const { user } = useAuth();
+    const { user, isLoading: authLoading } = useAuth();
 
     const [step, setStep] = useState(1);
     const [pkg, setPkg] = useState<Package | null>(null);
@@ -54,28 +54,34 @@ const PurchasePackage: React.FC = () => {
 
     // Redirect nếu chưa đăng nhập
     useEffect(() => {
-        if (!user) navigate('/login', { state: { from: `/purchase/${packageId}` } });
-    }, [user, packageId, navigate]);
+        if (!authLoading && !user) {
+            navigate('/login', { state: { from: `/purchase/${packageId}` } });
+        }
+    }, [authLoading, user, packageId, navigate]);
 
-    // Load package detail & SePay info
+    // Load package detail first so the purchase screen can render quickly.
     useEffect(() => {
         if (!packageId) return;
         setLoadingPkg(true);
-        
-        const tasks: Promise<any>[] = [
-            packageApi.getById(packageId),
-            paymentApi.getSePayInfo()
-        ];
 
-        // Nếu có projectId, tải thêm thông tin dự án đó
+        packageApi.getById(packageId)
+            .then((pkgRes) => {
+                if (pkgRes.data) setPkg(pkgRes.data);
+                else setPkgError('Không tìm thấy gói dịch vụ.');
+            })
+            .catch(() => setPkgError('Không thể tải thông tin gói dịch vụ.'))
+            .finally(() => setLoadingPkg(false));
+    }, [packageId]);
+
+    // Load payment/project data without blocking package preview.
+    useEffect(() => {
+        const tasks: Promise<any>[] = [paymentApi.getSePayInfo()];
+
         if (existingProjectId) {
             tasks.push(projectApi.getById(existingProjectId));
         }
 
-        Promise.all(tasks).then(([pkgRes, payRes, projectRes]) => {
-            if (pkgRes.data) setPkg(pkgRes.data);
-            else setPkgError('Không tìm thấy gói dịch vụ.');
-            
+        Promise.all(tasks).then(([payRes, projectRes]) => {
             if (payRes.data) setSepayInfo(payRes.data);
 
             if (projectRes && projectRes.data) {
@@ -85,9 +91,12 @@ const PurchasePackage: React.FC = () => {
                 setStep(3); // Nhảy thẳng đến bước QR
                 setPaymentPolling(true);
             }
-        }).catch(() => setPkgError('Không thể tải thông tin.'))
-          .finally(() => setLoadingPkg(false));
-    }, [packageId, existingProjectId]);
+        }).catch(() => {
+            if (existingProjectId) {
+                setPkgError('Không thể tải thông tin dự án.');
+            }
+        });
+    }, [existingProjectId]);
 
     // Polling payment status
     useEffect(() => {
@@ -204,7 +213,7 @@ const PurchasePackage: React.FC = () => {
     const handleNextStep = useCallback(() => setStep(prev => prev + 1), []);
 
     // ─── Loading / Error ────────────────────────────────────────
-    if (loadingPkg) return (
+    if (authLoading || loadingPkg) return (
         <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Loader2 size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-accent)' }} />
             <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>

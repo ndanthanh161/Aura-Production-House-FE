@@ -10,16 +10,17 @@ import { TemplatePreviewPanel } from '../../components/bookings/TemplatePreviewP
 import '../public/MyBookings.css'; // Reusing HUD / grid animations from MyBookings
 
 const Vault: React.FC = () => {
-    const { user } = useAuth();
+    const { isLoading: authLoading } = useAuth();
     const [templates, setTemplates] = useState<DocumentTemplate[]>([]);
     const [templatesLoading, setTemplatesLoading] = useState(false);
     const [templatesError, setTemplatesError] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState<DocumentTemplate | null>(null);
 
     useEffect(() => {
-        // Fetch templates publicly on mount or user change
-        fetchTemplates();
-    }, [user]);
+        if (!authLoading) {
+            fetchTemplates();
+        }
+    }, [authLoading]);
 
     const fetchTemplates = async () => {
         setTemplatesLoading(true);
@@ -145,7 +146,7 @@ const Vault: React.FC = () => {
                 </div>
 
                 <AnimatePresence mode="wait">
-                    {templatesLoading ? (
+                    {authLoading || templatesLoading ? (
                         <motion.div
                             key="templates-loading"
                             initial={{ opacity: 0 }}
