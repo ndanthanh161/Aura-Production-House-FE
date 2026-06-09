@@ -4,8 +4,6 @@ import type { ApiResponse } from '../types/auth.types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:7283/api/v1/';
 
-// ─── Normalize BE response: hỗ trợ cả PascalCase lẫn camelCase ─
-
 function normalizeApiResponse<T>(raw: Record<string, unknown>): ApiResponse<T> {
     return {
         succeeded: (raw.succeeded ?? raw.Succeeded ?? raw.success ?? raw.Success ?? false) as boolean,
@@ -16,40 +14,40 @@ function normalizeApiResponse<T>(raw: Record<string, unknown>): ApiResponse<T> {
     };
 }
 
-// ─── Axios instance ──────────────────────────────────────────────
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string | null) {
+    accessToken = token;
+}
+
+export function getAccessToken() {
+    return accessToken;
+}
 
 export const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
     headers: { 'Content-Type': 'application/json' },
     timeout: 15000,
+    withCredentials: true,
 });
-
-// ─── Constants for Storage ──────────────────────────────────────
-
-const STORAGE_KEYS = {
-    ACCESS_TOKEN: 'aura_access_token',
-    REFRESH_TOKEN: 'aura_refresh_token',
-} as const;
-
-// ─── Request interceptor: tự gắn Authorization header ───────────
 
 axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-        if (token && config.headers) {
-            config.headers.Authorization = `Bearer ${token}`;
+        if (accessToken && config.headers) {
+            config.headers.Authorization = `Bearer ${accessToken}`;
         }
         return config;
     },
     (error) => Promise.reject(error)
 );
 
-// ─── Helper for Refresh Token ───────────────────────────────────
-
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: Array<{
+    resolve: (token: string | null) => void;
+    reject: (error: unknown) => void;
+}> = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
     failedQueue.forEach((prom) => {
         if (error) {
             prom.reject(error);
@@ -60,72 +58,67 @@ const processQueue = (error: any, token: string | null = null) => {
     failedQueue = [];
 };
 
-// ─── Response interceptor: normalize + Silent Refresh ────────────
+function clearLegacyAuthStorage() {
+    localStorage.removeItem('aura_access_token');
+    localStorage.removeItem('aura_refresh_token');
+    localStorage.removeItem('aura_user');
+    localStorage.removeItem('aura_role');
+}
 
 axiosInstance.interceptors.response.use(
     (response: AxiosResponse) => {
-        // Normalize body về camelCase chuẩn
         response.data = normalizeApiResponse(response.data);
         return response;
     },
     async (error) => {
         const originalRequest = error.config;
+        const requestUrl = originalRequest?.url ?? '';
+        const isAuthRequest =
+            requestUrl.includes('Auth/refresh-token') ||
+            requestUrl.includes('Auth/login') ||
+            requestUrl.includes('Auth/google-login');
 
-        // Nếu lỗi 401 và chưa được retry
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthRequest) {
             if (isRefreshing) {
-                return new Promise(function (resolve, reject) {
+                return new Promise<string | null>((resolve, reject) => {
                     failedQueue.push({ resolve, reject });
                 })
                     .then((token) => {
-                        originalRequest.headers['Authorization'] = 'Bearer ' + token;
+                        originalRequest.headers['Authorization'] = `Bearer ${token}`;
                         return axiosInstance(originalRequest);
                     })
-                    .catch((err) => {
-                        return Promise.reject(err);
-                    });
+                    .catch((err) => Promise.reject(err));
             }
 
             originalRequest._retry = true;
             isRefreshing = true;
 
-            const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+            try {
+                const res = await axios.post(`${API_BASE_URL}/Auth/refresh-token`, {}, {
+                    withCredentials: true,
+                });
+                const normalized = normalizeApiResponse<any>(res.data);
 
-            if (refreshToken) {
-                try {
-                    // Gọi trực tiếp axios để tránh circular dependency với authApi/axiosInstance
-                    const res = await axios.post(`${API_BASE_URL}/Auth/refresh-token`, {
-                        refreshToken,
-                    });
-
-                    // Server trả về ApiResponse<AuthResponse>
-                    const normalized = normalizeApiResponse<any>(res.data);
-                    
-                    if (normalized.succeeded && normalized.data) {
-                        const { accessToken, refreshToken: newRefreshToken } = normalized.data;
-
-                        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-                        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken);
-
-                        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-                        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-
-                        processQueue(null, accessToken);
-                        return axiosInstance(originalRequest);
-                    }
-                } catch (refreshError) {
-                    processQueue(refreshError, null);
-                    // Logout và redirect nếu refresh thất bại
-                    localStorage.clear();
-                    window.location.href = '/login';
-                    return Promise.reject(refreshError);
-                } finally {
-                    isRefreshing = false;
+                if (normalized.succeeded && normalized.data) {
+                    const { accessToken: newAccessToken } = normalized.data;
+                    setAccessToken(newAccessToken);
+                    originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                    processQueue(null, newAccessToken);
+                    return axiosInstance(originalRequest);
                 }
+
+                throw new Error(normalized.message || 'Unable to refresh session');
+            } catch (refreshError) {
+                processQueue(refreshError, null);
+                setAccessToken(null);
+                clearLegacyAuthStorage();
+                window.location.href = '/login';
+                return Promise.reject(refreshError);
+            } finally {
+                isRefreshing = false;
             }
         }
 
-        // Axios throw khi status 4xx/5xx
         const data = error.response?.data;
         const normalized = data ? normalizeApiResponse(data as Record<string, unknown>) : null;
 
