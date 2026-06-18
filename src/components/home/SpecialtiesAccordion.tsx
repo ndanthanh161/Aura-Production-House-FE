@@ -147,14 +147,16 @@ export const SpecialtiesAccordion: React.FC = React.memo(() => {
                                     src={cat.image}
                                     alt={cat.title}
                                     animate={{
-                                        scale: isHovered ? 1.08 : 1.0,
-                                        filter: isHovered ? 'grayscale(0%) contrast(1.05)' : 'grayscale(100%) brightness(0.4)'
+                                        scale: isHovered ? 1.08 : 1.0
                                     }}
                                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                                     style={{
                                         width: '100%',
                                         height: '100%',
-                                        objectFit: 'cover'
+                                        objectFit: 'cover',
+                                        filter: isHovered ? 'grayscale(0%) contrast(1.05)' : 'grayscale(100%) brightness(0.4)',
+                                        transition: 'filter 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                                        willChange: 'transform'
                                     }}
                                 />
                             </div>
