@@ -159,7 +159,7 @@ export const Hero: React.FC = () => {
                         animate={{ opacity: 1, scale: 1.08 }}
                         exit={{ opacity: 0, scale: 1.12 }}
                         transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-                        style={{ position: 'absolute', inset: 0 }}
+                        style={{ position: 'absolute', inset: 0, willChange: 'transform, opacity' }}
                     >
                         {/* High-end linear gradient overlay for 50/50 layout readability */}
                         <div style={{
@@ -334,6 +334,7 @@ export const Hero: React.FC = () => {
                                                 border: isActive ? '2px solid #D0A968' : '1px solid rgba(255,255,255,0.12)',
                                                 transformOrigin: 'bottom',
                                                 boxSizing: 'border-box',
+                                                willChange: 'transform'
                                             }}
                                             whileHover={{ scale: 1.04 }}
                                             animate={{ scale: isActive ? 1.06 : 1.0 }}
@@ -351,7 +352,7 @@ export const Hero: React.FC = () => {
                                                     alt={project.title}
                                                     animate={{ scale: isActive ? 1.15 : 1.0 }}
                                                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover', willChange: 'transform' }}
                                                 />
                                             </div>
 
