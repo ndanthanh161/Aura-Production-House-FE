@@ -15,6 +15,7 @@ interface BookingCardProps {
 
 export const BookingCard: React.FC<BookingCardProps> = React.memo(({ booking, index, onSelect, onPay }) => {
     const statusInfo = getStatusInfo(booking.status);
+    const canPay = (booking.remainingAmount ?? 0) > 0 && booking.status !== 'Cancelled' && booking.status !== 'Completed';
 
     // Custom status dots
     let statusDotClass = 'status-dot-neutral';
@@ -121,7 +122,7 @@ export const BookingCard: React.FC<BookingCardProps> = React.memo(({ booking, in
                 </div>
 
                 <div className="booking-card-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexShrink: 0 }}>
-                    {booking.status === 'Scheduled' && (
+                    {canPay && (
                         <Button
                             onClick={() => onPay(booking.packageId, booking.id)}
                             style={{
@@ -136,7 +137,7 @@ export const BookingCard: React.FC<BookingCardProps> = React.memo(({ booking, in
                                 letterSpacing: '0.05em'
                             }}
                         >
-                            <CreditCard size={15} /> Thanh toán
+                            <CreditCard size={15} /> {booking.status === 'Scheduled' ? 'Thanh toán' : 'Thanh toán tiếp'}
                         </Button>
                     )}
 

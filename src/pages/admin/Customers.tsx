@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Search, Edit2, X, Check, Loader2, Mail, Phone, Calendar, Lock } from 'lucide-react';
+import { Users, Search, Edit2, X, Check, Loader2, Mail, Phone, Calendar, Lock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { customerApi } from '../../services/userApi';
 import type { UserDTO, UpdateUserRequest } from '../../types/user.types';
 
 const AdminCustomers: React.FC = () => {
+    const pageSize = 5;
     const [customers, setCustomers] = useState<UserDTO[]>([]);
     const [filtered, setFiltered] = useState<UserDTO[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [search, setSearch] = useState('');
@@ -37,7 +39,12 @@ const AdminCustomers: React.FC = () => {
             c.email.toLowerCase().includes(q) ||
             (c.phone || '').includes(q)
         ));
+        setCurrentPage(1);
     }, [search, customers]);
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    const safeCurrentPage = Math.min(currentPage, totalPages);
+    const pagedCustomers = filtered.slice((safeCurrentPage - 1) * pageSize, safeCurrentPage * pageSize);
 
     const openEdit = (c: UserDTO) => {
         setEditItem(c);
@@ -117,7 +124,7 @@ const AdminCustomers: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filtered.map((c, i) => (
+                                {pagedCustomers.map((c, i) => (
                                     <motion.tr key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
                                         style={{ borderBottom: '1px solid var(--color-border)' }}>
                                         <td style={{ padding: '1rem 1.25rem' }}>
@@ -166,7 +173,29 @@ const AdminCustomers: React.FC = () => {
                                 )}
                             </tbody>
                         </table>
-                    </div>
+                        {filtered.length > pageSize && (
+                            <div style={paginationStyle}>
+                                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>
+                                    Trang {safeCurrentPage}/{totalPages} - hien thi {pagedCustomers.length}/{filtered.length}
+                                </span>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <button
+                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                        disabled={safeCurrentPage === 1}
+                                        style={{ ...btnSecondary, opacity: safeCurrentPage === 1 ? 0.45 : 1 }}
+                                    >
+                                        <ChevronLeft size={14} /> Truoc
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                        disabled={safeCurrentPage === totalPages}
+                                        style={{ ...btnSecondary, opacity: safeCurrentPage === totalPages ? 0.45 : 1 }}
+                                    >
+                                        Sau <ChevronRight size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        )}                    </div>
                 </>
             )}
 
@@ -208,6 +237,7 @@ const AdminCustomers: React.FC = () => {
 const btnPrimary: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: 'var(--color-accent)', color: 'var(--color-bg)', padding: '0.6rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, borderRadius: '6px', cursor: 'pointer', border: 'none' };
 const btnSecondary: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'transparent', color: 'var(--color-text-muted)', padding: '0.5rem 1rem', fontSize: '0.875rem', fontWeight: 500, borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--color-border)' };
 const btnDanger: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', border: 'none' };
+const paginationStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', padding: '1rem 1.25rem', borderTop: '1px solid var(--color-border)', flexWrap: 'wrap' };
 const alertStyle: React.CSSProperties = { backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.75rem 1rem', borderRadius: '6px', fontSize: '0.875rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
 const centerStyle: React.CSSProperties = { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4rem' };
 const overlayStyle: React.CSSProperties = { position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 };

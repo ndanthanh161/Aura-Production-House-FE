@@ -17,7 +17,12 @@ export interface Project {
     staffName?: string;
     status: ProjectStatus;
     revenue: number;
-
+    paidAmount: number;
+    remainingAmount: number;
+    totalInstallments: number;
+    paidInstallments: number;
+    nextInstallmentNumber?: number | null;
+    nextInstallmentAmount?: number | null;
     deadline: string;
     description?: string;
     resultLink?: string;
@@ -58,7 +63,6 @@ export interface UpdateProjectRequest {
     staffId?: string;
     status: ProjectStatus;
     revenue: number;
-
     deadline: string;
     description?: string;
     resultLink?: string;

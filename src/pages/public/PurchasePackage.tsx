@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Loader2, AlertCircle, ArrowLeft, FileText, User, ShieldCheck } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
@@ -25,6 +25,60 @@ const STEPS = [
     { label: 'Xác nhận', icon: ShieldCheck },
 ];
 
+const INSTALLMENT_THRESHOLD = 10_000_000;
+
+const getPaymentPlan = (total: number) => {
+    if (total < INSTALLMENT_THRESHOLD) {
+        return [{ installmentNumber: 1, percentage: 100, amount: total }];
+    }
+
+    const firstAmount = Math.round(total * 0.5);
+    const secondAmount = Math.round(total * 0.25);
+
+    return [
+        { installmentNumber: 1, percentage: 50, amount: firstAmount },
+        { installmentNumber: 2, percentage: 25, amount: secondAmount },
+        { installmentNumber: 3, percentage: 25, amount: total - firstAmount - secondAmount },
+    ];
+};
+
+const buildPaymentOptions = (project: Project | null, pkg: Package | null) => {
+    if (!pkg) return [];
+
+    const plan = getPaymentPlan(pkg.price);
+    const fallbackNextAmount = plan[0].amount;
+    const totalInstallments = project?.totalInstallments || plan.length;
+    const paidAmount = project?.paidAmount ?? 0;
+    const remainingAmount = Math.max(0, project?.remainingAmount ?? pkg.price);
+    const nextInstallmentNumber = project?.nextInstallmentNumber ?? 1;
+    const nextAmount = Math.min(
+        remainingAmount,
+        Math.max(0, project?.nextInstallmentAmount ?? fallbackNextAmount)
+    );
+
+    const options = nextAmount > 0
+        ? [{
+            id: 'next',
+            label: totalInstallments > 1 ? `Thanh toán đợt ${nextInstallmentNumber}/${totalInstallments}` : 'Thanh toán 1 lần',
+            description: totalInstallments > 1 ? 'Thanh toán theo lịch đợt tiếp theo.' : 'Thanh toán toàn bộ gói dịch vụ.',
+            amount: nextAmount,
+        }]
+        : [];
+
+    if (remainingAmount > nextAmount) {
+        options.push({
+            id: 'full',
+            label: paidAmount > 0 ? 'Thanh toán toàn bộ còn lại' : 'Thanh toán 100%',
+            description: 'Hoàn tất toàn bộ số tiền còn lại của dự án.',
+            amount: remainingAmount,
+        });
+    }
+
+    return options;
+};
+
+const getDefaultPaymentAmount = (project: Project | null, pkg: Package | null) =>
+    buildPaymentOptions(project, pkg)[0]?.amount ?? 0;
 const PurchasePackage: React.FC = () => {
     const { showToast, ToastContainer } = useToast();
     const { packageId } = useParams<{ packageId: string }>();
@@ -47,6 +101,8 @@ const PurchasePackage: React.FC = () => {
 
     const [sepayInfo, setSepayInfo] = useState<SePayInfo | null>(null);
     const [paymentPolling, setPaymentPolling] = useState(false);
+    const [paymentBaselinePaidAmount, setPaymentBaselinePaidAmount] = useState(0);
+    const [selectedPaymentAmount, setSelectedPaymentAmount] = useState(0);
     const [timeLeft, setTimeLeft] = useState<number>(15 * 60); // 15 minutes in seconds
 
     // Cancellation modal state
@@ -86,6 +142,8 @@ const PurchasePackage: React.FC = () => {
 
             if (projectRes && projectRes.data) {
                 setCreatedProject(projectRes.data);
+                setPaymentBaselinePaidAmount(projectRes.data.paidAmount ?? 0);
+                setSelectedPaymentAmount(getDefaultPaymentAmount(projectRes.data, pkg));
                 setProjectName(projectRes.data.name);
                 setDescription(projectRes.data.description || '');
                 setStep(3); // Nhảy thẳng đến bước QR
@@ -96,7 +154,7 @@ const PurchasePackage: React.FC = () => {
                 setPkgError('Không thể tải thông tin dự án.');
             }
         });
-    }, [existingProjectId]);
+    }, [existingProjectId, pkg]);
 
     // Polling payment status
     useEffect(() => {
@@ -108,7 +166,7 @@ const PurchasePackage: React.FC = () => {
             interval = setInterval(async () => {
                 try {
                     const res = await projectApi.getById(createdProject.id);
-                    if (res.data && res.data.status === 'InProduction') {
+                    if (res.data && (res.data.paidAmount ?? 0) > paymentBaselinePaidAmount) {
                         setCreatedProject(res.data);
                         setStep(4);
                         setPaymentPolling(false);
@@ -138,7 +196,7 @@ const PurchasePackage: React.FC = () => {
             clearInterval(interval);
             clearInterval(timerInterval);
         };
-    }, [paymentPolling, createdProject]);
+    }, [paymentPolling, createdProject, paymentBaselinePaidAmount]);
 
     // ─── Callbacks & Handlers ─────────────────────────────────────
     const formatTime = useCallback((seconds: number) => {
@@ -164,6 +222,8 @@ const PurchasePackage: React.FC = () => {
             });
             if (res.data) {
                 setCreatedProject(res.data);
+                setPaymentBaselinePaidAmount(res.data.paidAmount ?? 0);
+                setSelectedPaymentAmount((current) => current || getDefaultPaymentAmount(res.data, pkg));
                 setTimeLeft(15 * 60); // Reset 15 mins
                 setPaymentPolling(true); // Bắt đầu đợi thanh toán
             } else {
@@ -177,30 +237,32 @@ const PurchasePackage: React.FC = () => {
         }
     }, [pkg, user, projectName, description]);
 
-    const handleCancelPayment = useCallback(async () => {
-        if (!createdProject) return;
-        
-        try {
-            await projectApi.cancel(createdProject.id);
-            setCreatedProject(null);
-            setPaymentPolling(false);
-            setShowCancelModal(false);
-            setStep(2); // Quay lại bước nhập thông tin
-        } catch (e) {
-            showToast('Không thể hủy dự án lúc này.', 'error');
+    const handleCancelPayment = useCallback(() => {
+        setPaymentPolling(false);
+        setShowCancelModal(false);
+        setTimeLeft(15 * 60);
+
+        if (existingProjectId) {
+            navigate('/projects');
+            return;
         }
-    }, [createdProject, showToast]);
+
+        setCreatedProject(null);
+        setPaymentBaselinePaidAmount(0);
+        setSelectedPaymentAmount(0);
+        setStep(2);
+    }, [existingProjectId, navigate]);
 
     const getVietQRUrl = useCallback(() => {
         if (!sepayInfo || !pkg || !createdProject) return '';
         const bank = sepayInfo.bankId;
         const account = sepayInfo.accountNumber;
-        const amount = pkg.price;
+        const amount = selectedPaymentAmount || getDefaultPaymentAmount(createdProject, pkg);
         const addInfo = `AURA ${createdProject.id.toUpperCase()}`;
         const name = encodeURIComponent(sepayInfo.accountName);
         
         return `https://img.vietqr.io/image/${bank}-${account}-qr_only.png?amount=${amount}&addInfo=${addInfo}&accountName=${name}`;
-    }, [sepayInfo, pkg, createdProject]);
+    }, [sepayInfo, pkg, createdProject, selectedPaymentAmount]);
 
     const copyToClipboard = useCallback((text: string) => {
         navigator.clipboard.writeText(text);
@@ -213,6 +275,10 @@ const PurchasePackage: React.FC = () => {
     const handleNextStep = useCallback(() => setStep(prev => prev + 1), []);
 
     // ─── Loading / Error ────────────────────────────────────────
+    const paymentOptions = useMemo(
+        () => buildPaymentOptions(createdProject, pkg),
+        [createdProject, pkg]
+    );
     if (authLoading || loadingPkg) return (
         <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Loader2 size={36} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-accent)' }} />
@@ -292,6 +358,10 @@ const PurchasePackage: React.FC = () => {
                             timeLeft={timeLeft}
                             formatTime={formatTime}
                             formatPrice={formatPrice}
+                            paymentPlan={getPaymentPlan(pkg.price)}
+                            paymentOptions={paymentOptions}
+                            selectedPaymentAmount={selectedPaymentAmount || getDefaultPaymentAmount(createdProject, pkg)}
+                            setSelectedPaymentAmount={setSelectedPaymentAmount}
                             getVietQRUrl={getVietQRUrl}
                             copyToClipboard={copyToClipboard}
                             creating={creating}
@@ -309,8 +379,8 @@ const PurchasePackage: React.FC = () => {
                 <ConfirmModal 
                     isOpen={showCancelModal}
                     title="Hủy thanh toán"
-                    message="Bạn có chắc chắn muốn hủy thanh toán và dự án này không? Thông tin dự án sẽ không được lưu lại."
-                    confirmText="Xác nhận hủy"
+                    message="Ban co chac chan muon huy phien thanh toan hien tai khong? Du an van duoc giu lai va ban co the thanh toan tiep sau."
+                    confirmText="Huy phien thanh toan"
                     onConfirm={handleCancelPayment}
                     onCancel={() => setShowCancelModal(false)}
                     type="danger"
