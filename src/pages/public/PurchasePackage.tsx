@@ -379,8 +379,8 @@ const PurchasePackage: React.FC = () => {
                 <ConfirmModal 
                     isOpen={showCancelModal}
                     title="Hủy thanh toán"
-                    message="Ban co chac chan muon huy phien thanh toan hien tai khong? Du an van duoc giu lai va ban co the thanh toan tiep sau."
-                    confirmText="Huy phien thanh toan"
+                    message="Bạn có chắc chắn muốn hủy phiên thanh toán hiện tại không? Dự án vẫn được giữ lại và bạn có thể thanh toán tiếp sau."
+                    confirmText="Hủy phiên thanh toán"
                     onConfirm={handleCancelPayment}
                     onCancel={() => setShowCancelModal(false)}
                     type="danger"

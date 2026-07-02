@@ -8,10 +8,10 @@ import type { Project, ProjectStatus, UpdateProjectRequest } from '../../types/p
 import type { UserDTO } from '../../types/user.types';
 
 const STATUS_CONFIG: Record<ProjectStatus, { label: string; color: string }> = {
-    Scheduled: { label: 'ÄÃ£ lÃªn lá»‹ch', color: '#3b82f6' },
-    InProduction: { label: 'Äang thá»±c hiá»‡n', color: '#f59e0b' },
-    Completed: { label: 'HoÃ n thÃ nh', color: '#22c55e' },
-    Cancelled: { label: 'ÄÃ£ há»§y', color: '#ef4444' },
+    Scheduled: { label: 'Đã lên lịch', color: '#3b82f6' },
+    InProduction: { label: 'Đang thực hiện', color: '#f59e0b' },
+    Completed: { label: 'Hoàn thành', color: '#22c55e' },
+    Cancelled: { label: 'Đã hủy', color: '#ef4444' },
 };
 
 const AdminBookings: React.FC = () => {
@@ -56,7 +56,7 @@ const AdminBookings: React.FC = () => {
             setFiltered(bRes.data || []);
             setPhotographers(pRes.data || []);
         } catch {
-            setError('KhÃ´ng thá»ƒ táº£i dá»¯ liá»‡u.');
+            setError('Không thể tải dữ liệu.');
         } finally {
             setLoading(false);
         }
@@ -87,19 +87,19 @@ const AdminBookings: React.FC = () => {
             setNewDate('');
             fetchBookings();
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Äá»•i lá»‹ch tháº¥t báº¡i.');
+            setError(err instanceof Error ? err.message : 'Đổi lịch thất bại.');
         } finally {
             setSaving(false);
         }
     };
 
     const handleCancel = async (id: string, name: string) => {
-        if (!confirm(`Há»§y dá»± Ã¡n "${name}"?`)) return;
+        if (!confirm(`Hủy dự án "${name}"?`)) return;
         try {
             await projectApi.cancel(id);
             fetchBookings();
         } catch {
-            setError('Há»§y booking tháº¥t báº¡i.');
+            setError('Hủy booking thất bại.');
         }
     };
 
@@ -112,7 +112,7 @@ const AdminBookings: React.FC = () => {
             setSelectedPhotographer('');
             fetchBookings();
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'PhÃ¢n cÃ´ng tháº¥t báº¡i.');
+            setError(err instanceof Error ? err.message : 'Phân công thất bại.');
         } finally {
             setSaving(false);
         }
@@ -141,7 +141,7 @@ const AdminBookings: React.FC = () => {
             setResultLink('');
             fetchBookings();
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Cáº­p nháº­t tháº¥t báº¡i.');
+            setError(err instanceof Error ? err.message : 'Cập nhật thất bại.');
         } finally {
             setSaving(false);
         }
@@ -157,11 +157,11 @@ const AdminBookings: React.FC = () => {
         project.nextInstallmentAmount ?? project.remainingAmount ?? project.revenue;
 
     const getPaymentLabel = (project: Project) => {
-        if ((project.remainingAmount ?? project.revenue) <= 0) return 'Da thanh toan du';
+        if ((project.remainingAmount ?? project.revenue) <= 0) return 'Đã thanh toán đủ';
         if (project.totalInstallments > 1 && project.nextInstallmentNumber) {
-            return `Dot ${project.nextInstallmentNumber}/${project.totalInstallments}`;
+            return `Đợt ${project.nextInstallmentNumber}/${project.totalInstallments}`;
         }
-        return 'Thanh toan 1 lan';
+        return 'Thanh toán 1 lần';
     };
 
     const openPaymentConfirmModal = (project: Project) => {
@@ -177,7 +177,7 @@ const AdminBookings: React.FC = () => {
 
         const remainingAmount = paymentConfirmProject.remainingAmount ?? paymentConfirmProject.revenue;
         if (txAmount > remainingAmount) {
-            setPaymentError(`So tien nhap (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(txAmount)}) lon hon so tien con lai cua du an (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(remainingAmount)}).`);
+            setPaymentError(`Số tiền nhập (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(txAmount)}) lớn hơn số tiền còn lại của dự án (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(remainingAmount)}).`);
             return;
         }
 
@@ -190,10 +190,10 @@ const AdminBookings: React.FC = () => {
                 transactionId: txId
             });
             setPaymentConfirmProject(null);
-            setSuccess(`PhÃª duyá»‡t thanh toÃ¡n cho dá»± Ã¡n "${paymentConfirmProject.name}" thÃ nh cÃ´ng!`);
+            setSuccess(`Phê duyệt thanh toán cho dự án "${paymentConfirmProject.name}" thành công!`);
             fetchBookings();
         } catch (err: any) {
-            setPaymentError(err.message || 'XÃ¡c nháº­n thanh toÃ¡n tháº¥t báº¡i.');
+            setPaymentError(err.message || 'Xác nhận thanh toán thất bại.');
         } finally {
             setSaving(false);
         }
@@ -204,19 +204,19 @@ const AdminBookings: React.FC = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <header>
-                <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--color-text)' }}>Quáº£n LÃ½ Dá»± Ãn</h1>
-                <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>Lá»‹ch chá»¥p áº£nh vÃ  tráº¡ng thÃ¡i cÃ¡c dá»± Ã¡n</p>
+                <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: 'var(--color-text)' }}>Quản Lý Dự Án</h1>
+                <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>Lịch chụp ảnh và trạng thái các dự án</p>
             </header>
 
             {/* Filters */}
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
                 <div style={{ position: 'relative', flex: '1 1 200px' }}>
                     <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
-                    <input placeholder="TÃ¬m tÃªn dá»± Ã¡n, khÃ¡ch hÃ ng..." value={search} onChange={e => setSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: '36px' }} />
+                    <input placeholder="Tìm tên dự án, khách hàng..." value={search} onChange={e => setSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: '36px' }} />
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} style={{ ...inputStyle, width: 'auto' }} />
-                    <span style={{ color: 'var(--color-text-muted)' }}>â†’</span>
+                    <span style={{ color: 'var(--color-text-muted)' }}>→</span>
                     <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} style={{ ...inputStyle, width: 'auto' }} />
                     <button onClick={fetchBookings} style={btnSecondary}><RefreshCw size={15} /></button>
                 </div>
@@ -232,7 +232,7 @@ const AdminBookings: React.FC = () => {
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'rgba(255,255,255,0.02)' }}>
-                                {['Dá»± Ã¡n', 'KhÃ¡ch hÃ ng', 'Photographer', 'GiÃ¡ gÃ³i', 'NgÃ y hoÃ n thÃ nh', 'Tráº¡ng thÃ¡i', 'Thao tÃ¡c'].map(h => (
+                                {['Dự án', 'Khách hàng', 'Photographer', 'Giá gói', 'Ngày hoàn thành', 'Trạng thái', 'Thao tác'].map(h => (
                                     <th key={h} style={{ padding: '1rem 1.25rem', textAlign: 'left', fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
                                 ))}
                             </tr>
@@ -240,7 +240,7 @@ const AdminBookings: React.FC = () => {
                         <tbody>
                             {pagedBookings.map((b, i) => {
                                 const cfg = STATUS_CONFIG[b.status] || STATUS_CONFIG.Scheduled;
-                                const fmtMoney = (n?: number) => n ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n) : 'â€”';
+                                const fmtMoney = (n?: number) => n ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n) : '—';
                                 const paidAmount = b.paidAmount ?? 0;
                                 const remainingAmount = b.remainingAmount ?? Math.max(0, b.revenue - paidAmount);
                                 const progress = b.revenue > 0 ? Math.min(100, Math.round((paidAmount / b.revenue) * 100)) : 0;
@@ -260,7 +260,7 @@ const AdminBookings: React.FC = () => {
                                         </td>
                                         <td style={{ padding: '1rem 1.25rem', color: 'var(--color-text)', fontSize: '0.875rem' }}>{b.clientName}</td>
                                         <td style={{ padding: '1rem 1.25rem', color: b.staffName ? 'var(--color-text)' : 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-                                            {b.staffName || 'â€”'}
+                                            {b.staffName || '—'}
                                         </td>
                                         <td style={{ padding: '1rem 1.25rem', color: 'var(--color-text)', fontSize: '0.875rem', minWidth: '210px' }}>
                                             <div style={{ fontWeight: 700 }}>{fmtMoney(b.revenue)}</div>
@@ -268,9 +268,9 @@ const AdminBookings: React.FC = () => {
                                                 <div style={{ width: `${progress}%`, height: '100%', backgroundColor: remainingAmount <= 0 ? '#22c55e' : 'var(--color-accent)' }} />
                                             </div>
                                             <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '0.7rem', lineHeight: 1.35 }}>
-                                                <span style={{ color: '#22c55e' }}>Da thanh toan: {fmtMoney(paidAmount)} ({b.paidInstallments ?? 0}/{b.totalInstallments || 1} dot)</span>
-                                                <span style={{ color: remainingAmount > 0 ? '#f59e0b' : '#22c55e' }}>Con lai: {fmtMoney(remainingAmount)}</span>
-                                                {remainingAmount > 0 && <span style={{ color: 'var(--color-text-muted)' }}>Tiep theo: {paymentLabel} - {fmtMoney(nextAmount)}</span>}
+                                                <span style={{ color: '#22c55e' }}>Đã thanh toán: {fmtMoney(paidAmount)} ({b.paidInstallments ?? 0}/{b.totalInstallments || 1} đợt)</span>
+                                                <span style={{ color: remainingAmount > 0 ? '#f59e0b' : '#22c55e' }}>Còn lại: {fmtMoney(remainingAmount)}</span>
+                                                {remainingAmount > 0 && <span style={{ color: 'var(--color-text-muted)' }}>Tiếp theo: {paymentLabel} - {fmtMoney(nextAmount)}</span>}
                                             </div>
                                         </td>
                                         <td style={{ padding: '1rem 1.25rem' }}>
@@ -286,7 +286,7 @@ const AdminBookings: React.FC = () => {
                                                 </span>
                                                 {b.resultLink && (
                                                     <a href={b.resultLink} target="_blank" rel="noreferrer" style={{ fontSize: '0.7rem', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                        <ExternalLink size={10} /> ÄÃ£ cÃ³ link Drive
+                                                        <ExternalLink size={10} /> Đã có link Drive
                                                     </a>
                                                 )}
                                             </div>
@@ -296,23 +296,23 @@ const AdminBookings: React.FC = () => {
                                                 {b.status !== 'Cancelled' && b.status !== 'Completed' && (
                                                     <>
                                                         {remainingAmount > 0 && (
-                                                            <button onClick={() => openPaymentConfirmModal(b)} style={btnIconSuccess} title="XÃ¡c nháº­n thanh toÃ¡n thá»§ cÃ´ng">
+                                                            <button onClick={() => openPaymentConfirmModal(b)} style={btnIconSuccess} title="Xác nhận thanh toán thủ công">
                                                                 <CreditCard size={15} />
                                                             </button>
                                                         )}
-                                                        <button onClick={() => { setRescheduleId(b.id); setNewDate(''); }} style={btnIcon} title="Äá»•i lá»‹ch">
+                                                        <button onClick={() => { setRescheduleId(b.id); setNewDate(''); }} style={btnIcon} title="Đổi lịch">
                                                             <RefreshCw size={15} />
                                                         </button>
-                                                        <button onClick={() => { setAssignId(b.id); setSelectedPhotographer(b.staffId || ''); }} style={btnIcon} title="PhÃ¢n cÃ´ng">
+                                                        <button onClick={() => { setAssignId(b.id); setSelectedPhotographer(b.staffId || ''); }} style={btnIcon} title="Phân công">
                                                             <UserPlus size={15} />
                                                         </button>
-                                                        <button onClick={() => handleCancel(b.id, b.name)} style={btnIconDanger} title="Há»§y">
+                                                        <button onClick={() => handleCancel(b.id, b.name)} style={btnIconDanger} title="Hủy">
                                                             <Ban size={15} />
                                                         </button>
                                                     </>
                                                 )}
                                                 {b.status !== 'Cancelled' && (
-                                                    <button onClick={() => openStatusModal(b)} style={btnIcon} title="Cáº­p nháº­t tráº¡ng thÃ¡i & link Drive">
+                                                    <button onClick={() => openStatusModal(b)} style={btnIcon} title="Cập nhật trạng thái & link Drive">
                                                         <Edit3 size={15} />
                                                     </button>
                                                 )}
@@ -322,14 +322,14 @@ const AdminBookings: React.FC = () => {
                                 );
                             })}
                             {filtered.length === 0 && (
-                                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>KhÃ´ng cÃ³ booking nÃ o.</td></tr>
+                                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>Không có booking nào.</td></tr>
                             )}
                         </tbody>
                     </table>
                     {filtered.length > pageSize && (
                         <div style={paginationStyle}>
                             <span style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>
-                                Trang {safeCurrentPage}/{totalPages} - hien thi {pagedBookings.length}/{filtered.length}
+                                Trang {safeCurrentPage}/{totalPages} - hiển thị {pagedBookings.length}/{filtered.length}
                             </span>
                             <div style={{ display: 'flex', gap: '8px' }}>
                                 <button
@@ -337,7 +337,7 @@ const AdminBookings: React.FC = () => {
                                     disabled={safeCurrentPage === 1}
                                     style={{ ...btnSecondary, opacity: safeCurrentPage === 1 ? 0.45 : 1 }}
                                 >
-                                    <ChevronLeft size={14} /> Truoc
+                                    <ChevronLeft size={14} /> Trước
                                 </button>
                                 <button
                                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -357,35 +357,35 @@ const AdminBookings: React.FC = () => {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ ...modalStyle, maxWidth: '600px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '1rem' }}>
                             <div>
-                                <h2 style={{ fontWeight: 800, color: 'var(--color-accent)', fontSize: '1.5rem' }}>Chi tiáº¿t dá»± Ã¡n</h2>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>MÃ£: {viewProject.id}</p>
+                                <h2 style={{ fontWeight: 800, color: 'var(--color-accent)', fontSize: '1.5rem' }}>Chi tiết dự án</h2>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Mã: {viewProject.id}</p>
                             </div>
                             <button onClick={() => setViewProject(null)} style={{ color: 'var(--color-text-muted)', height: 'fit-content', background: 'none', border: 'none', cursor: 'pointer' }}><X size={24} /></button>
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
                             <div>
-                                <label style={labelStyle}>TÃªn dá»± Ã¡n</label>
+                                <label style={labelStyle}>Tên dự án</label>
                                 <p style={{ fontWeight: 600, color: 'var(--color-text)' }}>{viewProject.name}</p>
                             </div>
                             <div>
-                                <label style={labelStyle}>GÃ³i dá»‹ch vá»¥</label>
+                                <label style={labelStyle}>Gói dịch vụ</label>
                                 <p style={{ fontWeight: 600, color: 'var(--color-text)' }}>{viewProject.packageName}</p>
                             </div>
                             <div>
-                                <label style={labelStyle}>KhÃ¡ch hÃ ng</label>
+                                <label style={labelStyle}>Khách hàng</label>
                                 <p style={{ color: 'var(--color-text)' }}>{viewProject.clientName}</p>
                             </div>
                             <div>
                                 <label style={labelStyle}>Photographer</label>
-                                <p style={{ color: 'var(--color-text)' }}>{viewProject.staffName || 'ChÆ°a phÃ¢n cÃ´ng'}</p>
+                                <p style={{ color: 'var(--color-text)' }}>{viewProject.staffName || 'Chưa phân công'}</p>
                             </div>
                             <div>
-                                <label style={labelStyle}>NgÃ y chá»¥p dá»± kiáº¿n</label>
+                                <label style={labelStyle}>Ngày chụp dự kiến</label>
                                 <p style={{ color: 'var(--color-text)' }}>{fmtDate(viewProject.deadline)}</p>
                             </div>
                             <div>
-                                <label style={labelStyle}>Tá»•ng doanh thu</label>
+                                <label style={labelStyle}>Tổng doanh thu</label>
                                 <p style={{ fontWeight: 700, color: 'var(--color-accent)' }}>
                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(viewProject.revenue)}
                                 </p>
@@ -393,7 +393,7 @@ const AdminBookings: React.FC = () => {
                         </div>
 
                         <div style={{ padding: '1.5rem', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--color-border)' }}>
-                            <label style={labelStyle}>YÃªu cáº§u Ä‘áº·c biá»‡t tá»« khÃ¡ch hÃ ng</label>
+                            <label style={labelStyle}>Yêu cầu đặc biệt từ khách hàng</label>
                             <p style={{
                                 whiteSpace: 'pre-wrap',
                                 fontSize: '0.95rem',
@@ -401,12 +401,12 @@ const AdminBookings: React.FC = () => {
                                 lineHeight: 1.6,
                                 fontStyle: viewProject.description ? 'normal' : 'italic'
                             }}>
-                                {viewProject.description || 'KhÃ´ng cÃ³ ghi chÃº thÃªm.'}
+                                {viewProject.description || 'Không có ghi chú thêm.'}
                             </p>
                         </div>
 
                         <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-                            <button onClick={() => setViewProject(null)} style={btnPrimary}>ÄÃ³ng</button>
+                            <button onClick={() => setViewProject(null)} style={btnPrimary}>Đóng</button>
                         </div>
                     </motion.div>
                 </div>
@@ -417,16 +417,16 @@ const AdminBookings: React.FC = () => {
                 <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setRescheduleId(null)}>
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={modalStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>NgÃ y HoÃ n ThÃ nh</h2>
+                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Ngày Hoàn Thành</h2>
                             <button onClick={() => setRescheduleId(null)} style={{ color: 'var(--color-text-muted)' }}><X size={20} /></button>
                         </div>
-                        <label style={labelStyle}>NgÃ y hoÃ n thÃ nh má»›i *</label>
+                        <label style={labelStyle}>Ngày hoàn thành mới *</label>
                         <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)} style={{ ...inputStyle, marginBottom: '1.25rem' }} />
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
                             <button onClick={handleReschedule} disabled={!newDate || saving} style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }}>
-                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <RefreshCw size={16} />} XÃ¡c Nháº­n
+                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <RefreshCw size={16} />} Xác Nhận
                             </button>
-                            <button onClick={() => setRescheduleId(null)} style={btnSecondary}>Huá»·</button>
+                            <button onClick={() => setRescheduleId(null)} style={btnSecondary}>Huỷ</button>
                         </div>
                     </motion.div>
                 </div>
@@ -437,25 +437,25 @@ const AdminBookings: React.FC = () => {
                 <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setAssignId(null)}>
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={modalStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>PhÃ¢n CÃ´ng Photographer</h2>
+                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Phân Công Photographer</h2>
                             <button onClick={() => setAssignId(null)} style={{ color: 'var(--color-text-muted)' }}><X size={20} /></button>
                         </div>
-                        <label style={labelStyle}>Chá»n Photographer *</label>
+                        <label style={labelStyle}>Chọn Photographer *</label>
                         <select
                             value={selectedPhotographer}
                             onChange={e => setSelectedPhotographer(e.target.value)}
                             style={{ ...inputStyle, marginBottom: '1.25rem', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'white\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
                         >
-                            <option value="">-- Chá»n Photographer --</option>
+                            <option value="">-- Chọn Photographer --</option>
                             {photographers.map(p => (
                                 <option key={p.id} value={p.id}>{p.fullName} ({p.email})</option>
                             ))}
                         </select>
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
                             <button onClick={handleAssign} disabled={!selectedPhotographer || saving} style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }}>
-                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <UserPlus size={16} />} XÃ¡c Nháº­n
+                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <UserPlus size={16} />} Xác Nhận
                             </button>
-                            <button onClick={() => setAssignId(null)} style={btnSecondary}>Huá»·</button>
+                            <button onClick={() => setAssignId(null)} style={btnSecondary}>Huỷ</button>
                         </div>
                     </motion.div>
                 </div>
@@ -466,13 +466,13 @@ const AdminBookings: React.FC = () => {
                 <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setStatusUpdateId(null)}>
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={modalStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Cáº­p Nháº­t Dá»± Ãn</h2>
+                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Cập Nhật Dự Án</h2>
                             <button onClick={() => setStatusUpdateId(null)} style={{ color: 'var(--color-text-muted)' }}><X size={20} /></button>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '1.5rem' }}>
                             <div>
-                                <label style={labelStyle}>Tráº¡ng thÃ¡i dá»± Ã¡n</label>
+                                <label style={labelStyle}>Trạng thái dự án</label>
                                 <select
                                     value={selectedStatus}
                                     disabled={bookings.find(b => b.id === statusUpdateId)?.status === 'Completed'}
@@ -495,7 +495,7 @@ const AdminBookings: React.FC = () => {
                             </div>
 
                             <div>
-                                <label style={labelStyle}>Link bÃ n giao (Google Drive)</label>
+                                <label style={labelStyle}>Link bàn giao (Google Drive)</label>
                                 <input
                                     type="url"
                                     placeholder="https://drive.google.com/..."
@@ -503,15 +503,15 @@ const AdminBookings: React.FC = () => {
                                     onChange={e => setResultLink(e.target.value)}
                                     style={inputStyle}
                                 />
-                                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.4rem' }}>KhÃ¡ch hÃ ng sáº½ tháº¥y link nÃ y trong má»¥c "Dá»± Ã¡n cá»§a tÃ´i"</p>
+                                <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.4rem' }}>Khách hàng sẽ thấy link này trong mục "Dự án của tôi"</p>
                             </div>
                         </div>
 
                         <div style={{ display: 'flex', gap: '0.75rem' }}>
                             <button onClick={handleUpdateProject} disabled={saving} style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }}>
-                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={16} />} LÆ°u Thay Äá»•i
+                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={16} />} Lưu Thay Đổi
                             </button>
-                            <button onClick={() => setStatusUpdateId(null)} style={btnSecondary}>Huá»·</button>
+                            <button onClick={() => setStatusUpdateId(null)} style={btnSecondary}>Huỷ</button>
                         </div>
                     </motion.div>
                 </div>
@@ -522,7 +522,7 @@ const AdminBookings: React.FC = () => {
                 <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setPaymentConfirmProject(null)}>
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={modalStyle}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>XÃ¡c Nháº­n Thanh ToÃ¡n</h2>
+                            <h2 style={{ fontWeight: 700, color: 'var(--color-text)' }}>Xác Nhận Thanh Toán</h2>
                             <button onClick={() => setPaymentConfirmProject(null)} style={{ color: 'var(--color-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} /></button>
                         </div>
 
@@ -535,25 +535,25 @@ const AdminBookings: React.FC = () => {
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
                             <div>
-                                <label style={labelStyle}>Dá»± Ã¡n</label>
+                                <label style={labelStyle}>Dự án</label>
                                 <p style={{ fontWeight: 600, color: 'var(--color-text)', fontSize: '0.95rem' }}>{paymentConfirmProject.name}</p>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>KhÃ¡ch hÃ ng: {paymentConfirmProject.clientName}</p>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Khách hàng: {paymentConfirmProject.clientName}</p>
                                 <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid var(--color-border)', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.03)', display: 'grid', gap: '0.45rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                                        <span style={{ color: 'var(--color-text-muted)' }}>Trang thai thanh toan</span>
+                                        <span style={{ color: 'var(--color-text-muted)' }}>Trạng thái thanh toán</span>
                                         <strong style={{ color: 'var(--color-accent)' }}>{getPaymentLabel(paymentConfirmProject)}</strong>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                                        <span style={{ color: 'var(--color-text-muted)' }}>Da thanh toan</span>
+                                        <span style={{ color: 'var(--color-text-muted)' }}>Đã thanh toán</span>
                                         <strong style={{ color: '#22c55e' }}>{fmtCurrency(paymentConfirmProject.paidAmount)}</strong>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                                        <span style={{ color: 'var(--color-text-muted)' }}>Con lai</span>
+                                        <span style={{ color: 'var(--color-text-muted)' }}>Còn lại</span>
                                         <strong style={{ color: '#f59e0b' }}>{fmtCurrency(paymentConfirmProject.remainingAmount)}</strong>
                                     </div>
                                     {(paymentConfirmProject.remainingAmount ?? 0) > 0 && (
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                                            <span style={{ color: 'var(--color-text-muted)' }}>Can thu tiep</span>
+                                            <span style={{ color: 'var(--color-text-muted)' }}>Cần thu tiếp</span>
                                             <strong style={{ color: 'var(--color-text)' }}>{fmtCurrency(getRequiredPaymentAmount(paymentConfirmProject))}</strong>
                                         </div>
                                     )}
@@ -561,10 +561,10 @@ const AdminBookings: React.FC = () => {
                             </div>
 
                             <div>
-                                <label style={labelStyle}>MÃ£ giao dá»‹ch (Transaction ID) *</label>
+                                <label style={labelStyle}>Mã giao dịch (Transaction ID) *</label>
                                 <input
                                     type="text"
-                                    placeholder="VÃ­ dá»¥: FT2615482390 hoáº·c ID SePay"
+                                    placeholder="Ví dụ: FT2615482390 hoặc ID SePay"
                                     value={txId}
                                     onChange={e => setTxId(e.target.value)}
                                     style={inputStyle}
@@ -573,17 +573,17 @@ const AdminBookings: React.FC = () => {
                             </div>
 
                             <div>
-                                <label style={labelStyle}>Sá»‘ tiá»n thanh toÃ¡n (VND) *</label>
+                                <label style={labelStyle}>Số tiền thanh toán (VND) *</label>
                                 <input
                                     type="number"
-                                    placeholder="Nháº­p sá»‘ tiá»n"
+                                    placeholder="Nhập số tiền"
                                     value={txAmount || ''}
                                     onChange={e => setTxAmount(Number(e.target.value))}
                                     style={inputStyle}
                                     required
                                 />
                                 <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.4rem' }}>
-                                    Goi y thu dot hien tai: {fmtCurrency(getRequiredPaymentAmount(paymentConfirmProject))}. Co the thu mot phan, toi da: {fmtCurrency(paymentConfirmProject.remainingAmount)}
+                                    Gợi ý thu đợt hiện tại: {fmtCurrency(getRequiredPaymentAmount(paymentConfirmProject))}. Có thể thu một phần, tối đa: {fmtCurrency(paymentConfirmProject.remainingAmount)}
                                 </p>
                             </div>
                         </div>
@@ -600,9 +600,9 @@ const AdminBookings: React.FC = () => {
                                     cursor: (saving || !txId || txAmount <= 0) ? 'not-allowed' : 'pointer'
                                 }}
                             >
-                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={16} />} PhÃª Duyá»‡t
+                                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <CheckCircle size={16} />} Phê Duyệt
                             </button>
-                            <button onClick={() => setPaymentConfirmProject(null)} style={btnSecondary}>Huá»·</button>
+                            <button onClick={() => setPaymentConfirmProject(null)} style={btnSecondary}>Huỷ</button>
                         </div>
                     </motion.div>
                 </div>
