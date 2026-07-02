@@ -18,6 +18,7 @@ export const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = React.m
     btnPrimary,
     btnOutline
 }) => {
+    const isInstallmentPlan = createdProject.revenue >= 10_000_000;
     return (
         <div style={{ paddingTop: '120px', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="container">
             <motion.div
@@ -45,7 +46,9 @@ export const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = React.m
                     </h1>
                     <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, marginBottom: '2.5rem' }}>
                         Dự án <strong style={{ color: 'var(--color-text)' }}>"{createdProject.name}"</strong> đã được chuyển sang trạng thái sản xuất.<br />
-                        Đội ngũ AURA đã nhận được khoản thanh toán 100% của bạn. Chúng tôi sẽ liên hệ sớm nhất.
+                        {isInstallmentPlan
+                            ? 'AURA đã nhận thanh toán đợt 1 (50%). Hai đợt tiếp theo mỗi đợt 25% sẽ được đội ngũ liên hệ/xác nhận sau.'
+                            : 'AURA đã nhận khoản thanh toán của bạn. Chúng tôi sẽ liên hệ sớm nhất.'}
                     </p>
 
                     <div style={{

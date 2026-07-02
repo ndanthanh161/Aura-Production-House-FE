@@ -14,6 +14,7 @@ interface BookingDetailsModalProps {
 }
 
 export const BookingDetailsModal: React.FC<BookingDetailsModalProps> = React.memo(({ project, onClose, onPay, onCancelClick }) => {
+    const canPay = (project.remainingAmount ?? 0) > 0 && project.status !== 'Cancelled' && project.status !== 'Completed';
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -139,7 +140,7 @@ export const BookingDetailsModal: React.FC<BookingDetailsModalProps> = React.mem
                     )}
 
                     <div className="booking-modal-actions" style={{ display: 'flex', gap: '1.5rem', paddingTop: '2rem', borderTop: '1px solid var(--color-border)' }}>
-                        {project.status === 'Scheduled' && (
+                        {canPay && (
                             <>
                                 <Button
                                     onClick={() => onPay(project.packageId, project.id)}
@@ -153,8 +154,9 @@ export const BookingDetailsModal: React.FC<BookingDetailsModalProps> = React.mem
                                         letterSpacing: '0.05em'
                                     }}
                                 >
-                                    <CreditCard size={18} style={{ marginRight: '8px' }} /> Tiến hành thanh toán
+                                    <CreditCard size={18} style={{ marginRight: '8px' }} /> {project.status === 'Scheduled' ? 'Tiến hành thanh toán' : 'Thanh toán tiếp'}
                                 </Button>
+                                {project.status === 'Scheduled' && (
                                 <Button
                                     variant="outline"
                                     onClick={() => onCancelClick(project.id)}
@@ -164,6 +166,7 @@ export const BookingDetailsModal: React.FC<BookingDetailsModalProps> = React.mem
                                 >
                                     Hủy dự án
                                 </Button>
+                                )}
                             </>
                         )}
                         {project.resultLink && (
@@ -174,7 +177,7 @@ export const BookingDetailsModal: React.FC<BookingDetailsModalProps> = React.mem
                                 Xem sản phẩm bàn giao <ChevronRight size={18} style={{ marginLeft: '8px' }} />
                             </Button>
                         )}
-                        {project.status === 'InProduction' && !project.resultLink && (
+                        {project.status === 'InProduction' && !project.resultLink && !canPay && (
                             <div style={{
                                 flex: 1,
                                 textAlign: 'center',

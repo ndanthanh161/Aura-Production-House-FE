@@ -16,6 +16,10 @@ interface Step3PaymentConfirmProps {
     timeLeft: number;
     formatTime: (seconds: number) => string;
     formatPrice: (price: number) => string;
+    paymentPlan: Array<{ installmentNumber: number; percentage: number; amount: number }>;
+    paymentOptions: Array<{ id: string; label: string; description: string; amount: number }>;
+    selectedPaymentAmount: number;
+    setSelectedPaymentAmount: (amount: number) => void;
     getVietQRUrl: () => string;
     copyToClipboard: (text: string) => void;
     creating: boolean;
@@ -38,6 +42,10 @@ export const Step3PaymentConfirm: React.FC<Step3PaymentConfirmProps> = React.mem
     timeLeft,
     formatTime,
     formatPrice,
+    paymentPlan,
+    paymentOptions,
+    selectedPaymentAmount,
+    setSelectedPaymentAmount,
     getVietQRUrl,
     copyToClipboard,
     creating,
@@ -49,6 +57,9 @@ export const Step3PaymentConfirm: React.FC<Step3PaymentConfirmProps> = React.mem
     btnOutline,
     labelStyle
 }) => {
+    const currentPaymentOption = paymentOptions.find((option) => option.amount === selectedPaymentAmount) ?? paymentOptions[0];
+    const hasPaymentChoices = paymentOptions.length > 1;
+
     return (
         <div>
             <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text)', marginBottom: '0.5rem' }}>
@@ -87,6 +98,57 @@ export const Step3PaymentConfirm: React.FC<Step3PaymentConfirmProps> = React.mem
                             <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--color-text)' }}>Tổng thanh toán:</span>
                             <span style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--color-accent)' }}>{formatPrice(pkg.price)}</span>
                         </div>
+                        {currentPaymentOption && (
+                            <div style={{ borderTop: '1px dashed var(--color-border)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+                                    <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--color-text)' }}>{currentPaymentOption.label}:</span>
+                                    <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--color-accent)' }}>{formatPrice(currentPaymentOption.amount)}</span>
+                                </div>
+
+                                {hasPaymentChoices && (
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
+                                        {paymentOptions.map((option) => {
+                                            const isSelected = option.amount === selectedPaymentAmount;
+                                            return (
+                                                <button
+                                                    key={option.id}
+                                                    type="button"
+                                                    onClick={() => setSelectedPaymentAmount(option.amount)}
+                                                    style={{
+                                                        textAlign: 'left',
+                                                        border: `1px solid ${isSelected ? 'rgba(192,154,90,0.75)' : 'var(--color-border)'}`,
+                                                        borderRadius: '8px',
+                                                        padding: '12px',
+                                                        backgroundColor: isSelected ? 'rgba(192,154,90,0.12)' : 'rgba(255,255,255,0.03)',
+                                                        color: 'var(--color-text)',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                >
+                                                    <div style={{ fontSize: '0.78rem', color: 'var(--color-accent)', fontWeight: 800, marginBottom: '4px' }}>{option.label}</div>
+                                                    <div style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '4px' }}>{formatPrice(option.amount)}</div>
+                                                    <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', lineHeight: 1.35 }}>{option.description}</div>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {currentPaymentOption.id === 'next' && paymentPlan.length > 1 && (
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '8px' }}>
+                                        {paymentPlan.map((item) => {
+                                            const isNext = item.installmentNumber === createdProject?.nextInstallmentNumber;
+                                            return (
+                                                <div key={item.installmentNumber} style={{ border: '1px solid var(--color-border)', borderRadius: '8px', padding: '8px', backgroundColor: isNext ? 'rgba(173,255,0,0.08)' : 'rgba(255,255,255,0.03)' }}>
+                                                    <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: 700 }}>Đợt {item.installmentNumber}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text)', fontWeight: 700 }}>{item.percentage}%</div>
+                                                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{formatPrice(item.amount)}</div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -233,9 +295,6 @@ export const Step3PaymentConfirm: React.FC<Step3PaymentConfirmProps> = React.mem
                     <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
                         <button onClick={() => setShowCancelModal(true)} style={{ ...btnOutline, flex: 1, color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)' }}>
                             Hủy thanh toán
-                        </button>
-                        <button onClick={() => window.location.reload()} style={{ ...btnOutline, flex: 1, justifyContent: 'center', padding: '1rem' }}>
-                            <RefreshCw size={18} /> Kiểm tra lại
                         </button>
                     </div>
                 )}

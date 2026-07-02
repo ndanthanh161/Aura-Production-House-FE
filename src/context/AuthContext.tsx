@@ -74,6 +74,16 @@ function clearAuthFromStorage() {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function isUnauthorizedError(error: unknown) {
+    if (!(error instanceof Error)) return false;
+
+    const message = error.message.toLowerCase();
+    return message.includes('unauthorized') ||
+        message.includes('refresh token is missing') ||
+        message.includes('invalid refresh token') ||
+        message.includes('expired refresh token');
+}
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(() => readStoredUser());
     const [accessToken, setAccessTokenState] = useState<string | null>(null);
@@ -103,8 +113,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         const restoreAuth = async () => {
-            clearAuthFromStorage();
-
             try {
                 const result = await authApi.refreshToken();
                 if (result.data?.accessToken) {
@@ -112,8 +120,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 } else {
                     clearAuthState();
                 }
-            } catch {
-                clearAuthState();
+            } catch (error) {
+                if (isUnauthorizedError(error)) {
+                    clearAuthState();
+                }
             } finally {
                 setIsLoading(false);
             }
