@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-<<<<<<< Updated upstream
-import { X, RefreshCw, Ban, Search, Loader2, CheckCircle, UserPlus, Edit3, ExternalLink } from 'lucide-react';
-=======
 import { X, RefreshCw, Ban, Search, Loader2, CheckCircle, UserPlus, Edit3, ExternalLink, CreditCard, ChevronLeft, ChevronRight } from 'lucide-react';
->>>>>>> Stashed changes
 import { projectApi } from '../../services/projectApi';
 import { photographerApi } from '../../services/userApi';
+import { paymentApi } from '../../services/paymentApi';
 import type { Project, ProjectStatus, UpdateProjectRequest } from '../../types/project.types';
 import type { UserDTO } from '../../types/user.types';
 
@@ -24,6 +21,7 @@ const AdminBookings: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [search, setSearch] = useState('');
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
@@ -40,6 +38,12 @@ const AdminBookings: React.FC = () => {
 
     const [saving, setSaving] = useState(false);
     const [viewProject, setViewProject] = useState<Project | null>(null);
+
+    // Payment confirmation state
+    const [paymentConfirmProject, setPaymentConfirmProject] = useState<Project | null>(null);
+    const [txId, setTxId] = useState('');
+    const [txAmount, setTxAmount] = useState<number>(0);
+    const [paymentError, setPaymentError] = useState('');
 
     const fetchBookings = async () => {
         try {
@@ -149,17 +153,15 @@ const AdminBookings: React.FC = () => {
         setResultLink(project.resultLink || '');
     };
 
-<<<<<<< Updated upstream
-=======
     const getRequiredPaymentAmount = (project: Project) =>
         project.nextInstallmentAmount ?? project.remainingAmount ?? project.revenue;
 
     const getPaymentLabel = (project: Project) => {
-        if ((project.remainingAmount ?? project.revenue) <= 0) return 'Da thanh toan du';
+        if ((project.remainingAmount ?? project.revenue) <= 0) return 'Đã thanh toán đủ';
         if (project.totalInstallments > 1 && project.nextInstallmentNumber) {
-            return `Dot ${project.nextInstallmentNumber}/${project.totalInstallments}`;
+            return `Đợt ${project.nextInstallmentNumber}/${project.totalInstallments}`;
         }
-        return 'Thanh toan 1 lan';
+        return 'Thanh toán 1 lần';
     };
 
     const openPaymentConfirmModal = (project: Project) => {
@@ -175,7 +177,7 @@ const AdminBookings: React.FC = () => {
 
         const remainingAmount = paymentConfirmProject.remainingAmount ?? paymentConfirmProject.revenue;
         if (txAmount > remainingAmount) {
-            setPaymentError(`So tien nhap (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(txAmount)}) lon hon so tien con lai cua du an (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(remainingAmount)}).`);
+            setPaymentError(`Số tiền nhập (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(txAmount)}) lớn hơn số tiền còn lại của dự án (${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(remainingAmount)}).`);
             return;
         }
 
@@ -196,8 +198,6 @@ const AdminBookings: React.FC = () => {
             setSaving(false);
         }
     };
-
->>>>>>> Stashed changes
     const fmtDate = (d: string) => new Date(d).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const fmtCurrency = (n?: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n ?? 0);
 
@@ -223,6 +223,7 @@ const AdminBookings: React.FC = () => {
             </div>
 
             {error && <div style={alertStyle}>{error} <button onClick={() => setError('')}><X size={14} /></button></div>}
+            {success && <div style={successAlertStyle}>{success} <button onClick={() => setSuccess('')}><X size={14} /></button></div>}
 
             {loading ? (
                 <div style={centerStyle}><Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-accent)' }} /></div>
@@ -267,9 +268,9 @@ const AdminBookings: React.FC = () => {
                                                 <div style={{ width: `${progress}%`, height: '100%', backgroundColor: remainingAmount <= 0 ? '#22c55e' : 'var(--color-accent)' }} />
                                             </div>
                                             <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '0.7rem', lineHeight: 1.35 }}>
-                                                <span style={{ color: '#22c55e' }}>Da thanh toan: {fmtMoney(paidAmount)} ({b.paidInstallments ?? 0}/{b.totalInstallments || 1} dot)</span>
-                                                <span style={{ color: remainingAmount > 0 ? '#f59e0b' : '#22c55e' }}>Con lai: {fmtMoney(remainingAmount)}</span>
-                                                {remainingAmount > 0 && <span style={{ color: 'var(--color-text-muted)' }}>Tiep theo: {paymentLabel} - {fmtMoney(nextAmount)}</span>}
+                                                <span style={{ color: '#22c55e' }}>Đã thanh toán: {fmtMoney(paidAmount)} ({b.paidInstallments ?? 0}/{b.totalInstallments || 1} đợt)</span>
+                                                <span style={{ color: remainingAmount > 0 ? '#f59e0b' : '#22c55e' }}>Còn lại: {fmtMoney(remainingAmount)}</span>
+                                                {remainingAmount > 0 && <span style={{ color: 'var(--color-text-muted)' }}>Tiếp theo: {paymentLabel} - {fmtMoney(nextAmount)}</span>}
                                             </div>
                                         </td>
                                         <td style={{ padding: '1rem 1.25rem' }}>
@@ -294,14 +295,11 @@ const AdminBookings: React.FC = () => {
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                 {b.status !== 'Cancelled' && b.status !== 'Completed' && (
                                                     <>
-<<<<<<< Updated upstream
-=======
                                                         {remainingAmount > 0 && (
                                                             <button onClick={() => openPaymentConfirmModal(b)} style={btnIconSuccess} title="Xác nhận thanh toán thủ công">
                                                                 <CreditCard size={15} />
                                                             </button>
                                                         )}
->>>>>>> Stashed changes
                                                         <button onClick={() => { setRescheduleId(b.id); setNewDate(''); }} style={btnIcon} title="Đổi lịch">
                                                             <RefreshCw size={15} />
                                                         </button>
@@ -331,7 +329,7 @@ const AdminBookings: React.FC = () => {
                     {filtered.length > pageSize && (
                         <div style={paginationStyle}>
                             <span style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>
-                                Trang {safeCurrentPage}/{totalPages} - hien thi {pagedBookings.length}/{filtered.length}
+                                Trang {safeCurrentPage}/{totalPages} - hiển thị {pagedBookings.length}/{filtered.length}
                             </span>
                             <div style={{ display: 'flex', gap: '8px' }}>
                                 <button
@@ -339,7 +337,7 @@ const AdminBookings: React.FC = () => {
                                     disabled={safeCurrentPage === 1}
                                     style={{ ...btnSecondary, opacity: safeCurrentPage === 1 ? 0.45 : 1 }}
                                 >
-                                    <ChevronLeft size={14} /> Truoc
+                                    <ChevronLeft size={14} /> Trước
                                 </button>
                                 <button
                                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -519,8 +517,6 @@ const AdminBookings: React.FC = () => {
                 </div>
             )}
 
-<<<<<<< Updated upstream
-=======
             {/* Payment Manual Confirmation Modal */}
             {paymentConfirmProject && (
                 <div style={overlayStyle} onClick={e => e.target === e.currentTarget && setPaymentConfirmProject(null)}>
@@ -544,20 +540,20 @@ const AdminBookings: React.FC = () => {
                                 <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Khách hàng: {paymentConfirmProject.clientName}</p>
                                 <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid var(--color-border)', borderRadius: '8px', backgroundColor: 'rgba(255,255,255,0.03)', display: 'grid', gap: '0.45rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                                        <span style={{ color: 'var(--color-text-muted)' }}>Trang thai thanh toan</span>
+                                        <span style={{ color: 'var(--color-text-muted)' }}>Trạng thái thanh toán</span>
                                         <strong style={{ color: 'var(--color-accent)' }}>{getPaymentLabel(paymentConfirmProject)}</strong>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                                        <span style={{ color: 'var(--color-text-muted)' }}>Da thanh toan</span>
+                                        <span style={{ color: 'var(--color-text-muted)' }}>Đã thanh toán</span>
                                         <strong style={{ color: '#22c55e' }}>{fmtCurrency(paymentConfirmProject.paidAmount)}</strong>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                                        <span style={{ color: 'var(--color-text-muted)' }}>Con lai</span>
+                                        <span style={{ color: 'var(--color-text-muted)' }}>Còn lại</span>
                                         <strong style={{ color: '#f59e0b' }}>{fmtCurrency(paymentConfirmProject.remainingAmount)}</strong>
                                     </div>
                                     {(paymentConfirmProject.remainingAmount ?? 0) > 0 && (
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                                            <span style={{ color: 'var(--color-text-muted)' }}>Can thu tiep</span>
+                                            <span style={{ color: 'var(--color-text-muted)' }}>Cần thu tiếp</span>
                                             <strong style={{ color: 'var(--color-text)' }}>{fmtCurrency(getRequiredPaymentAmount(paymentConfirmProject))}</strong>
                                         </div>
                                     )}
@@ -587,7 +583,7 @@ const AdminBookings: React.FC = () => {
                                     required
                                 />
                                 <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.4rem' }}>
-                                    Goi y thu dot hien tai: {fmtCurrency(getRequiredPaymentAmount(paymentConfirmProject))}. Co the thu mot phan, toi da: {fmtCurrency(paymentConfirmProject.remainingAmount)}
+                                    Gợi ý thu đợt hiện tại: {fmtCurrency(getRequiredPaymentAmount(paymentConfirmProject))}. Có thể thu một phần, tối đa: {fmtCurrency(paymentConfirmProject.remainingAmount)}
                                 </p>
                             </div>
                         </div>
@@ -612,7 +608,6 @@ const AdminBookings: React.FC = () => {
                 </div>
             )}
 
->>>>>>> Stashed changes
             <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
         </div>
     );
@@ -622,12 +617,10 @@ const btnPrimary: React.CSSProperties = { display: 'flex', alignItems: 'center',
 const btnSecondary: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: 'transparent', color: 'var(--color-text-muted)', padding: '0.5rem 1rem', fontSize: '0.875rem', fontWeight: 500, borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--color-border)' };
 const btnIcon: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--color-border)', backgroundColor: 'transparent', color: 'var(--color-text-muted)' };
 const btnIconDanger: React.CSSProperties = { ...btnIcon, border: 'none', backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444' };
-<<<<<<< Updated upstream
-=======
 const btnIconSuccess: React.CSSProperties = { ...btnIcon, border: 'none', backgroundColor: 'rgba(34,197,94,0.1)', color: '#22c55e' };
 const paginationStyle: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', padding: '1rem 1.25rem', borderTop: '1px solid var(--color-border)', flexWrap: 'wrap' };
->>>>>>> Stashed changes
 const alertStyle: React.CSSProperties = { backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.75rem 1rem', borderRadius: '6px', fontSize: '0.875rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
+const successAlertStyle: React.CSSProperties = { backgroundColor: 'rgba(34,197,94,0.1)', color: '#22c55e', padding: '0.75rem 1rem', borderRadius: '6px', fontSize: '0.875rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' };
 const centerStyle: React.CSSProperties = { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4rem' };
 const overlayStyle: React.CSSProperties = { position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 };
 const modalStyle: React.CSSProperties = { backgroundColor: 'var(--color-bg-secondary)', borderRadius: '12px', padding: '2rem', width: '100%', maxWidth: '440px', border: '1px solid var(--color-border)' };

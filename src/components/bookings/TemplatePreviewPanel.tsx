@@ -10,6 +10,31 @@ interface TemplatePreviewPanelProps {
     onClose: () => void;
 }
 
+const GOOGLE_VIEWER_URL = 'https://docs.google.com/viewer';
+const OFFICE_VIEWER_URL = 'https://view.officeapps.live.com/op/embed.aspx';
+const LOCKED_PREVIEW_URL = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+
+const getNormalizedFileType = (template: DocumentTemplate) => {
+    const type = template.fileType?.trim().toLowerCase();
+    if (type) return type.startsWith('.') ? type : `.${type}`;
+
+    const urlWithoutQuery = template.fileUrl?.split(/[?#]/, 1)[0].toLowerCase() || '';
+    const extensionMatch = urlWithoutQuery.match(/\.[a-z0-9]+$/);
+    return extensionMatch?.[0] || '';
+};
+
+const getPreviewUrl = (template: DocumentTemplate, canViewOriginal: boolean) => {
+    const fileUrl = canViewOriginal ? template.fileUrl : LOCKED_PREVIEW_URL;
+    const fileType = canViewOriginal ? getNormalizedFileType(template) : '.pdf';
+    const isSpreadsheet = ['.xls', '.xlsx', '.csv', '.ods'].includes(fileType);
+
+    if (isSpreadsheet) {
+        return `${OFFICE_VIEWER_URL}?src=${encodeURIComponent(fileUrl)}`;
+    }
+
+    return `${GOOGLE_VIEWER_URL}?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+};
+
 export const TemplatePreviewPanel: React.FC<TemplatePreviewPanelProps> = React.memo(({
     selectedTemplate,
     onClose
@@ -20,6 +45,7 @@ export const TemplatePreviewPanel: React.FC<TemplatePreviewPanelProps> = React.m
 
     // Check VIP Access: users with active VIP status or Admins/Photographers
     const isVipOrStaff = user?.isVip === true || user?.role?.toLowerCase() === 'admin' || user?.role?.toLowerCase() === 'photographer';
+    const previewUrl = getPreviewUrl(selectedTemplate, isVipOrStaff);
 
     const handleDownload = async () => {
         if (!isVipOrStaff || !selectedTemplate.fileUrl || isDownloading) return;
@@ -151,11 +177,7 @@ export const TemplatePreviewPanel: React.FC<TemplatePreviewPanelProps> = React.m
             {/* Secure IFrame Embed with Blur Check */}
             <div style={{ flex: 1, backgroundColor: '#141414', position: 'relative', overflow: 'hidden' }}>
                 <iframe
-                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(
-                        isVipOrStaff 
-                            ? (selectedTemplate.fileUrl || '') 
-                            : 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
-                    )}&embedded=true`}
+                    src={previewUrl}
                     style={{
                         width: '100%',
                         height: '100%',

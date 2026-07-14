@@ -653,9 +653,9 @@ const AdminPackages: React.FC = () => {
 
                                 {/* File selection */}
                                 <div>
-                                    <label style={labelStyle}>Chọn tệp tài liệu * (Hỗ trợ .doc, .docx, .pdf)</label>
+                                    <label style={labelStyle}>Chọn tệp tài liệu * (Hỗ trợ .doc, .docx, .pdf, .xls, .xlsx, .csv, .ods)</label>
                                     <input
-                                        type="file" required accept=".pdf,.doc,.docx"
+                                        type="file" required accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ods"
                                         onChange={e => {
                                             const file = e.target.files?.[0] || null;
                                             setTemplateForm(prev => ({ ...prev, file }));

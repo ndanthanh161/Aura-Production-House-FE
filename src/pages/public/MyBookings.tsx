@@ -19,6 +19,11 @@ import { BookingsList } from '../../components/bookings/BookingsList';
 // ─── CSS STYLES IMPORT ───────────────────────────────────────────
 import './MyBookings.css';
 
+const isMembershipProject = (project: Project) => {
+    const packageName = project.packageName?.trim().toLocaleLowerCase('vi-VN') || '';
+    return packageName.includes('membership') || packageName.includes('hội viên');
+};
+
 const MyBookings: React.FC = () => {
     const { showToast, ToastContainer } = useToast();
     const { user, isLoading: authLoading } = useAuth();
@@ -56,8 +61,9 @@ const MyBookings: React.FC = () => {
         try {
             const res = await projectApi.getSchedules();
             if (res.succeeded && res.data) {
-                // Sort by creation date descending
-                setBookings(res.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+                // Membership purchases grant access but are not production projects.
+                const productionProjects = res.data.filter(project => !isMembershipProject(project));
+                setBookings(productionProjects.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
             } else if (!res.succeeded) {
                 setError(res.message || 'Không thể tải danh sách lịch hẹn.');
             }
