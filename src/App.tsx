@@ -22,14 +22,14 @@ import PhotographerProjects from './pages/photographer/Projects';
 import PhotographerProfile from './pages/photographer/Profile';
 
 import { AdminLayout } from './layouts/AdminLayout';
-import AdminOverview from './pages/admin/Overview';
+import AdminOverview from './pages/admin/OverviewDashboard';
 
 import AdminPackages from './pages/admin/Packages';
 import AdminUsers from './pages/admin/Users';
 import AdminPhotographers from './pages/admin/Photographers';
 import AdminBookings from './pages/admin/Bookings';
 import AdminCustomers from './pages/admin/Customers';
-import AdminStatistics from './pages/admin/Statistics';
+import AdminStatistics from './pages/admin/StatisticsDashboard';
 import AdminAIKnowledge from './pages/admin/AIKnowledge';
 import AdminPortfolio from './pages/admin/Portfolio';
 import AdminContactMessages from './pages/admin/ContactMessages';
@@ -39,12 +39,12 @@ import ChatWidget from './components/ChatWidget';
 import { useAuth } from './context/AuthContext';
 
 function App() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
 
   return (
     <>
       <ScrollToTop />
-      {user && <ChatWidget />}
+      {user && role === 'user' && <ChatWidget />}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<PublicLayout />}>
