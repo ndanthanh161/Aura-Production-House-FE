@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
     ArrowRight, BriefcaseBusiness, CalendarDays, CheckCircle2,
-    CircleDollarSign, Clock3, CreditCard, Loader2, Mail, RefreshCw, UserRoundPlus,
+    CircleDollarSign, Clock3, Loader2, Mail, RefreshCw, UserRoundPlus,
 } from 'lucide-react';
 import { analyticsApi } from '../../services/analyticsApi';
 import type { AnalyticsDashboard, OverviewProject } from '../../types/analytics.types';
@@ -62,10 +62,6 @@ const OverviewDashboard: React.FC = () => {
         {
             label: 'Dự án đang thực hiện', value: overview.projectsInProduction.toString(),
             note: `${data.dashboard.projectsScheduled} dự án đã lên lịch`, icon: BriefcaseBusiness,
-        },
-        {
-            label: 'Dự án còn phải thu', value: overview.awaitingPaymentProjects.toString(),
-            note: `Công nợ ${formatMoney(data.dashboard.outstandingAmount)}`, icon: CreditCard,
         },
         {
             label: 'Tin nhắn chưa đọc', value: overview.unreadMessages.toString(),
