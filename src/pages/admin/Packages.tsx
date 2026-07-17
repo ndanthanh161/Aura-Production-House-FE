@@ -36,6 +36,7 @@ const AdminPackages: React.FC = () => {
     const [templates, setTemplates] = useState<DocumentTemplate[]>([]);
     const [templatesLoading, setTemplatesLoading] = useState(false);
     const [showTemplateModal, setShowTemplateModal] = useState(false);
+    const [editTemplate, setEditTemplate] = useState<DocumentTemplate | null>(null);
     const [templateForm, setTemplateForm] = useState<{ title: string; description: string; file: File | null; isPublished: boolean }>({
         title: '',
         description: '',
@@ -154,31 +155,59 @@ const AdminPackages: React.FC = () => {
     };
 
     // ─── Templates Logic ──────────────────────────────────────────
-    const handleCreateTemplate = async (e: React.FormEvent) => {
+    const openCreateTemplate = () => {
+        setEditTemplate(null);
+        setTemplateForm({ title: '', description: '', file: null, isPublished: true });
+        setTemplateError('');
+        setShowTemplateModal(true);
+    };
+
+    const openEditTemplate = (template: DocumentTemplate) => {
+        setEditTemplate(template);
+        setTemplateForm({
+            title: template.title,
+            description: template.description || '',
+            file: null,
+            isPublished: template.isPublished
+        });
+        setTemplateError('');
+        setShowTemplateModal(true);
+    };
+
+    const handleSaveTemplate = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!templateForm.file) {
-            setTemplateError('Vui lòng chọn 1 tệp tin (.doc, .docx hoặc .pdf).');
+        if (!editTemplate && !templateForm.file) {
+            setTemplateError('Vui lòng chọn một tệp tài liệu.');
             return;
         }
         setTemplateSaving(true);
         setTemplateError('');
         try {
-            await documentTemplateApi.create({
-                title: templateForm.title,
-                description: templateForm.description,
-                file: templateForm.file,
-                isPublished: templateForm.isPublished
-            });
+            if (editTemplate) {
+                await documentTemplateApi.update({
+                    id: editTemplate.id,
+                    title: templateForm.title.trim(),
+                    description: templateForm.description.trim(),
+                    isPublished: templateForm.isPublished
+                });
+            } else {
+                await documentTemplateApi.create({
+                    title: templateForm.title.trim(),
+                    description: templateForm.description.trim(),
+                    file: templateForm.file!,
+                    isPublished: templateForm.isPublished
+                });
+            }
             setShowTemplateModal(false);
+            setEditTemplate(null);
             setTemplateForm({ title: '', description: '', file: null, isPublished: true });
             fetchTemplates();
         } catch (err) {
-            setTemplateError(err instanceof Error ? err.message : 'Đăng tải tài liệu thất bại.');
+            setTemplateError(err instanceof Error ? err.message : 'Lưu tài liệu thất bại.');
         } finally {
             setTemplateSaving(false);
         }
     };
-
     const handleDeleteTemplate = async (id: string) => {
         if (!confirm('Bạn có chắc chắn muốn xóa tài liệu này? File đính kèm trên hệ thống Cloudinary cũng sẽ bị gỡ bỏ.')) return;
         try {
@@ -234,11 +263,7 @@ const AdminPackages: React.FC = () => {
                                 Đăng tải và quản lý kịch bản, biểu mẫu dành riêng cho hội viên
                             </p>
                         </div>
-                        <button onClick={() => {
-                            setTemplateForm({ title: '', description: '', file: null, isPublished: true });
-                            setTemplateError('');
-                            setShowTemplateModal(true);
-                        }} style={btnPrimary}>
+                        <button onClick={openCreateTemplate} style={btnPrimary}>
                             <Plus size={18} /> Đăng Tải Template
                         </button>
                     </>
@@ -445,6 +470,14 @@ const AdminPackages: React.FC = () => {
                                         )}
 
                                         <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
+                                            <button
+                                                onClick={() => openEditTemplate(tmpl)}
+                                                aria-label={`Chỉnh sửa ${tmpl.title}`}
+                                                title="Chỉnh sửa tiêu đề và nội dung"
+                                                style={{ ...btnSecondary, padding: '0.5rem 0.75rem' }}
+                                            >
+                                                <Edit2 size={14} />
+                                            </button>
                                             <button 
                                                 onClick={() => handleTogglePublishTemplate(tmpl)} 
                                                 style={{ ...btnSecondary, flex: 1, justifyContent: 'center', gap: '6px' }}
@@ -620,14 +653,14 @@ const AdminPackages: React.FC = () => {
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text)' }}>
-                                    Đăng Tải Template Mới
+                                    {editTemplate ? 'Chỉnh Sửa Template' : 'Đăng Tải Template Mới'}
                                 </h2>
                                 <button onClick={() => setShowTemplateModal(false)} style={{ color: 'var(--color-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
                                     <X size={20} />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleCreateTemplate} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                            <form onSubmit={handleSaveTemplate} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                                 {/* Title */}
                                 <div>
                                     <label style={labelStyle}>Tiêu đề tài liệu *</label>
@@ -652,21 +685,22 @@ const AdminPackages: React.FC = () => {
                                 </div>
 
                                 {/* File selection */}
-                                <div>
-                                    <label style={labelStyle}>Chọn tệp tài liệu * (Hỗ trợ .doc, .docx, .pdf, .xls, .xlsx, .csv, .ods)</label>
-                                    <input
-                                        type="file" required accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ods"
-                                        onChange={e => {
-                                            const file = e.target.files?.[0] || null;
-                                            setTemplateForm(prev => ({ ...prev, file }));
-                                        }}
-                                        style={{
-                                            ...inputStyle,
-                                            padding: '0.5rem'
-                                        }}
-                                    />
-                                </div>
-
+                                {!editTemplate && (
+                                    <div>
+                                        <label style={labelStyle}>Chọn tệp tài liệu * (Hỗ trợ .doc, .docx, .pdf, .xls, .xlsx, .csv, .ods)</label>
+                                        <input
+                                            type="file" required accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ods"
+                                            onChange={e => {
+                                                const file = e.target.files?.[0] || null;
+                                                setTemplateForm(prev => ({ ...prev, file }));
+                                            }}
+                                            style={{
+                                                ...inputStyle,
+                                                padding: '0.5rem'
+                                            }}
+                                        />
+                                    </div>
+                                )}
                                 {/* Publish checkbox */}
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
                                     <input
@@ -674,7 +708,7 @@ const AdminPackages: React.FC = () => {
                                         checked={templateForm.isPublished}
                                         onChange={e => setTemplateForm(prev => ({ ...prev, isPublished: e.target.checked }))}
                                     />
-                                    Xuất bản ngay sau khi tải lên
+                                    {editTemplate ? 'Công khai template' : 'Xuất bản ngay sau khi tải lên'}
                                 </label>
 
                                 {templateError && <div style={{ ...alertStyle, marginTop: 0 }}>{templateError}</div>}
@@ -682,7 +716,7 @@ const AdminPackages: React.FC = () => {
                                 <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
                                     <button type="submit" disabled={templateSaving} style={{ ...btnPrimary, flex: 1, justifyContent: 'center' }}>
                                         {templateSaving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Check size={16} />}
-                                        Tải lên hệ thống
+                                        {editTemplate ? 'Lưu thay đổi' : 'Tải lên hệ thống'}
                                     </button>
                                     <button type="button" onClick={() => setShowTemplateModal(false)} style={btnSecondary}>Huỷ</button>
                                 </div>
