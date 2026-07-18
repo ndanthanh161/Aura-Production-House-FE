@@ -52,7 +52,8 @@ const Vault: React.FC = () => {
             backgroundColor: 'var(--color-bg)',
             backgroundImage: 'radial-gradient(circle at top right, rgba(192, 154, 90, 0.05), transparent), radial-gradient(circle at bottom left, rgba(7, 31, 217, 0.02), transparent)',
             position: 'relative',
-            overflow: 'hidden'
+            overflowX: 'hidden',
+            overflowY: 'visible'
         }} className="container">
             {/* Cinematic Background Grid Lines */}
             <div style={{
