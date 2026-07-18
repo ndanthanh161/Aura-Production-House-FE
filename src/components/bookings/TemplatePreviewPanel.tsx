@@ -260,7 +260,7 @@ export const TemplatePreviewPanel: React.FC<TemplatePreviewPanelProps> = React.m
                                 </button>
                             ) : (
                                 <button
-                                    onClick={() => navigate('/packages')}
+                                    onClick={() => navigate('/packages?focus=membership')}
                                     style={{
                                         backgroundColor: 'var(--color-accent)',
                                         color: '#0F0F0F',

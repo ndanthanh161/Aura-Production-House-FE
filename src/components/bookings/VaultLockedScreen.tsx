@@ -53,7 +53,7 @@ export const VaultLockedScreen: React.FC = React.memo(() => {
                         cursor: 'pointer'
                     }}
                     whileHover={{ scale: 1.05 }}
-                    onClick={() => navigate('/packages')}
+                    onClick={() => navigate('/packages?focus=membership')}
                 >
                     <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="100" cy="100" r="85" stroke="#C09A5A" strokeWidth="2" strokeDasharray="6 6" opacity="0.3" />
@@ -159,7 +159,7 @@ export const VaultLockedScreen: React.FC = React.memo(() => {
                 </div>
 
                 <button
-                    onClick={() => navigate('/packages')}
+                    onClick={() => navigate('/packages?focus=membership')}
                     className="shimmer-btn"
                     style={{
                         padding: '1.1rem 3rem',
