@@ -233,14 +233,12 @@ const Vault: React.FC = () => {
                             </motion.div>
 
                             {/* Right Column: Live Console Viewport Preview */}
-                            <AnimatePresence mode="wait">
-                                {selectedTemplate && (
-                                    <TemplatePreviewPanel
-                                        selectedTemplate={selectedTemplate}
-                                        onClose={() => setSelectedTemplate(null)}
-                                    />
-                                )}
-                            </AnimatePresence>
+                            {selectedTemplate && (
+                                <TemplatePreviewPanel
+                                    selectedTemplate={selectedTemplate}
+                                    onClose={() => setSelectedTemplate(null)}
+                                />
+                            )}
                         </div>
                     )}
                 </AnimatePresence>
