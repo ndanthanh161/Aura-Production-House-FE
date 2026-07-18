@@ -193,7 +193,7 @@ export const UserMenu: React.FC = () => {
                                     <button
                                         onClick={() => {
                                             setIsOpen(false);
-                                            navigate('/packages');
+                                            navigate('/packages?focus=membership');
                                         }}
                                         className="upgrade-vip-btn"
                                         style={{

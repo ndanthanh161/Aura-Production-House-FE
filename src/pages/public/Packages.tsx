@@ -6,7 +6,7 @@ import {
     Film
 } from 'lucide-react';
 import noiseImg from '../../assets/noise.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { packageApi } from '../../services/packageApi';
 import type { Package } from '../../types/package.types';
 
@@ -18,6 +18,8 @@ import { SpecsMatrixTable } from '../../components/packages/SpecsMatrixTable';
 
 const Packages: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const focusedPackage = searchParams.get('focus');
     const [packages, setPackages] = useState<Package[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -32,14 +34,20 @@ const Packages: React.FC = () => {
             .then(res => {
                 const pkgs = (res.data || []).filter(p => p.isActive);
                 setPackages(pkgs);
-                const popIdx = pkgs.findIndex(p => p.isPopular);
-                if (popIdx !== -1) {
-                    setActiveIdx(popIdx);
+                const membershipIdx = focusedPackage === 'membership'
+                    ? pkgs.findIndex(p => /membership|h\u1ed9i vi\u00ean/i.test(p.name))
+                    : -1;
+                const preferredIdx = membershipIdx !== -1
+                    ? membershipIdx
+                    : pkgs.findIndex(p => p.isPopular);
+
+                if (preferredIdx !== -1) {
+                    setActiveIdx(preferredIdx);
                 }
             })
             .catch(() => setError('Không thể tải danh sách gói dịch vụ.'))
             .finally(() => setLoading(false));
-    }, []);
+    }, [focusedPackage]);
 
     // Focus Lock indicator animations
     useEffect(() => {
